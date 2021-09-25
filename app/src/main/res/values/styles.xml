@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+<!--  Request Tab objects style  -->
     <style name="Restly.Request.MethodText" parent="Widget.MaterialComponents.TextView">
-
+        <item name="android:textSize">13sp</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+    <style name="Restly.Request.NameText" parent="Widget.MaterialComponents.TextView">
+        <item name="android:layout_marginHorizontal">8dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:gravity">center</item>
+    </style>
+    <style name="Restly.Request.UrlText" parent="Widget.MaterialComponents.TextView">
+        <item name="android:layout_marginVertical">8dp</item>
+        <item name="android:textSize">14sp</item>
     </style>
 </resources>

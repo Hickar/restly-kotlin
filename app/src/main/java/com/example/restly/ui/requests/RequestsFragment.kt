@@ -1,12 +1,12 @@
 package com.example.restly.ui.requests
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.restly.R
 import com.example.restly.databinding.FragmentRequestsBinding
 import com.example.restly.models.Request
 
@@ -15,8 +15,6 @@ class RequestsFragment : Fragment() {
     private lateinit var requestsViewModel: RequestsViewModel
     private var _binding: FragmentRequestsBinding? = null
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -38,7 +36,13 @@ class RequestsFragment : Fragment() {
         recyclerView.adapter = RequestsAdapter(context, requests)
         recyclerView.layoutManager = LinearLayoutManager(context)
 
+        setHasOptionsMenu(true)
+
         return binding.root
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.top_action_menu, menu)
     }
 
     override fun onDestroyView() {

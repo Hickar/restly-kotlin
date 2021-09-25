@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Restly</string>
-    <string name="title_requests">Requests</string>
-    <string name="title_history">History</string>
-    <string name="title_settings">Settings</string>
+    <string name="requests_tab_title">Requests</string>
+    <string name="history_tab_title">History</string>
+    <string name="settings_tab_title">Settings</string>
+    <string name="requests_menu_button_text">Add</string>
 </resources>

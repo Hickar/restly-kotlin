@@ -1,4 +1,4 @@
-package com.example.restly
+package com.hickar.restly
 
 import android.os.Bundle
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -7,7 +7,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.example.restly.databinding.ActivityMainBinding
+import com.hickar.restly.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 

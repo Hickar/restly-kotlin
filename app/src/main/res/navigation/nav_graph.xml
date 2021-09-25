@@ -7,19 +7,27 @@
 
     <fragment
         android:id="@+id/navigation_requests"
-        android:name="com.example.restly.ui.requests.RequestsFragment"
+        android:name="com.hickar.restly.ui.requests.RequestsFragment"
         android:label="@string/requests_tab_title"
-        tools:layout="@layout/fragment_requests" />
+        tools:layout="@layout/fragment_requests">
+        <action
+            android:id="@+id/action_navigation_requests_to_requestDetailFragment"
+            app:destination="@id/requestDetailFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_history"
-        android:name="com.example.restly.ui.history.HistoryFragment"
+        android:name="com.hickar.restly.ui.history.HistoryFragment"
         android:label="@string/history_tab_title"
         tools:layout="@layout/fragment_history" />
 
     <fragment
         android:id="@+id/navigation_settings"
-        android:name="com.example.restly.ui.settings.SettingsFragment"
+        android:name="com.hickar.restly.ui.settings.SettingsFragment"
         android:label="@string/settings_tab_title"
         tools:layout="@layout/fragment_settings" />
+    <fragment
+        android:id="@+id/requestDetailFragment"
+        android:name="com.hickar.restly.ui.requests.RequestDetailFragment"
+        android:label="RequestDetailFragment" />
 </navigation>

@@ -1,4 +1,4 @@
-package com.example.restly.ui.settings
+package com.hickar.restly.ui.settings
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.example.restly.databinding.FragmentSettingsBinding
+import com.hickar.restly.databinding.FragmentSettingsBinding
 
 class SettingsFragment : Fragment() {
 

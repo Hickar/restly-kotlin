@@ -1,4 +1,4 @@
-package com.example.restly.ui.history
+package com.hickar.restly.ui.history
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

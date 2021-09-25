@@ -1,4 +1,4 @@
-package com.example.restly
+package com.hickar.restly
 
 import org.junit.Test
 

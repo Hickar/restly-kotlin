@@ -1,4 +1,4 @@
-package com.example.restly.ui.settings
+package com.hickar.restly.ui.settings
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

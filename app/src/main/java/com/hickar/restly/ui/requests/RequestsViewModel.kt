@@ -1,15 +1,15 @@
 package com.hickar.restly.ui.requests
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.hickar.restly.database.RequestDao
+import androidx.lifecycle.*
 import com.hickar.restly.models.Request
+import com.hickar.restly.repository.RequestRepository
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
 
-class RequestsViewModel(private val requestDao: RequestDao) : ViewModel() {
-    private val requests = requestDao.getAll()
+class RequestsViewModel(private val repository: RequestRepository) : ViewModel() {
+    val allRequests: LiveData<List<Request>> = repository.allRequests.asLiveData()
 
-    fun createRequest(method: String, name: String, url: String) {
-        requestDao.insert(Request(0, method, name, url))
+    suspend fun createNewDefaultRequest(): Long {
+        return repository.insert(Request(0, "GET", "New Request", ""))
     }
 }

@@ -2,6 +2,7 @@ package com.hickar.restly.database
 
 import androidx.room.*
 import com.hickar.restly.models.Request
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface RequestDao {
@@ -9,10 +10,10 @@ interface RequestDao {
     fun getById(id: Int): Request
 
     @Query("SELECT * FROM requests")
-    fun getAll(): List<Request>
+    fun getAll(): Flow<List<Request>>
 
     @Insert
-    fun insert(request: Request)
+    suspend fun insert(request: Request): Long
 
     @Update
     fun update(request: Request)

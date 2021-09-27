@@ -3,12 +3,51 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="@dimen/activity_horizontal_padding">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="RequestDetailFragment test"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/request_detail_method_box"
+        android:layout_width="50dp"
+        android:layout_height="28dp"
+        app:cardBackgroundColor="@color/purple_500"
+        app:cardCornerRadius="4dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/request_method_label"
+            style="@style/Restly.RequestDetail.MethodText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="POST"/>
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@+id/request_detail_method_box"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="Untitled Request"
+        style="@style/Restly.RequestDetail.NameText"/>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/request_detail_method_box"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginVertical="8dp"
+        app:boxCornerRadiusBottomStart="4dp"
+        app:boxCornerRadiusTopEnd="4dp"
+        app:boxCornerRadiusTopStart="4dp"
+        app:boxCornerRadiusBottomEnd="4dp"
+        >
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="8dp"
+            android:hint="@string/request_detail_url_placeholder_text"
+            />
+
+    </com.google.android.material.textfield.TextInputLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

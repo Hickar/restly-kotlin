@@ -12,7 +12,11 @@
         tools:layout="@layout/fragment_requests">
         <action
             android:id="@+id/action_navigation_requests_to_requestDetailFragment"
-            app:destination="@id/requestDetailFragment" />
+            app:destination="@id/requestDetailFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
 
     <fragment
@@ -29,5 +33,9 @@
     <fragment
         android:id="@+id/requestDetailFragment"
         android:name="com.hickar.restly.ui.requests.RequestDetailFragment"
-        android:label="RequestDetailFragment" />
+        android:label="RequestDetailFragment" >
+        <argument
+            android:name="requestId"
+            app:argType="long" />
+    </fragment>
 </navigation>

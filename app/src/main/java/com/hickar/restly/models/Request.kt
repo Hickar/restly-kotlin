@@ -13,7 +13,7 @@ data class Header(
 
 @Entity(tableName = "requests")
 data class Request(
-    @PrimaryKey(autoGenerate = true) val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Long,
     @NonNull @ColumnInfo(defaultValue = "GET") val method: String,
     @NonNull @ColumnInfo(defaultValue = "New Request") val name: String,
     val url: String,

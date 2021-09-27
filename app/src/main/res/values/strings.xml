@@ -4,4 +4,5 @@
     <string name="history_tab_title">History</string>
     <string name="settings_tab_title">Settings</string>
     <string name="requests_menu_button_text">Add</string>
+    <string name="request_detail_url_placeholder_text">https://</string>
 </resources>

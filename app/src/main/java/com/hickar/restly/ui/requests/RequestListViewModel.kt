@@ -6,7 +6,7 @@ import com.hickar.restly.repository.RequestRepository
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 
-class RequestsViewModel(private val repository: RequestRepository) : ViewModel() {
+class RequestListViewModel(private val repository: RequestRepository) : ViewModel() {
     val allRequests: LiveData<List<Request>> = repository.allRequests.asLiveData()
 
     suspend fun createNewDefaultRequest(): Long {

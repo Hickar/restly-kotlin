@@ -1,36 +1,30 @@
 package com.hickar.restly.ui.requests
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.coroutineScope
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.hickar.restly.R
 import com.hickar.restly.RestlyApplication
-import com.hickar.restly.databinding.FragmentRequestDetailBinding
-import com.hickar.restly.databinding.FragmentRequestsBinding
-import com.hickar.restly.models.Request
+import com.hickar.restly.databinding.FragmentRequestlistBinding
 import kotlinx.coroutines.*
 
-class RequestsFragment : Fragment() {
+class RequestListFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
-    private val requestsViewModel: RequestsViewModel by activityViewModels {
-        RequestsViewModelFactory(
+    private val requestListViewModel: RequestListViewModel by activityViewModels {
+        RequestListViewModelFactory(
             (activity?.application as RestlyApplication).repository
         )
     }
 
-    private var _binding: FragmentRequestsBinding? = null
+    private var _binding: FragmentRequestlistBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -40,15 +34,15 @@ class RequestsFragment : Fragment() {
     ): View {
         setHasOptionsMenu(true)
 
-        _binding = FragmentRequestsBinding.inflate(inflater, container, false)
+        _binding = FragmentRequestlistBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val adapter = RequestsAdapter {
-            val action = RequestsFragmentDirections.actionNavigationRequestsToRequestDetailFragment(it.id)
+        val adapter = RequestListAdapter {
+            val action = RequestListFragmentDirections.actionNavigationRequestsToRequestDetailFragment(it.id)
             view.findNavController().navigate(action)
         }
 
@@ -56,7 +50,12 @@ class RequestsFragment : Fragment() {
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        requestsViewModel.allRequests.observe(viewLifecycleOwner, { requests ->
+        val dividerDecoration = DividerItemDecoration(context, RecyclerView.VERTICAL)
+        val dividerDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.recycler_divider)
+        dividerDecoration.setDrawable(dividerDrawable!!)
+        recyclerView.addItemDecoration(dividerDecoration)
+
+        requestListViewModel.allRequests.observe(viewLifecycleOwner, { requests ->
             requests?.let { adapter.submitList(it) }
         })
     }
@@ -70,8 +69,8 @@ class RequestsFragment : Fragment() {
             R.id.request_menu_add_button -> {
                 runBlocking coroutineScope@{
 
-                    val newRequestId = requestsViewModel.createNewDefaultRequest()
-                    val action = RequestsFragmentDirections.actionNavigationRequestsToRequestDetailFragment(newRequestId)
+                    val newRequestId = requestListViewModel.createNewDefaultRequest()
+                    val action = RequestListFragmentDirections.actionNavigationRequestsToRequestDetailFragment(newRequestId)
                     findNavController().navigate(action)
 
                     return@coroutineScope true

@@ -7,16 +7,16 @@
 
     <fragment
         android:id="@+id/navigation_requests"
-        android:name="com.hickar.restly.ui.requests.RequestsFragment"
+        android:name="com.hickar.restly.ui.requests.RequestListFragment"
         android:label="@string/requests_tab_title"
-        tools:layout="@layout/fragment_requests">
+        tools:layout="@layout/fragment_requestlist">
         <action
             android:id="@+id/action_navigation_requests_to_requestDetailFragment"
             app:destination="@id/requestDetailFragment"
             app:enterAnim="@android:anim/slide_in_left"
             app:exitAnim="@android:anim/slide_out_right"
             app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right" />
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
 
     <fragment

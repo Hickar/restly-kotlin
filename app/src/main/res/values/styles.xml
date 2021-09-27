@@ -1,9 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 <!--  Request Tab styles  -->
+    <style name="Restly.Request.MethodBox" parent="Widget.MaterialComponents.CardView">
+        <item name="cardCornerRadius">4dp</item>
+        <item name="cardBackgroundColor">@color/light_blue_200</item>
+        <item name="android:gravity">center</item>
+        <item name="android:minHeight">18dp</item>
+        <item name="android:minWidth">36dp</item>
+    </style>
     <style name="Restly.Request.MethodText" parent="Widget.MaterialComponents.TextView">
         <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/light_blue_700</item>
         <item name="android:textAlignment">center</item>
+        <item name="android:gravity">center</item>
     </style>
     <style name="Restly.Request.NameText" parent="Widget.MaterialComponents.TextView">
         <item name="android:layout_marginHorizontal">8dp</item>
@@ -17,14 +27,33 @@
         <item name="android:textSize">14sp</item>
     </style>
 <!--  Request Detail fragment styles  -->
+    <style name="Restly.RequestDetail.MethodBox" parent="Widget.MaterialComponents.CardView">
+        <item name="cardCornerRadius">4dp</item>
+        <item name="cardBackgroundColor">@color/light_blue_200</item>
+        <item name="android:gravity">center</item>
+        <item name="android:minHeight">32dp</item>
+        <item name="android:minWidth">64dp</item>
+    </style>
+    <style name="Restly.RequestDetail.MethodText" parent="Widget.MaterialComponents.TextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/light_blue_700</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:gravity">center</item>
+    </style>
     <style name="Restly.RequestDetail.NameText" parent="Widget.MaterialComponents.TextView">
         <item name="android:layout_marginHorizontal">8dp</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">26sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/black</item>
     </style>
-    <style name="Restly.RequestDetail.MethodText" parent="Widget.MaterialComponents.TextView">
-        <item name="android:textSize">18sp</item>
-        <item name="android:textAlignment">center</item>
+    <style name="Restly.RequestDetail.TextInput" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+        <item name="boxCornerRadiusTopStart">4dp</item>
+        <item name="boxCornerRadiusTopEnd">4dp</item>
+        <item name="boxCornerRadiusBottomEnd">4dp</item>
+        <item name="boxCornerRadiusBottomStart">4dp</item>
+        <item name="android:minHeight">48dp</item>
     </style>
 </resources>

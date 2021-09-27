@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.requests.RequestsFragment">
+    tools:context=".ui.requests.RequestListFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/requests_list"
@@ -12,6 +12,7 @@
         android:layout_height="match_parent"
         android:scrollbars="vertical"
         android:orientation="vertical"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:paddingBottom="?attr/actionBarSize"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

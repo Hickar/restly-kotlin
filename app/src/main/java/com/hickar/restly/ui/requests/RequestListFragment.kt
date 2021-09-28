@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.hickar.restly.R
 import com.hickar.restly.RestlyApplication
-import com.hickar.restly.databinding.FragmentRequestlistBinding
+import com.hickar.restly.databinding.FragmentRequestListBinding
 import kotlinx.coroutines.*
 
 class RequestListFragment : Fragment() {
@@ -24,7 +24,7 @@ class RequestListFragment : Fragment() {
         )
     }
 
-    private var _binding: FragmentRequestlistBinding? = null
+    private var _binding: FragmentRequestListBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -34,7 +34,7 @@ class RequestListFragment : Fragment() {
     ): View {
         setHasOptionsMenu(true)
 
-        _binding = FragmentRequestlistBinding.inflate(inflater, container, false)
+        _binding = FragmentRequestListBinding.inflate(inflater, container, false)
         return binding.root
     }
 

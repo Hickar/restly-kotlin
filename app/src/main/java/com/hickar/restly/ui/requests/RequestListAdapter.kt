@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.hickar.restly.R
-import com.hickar.restly.models.Request
+import com.hickar.restly.repository.models.Request
 import com.hickar.restly.databinding.RequestItemViewBinding
 
 class RequestListAdapter(

@@ -2,7 +2,7 @@ package com.hickar.restly.ui.requests
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.hickar.restly.repository.RequestRepository
+import com.hickar.restly.repository.room.RequestRepository
 
 class RequestListViewModelFactory(
     private val repository: RequestRepository

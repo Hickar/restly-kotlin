@@ -1,8 +1,8 @@
 package com.hickar.restly
 
 import android.app.Application
-import com.hickar.restly.database.AppDatabase
-import com.hickar.restly.repository.RequestRepository
+import com.hickar.restly.repository.room.AppDatabase
+import com.hickar.restly.repository.room.RequestRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 

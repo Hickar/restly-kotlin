@@ -9,7 +9,7 @@
         android:id="@+id/navigation_requests"
         android:name="com.hickar.restly.ui.requests.RequestListFragment"
         android:label="@string/requests_tab_title"
-        tools:layout="@layout/fragment_requestlist">
+        tools:layout="@layout/fragment_request_list">
         <action
             android:id="@+id/action_navigation_requests_to_requestDetailFragment"
             app:destination="@id/requestDetailFragment"

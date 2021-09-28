@@ -4,7 +4,13 @@
     <string name="history_tab_title">History</string>
     <string name="settings_tab_title">Settings</string>
     <string name="requests_menu_button_text">Add</string>
+
+
     <string name="request_detail_name_default_text">New Request</string>
     <string name="request_detail_url_placeholder_text">https://</string>
     <string name="request_detail_default_method_text">GET</string>
+    <string name="request_detail_params_header_text">Query Parameters</string>
+    <string name="request_detail_params_add_button_text">Add parameter</string>
+    <string name="request_detail_headers_header_text">Headers</string>
+    <string name="request_detail_headers_add_button_text">Add header</string>
 </resources>

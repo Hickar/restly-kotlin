@@ -1,8 +1,8 @@
-package com.hickar.restly.repository
+package com.hickar.restly.repository.room
 
 import androidx.annotation.WorkerThread
-import com.hickar.restly.database.RequestDao
-import com.hickar.restly.models.Request
+import com.hickar.restly.repository.dao.RequestDao
+import com.hickar.restly.repository.models.Request
 import kotlinx.coroutines.flow.Flow
 
 class RequestRepository(private val requestDao: RequestDao) {

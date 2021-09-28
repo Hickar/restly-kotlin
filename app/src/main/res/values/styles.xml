@@ -9,7 +9,7 @@
         <item name="android:minWidth">36dp</item>
     </style>
     <style name="Restly.Request.MethodText" parent="Widget.MaterialComponents.TextView">
-        <item name="android:textSize">13sp</item>
+        <item name="android:textSize">14sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/light_blue_700</item>
         <item name="android:textAlignment">center</item>
@@ -45,7 +45,7 @@
     </style>
     <style name="Restly.RequestDetail.NameText" parent="Widget.MaterialComponents.TextView">
         <item name="android:layout_marginHorizontal">8dp</item>
-        <item name="android:textSize">26sp</item>
+        <item name="android:textSize">24sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/black</item>
     </style>
@@ -55,5 +55,9 @@
         <item name="boxCornerRadiusBottomEnd">4dp</item>
         <item name="boxCornerRadiusBottomStart">4dp</item>
         <item name="android:minHeight">48dp</item>
+    </style>
+    <style name="Restly.RequestDetail.TextInputSecondary" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+        <item name="boxBackgroundColor">@color/design_default_color_surface</item>
+        <item name="android:layout_height">34dp</item>
     </style>
 </resources>

@@ -1,11 +1,12 @@
-package com.hickar.restly.database
+package com.hickar.restly.repository.room
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.hickar.restly.models.Request
+import com.hickar.restly.repository.dao.RequestDao
+import com.hickar.restly.repository.models.Request
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 

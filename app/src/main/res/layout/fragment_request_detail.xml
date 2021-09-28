@@ -1,54 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="@dimen/activity_horizontal_padding">
+    android:layout_height="match_parent">
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/request_detail_method_box"
-        android:layout_width="64dp"
-        android:layout_height="32dp"
-        style="@style/Restly.RequestDetail.MethodBox"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/request_method_label"
-                style="@style/Restly.RequestDetail.MethodText"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="@string/request_detail_default_method_text"/>
-
-        </RelativeLayout>
-    </com.google.android.material.card.MaterialCardView>
-
-    <com.google.android.material.textview.MaterialTextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toEndOf="@+id/request_detail_method_box"
-        app:layout_constraintTop_toTopOf="parent"
-        android:text="@string/request_detail_name_default_text"
-        style="@style/Restly.RequestDetail.NameText"/>
-
-    <com.google.android.material.textfield.TextInputLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/request_detail_method_box"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginVertical="8dp"
-        style="@style/Restly.RequestDetail.TextInput"
-        >
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:hint="@string/request_detail_url_placeholder_text"
-            android:inputType="textUri"
-            />
+        android:padding="@dimen/activity_horizontal_padding">
 
-    </com.google.android.material.textfield.TextInputLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/request_detail_method_box"
+            style="@style/Restly.RequestDetail.MethodBox"
+            android:layout_width="64dp"
+            android:layout_height="32dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/request_method_label"
+                    style="@style/Restly.RequestDetail.MethodText"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/request_detail_default_method_text" />
+
+            </RelativeLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.textview.MaterialTextView
+            style="@style/Restly.RequestDetail.NameText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/request_detail_name_default_text"
+            app:layout_constraintStart_toEndOf="@+id/request_detail_method_box"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/request_detail_url_input"
+            style="@style/Restly.RequestDetail.TextInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/request_detail_method_box">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/request_detail_url_placeholder_text"
+                android:inputType="textUri" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <TextView
+            android:id="@+id/request_detail_params_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/request_detail_params_header_text"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/request_detail_url_input" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/request_detail_params_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/request_detail_params_header" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/request_detail_params_add_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="8dp"
+            android:text="@string/request_detail_params_add_button_text"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/request_detail_params_recycler_view" />
+
+        <TextView
+            android:id="@+id/request_detail_headers_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/request_detail_headers_header_text"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/request_detail_params_add_button" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/request_detail_headers_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/request_detail_headers_header" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/request_detail_headers_add_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="8dp"
+            android:text="@string/request_detail_headers_add_button_text"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/request_detail_headers_recycler_view" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

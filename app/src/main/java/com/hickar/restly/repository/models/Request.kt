@@ -1,4 +1,4 @@
-package com.hickar.restly.models
+package com.hickar.restly.repository.models
 
 import androidx.annotation.NonNull
 import androidx.room.ColumnInfo

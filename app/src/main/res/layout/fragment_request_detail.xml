@@ -33,6 +33,7 @@
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/request_name_label"
             style="@style/Restly.RequestDetail.NameText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -41,7 +42,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/request_detail_url_input"
+            android:id="@+id/request_detail_url_input_layout"
             style="@style/Restly.RequestDetail.TextInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -50,6 +51,7 @@
             app:layout_constraintTop_toBottomOf="@+id/request_detail_method_box">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/request_detail_url_input_text"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="@string/request_detail_url_placeholder_text"
@@ -68,7 +70,7 @@
             android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/request_detail_url_input" />
+            app:layout_constraintTop_toBottomOf="@+id/request_detail_url_input_layout" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/request_detail_params_recycler_view"
@@ -116,5 +118,21 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/request_detail_headers_recycler_view" />
 
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/request_detail_body_tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/request_detail_headers_add_button"
+            app:tabMode="scrollable" />
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/request_detail_body_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/request_detail_body_tabs" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

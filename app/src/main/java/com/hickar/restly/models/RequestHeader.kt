@@ -1,7 +1,7 @@
 package com.hickar.restly.models
 
 data class RequestHeader(
-    var key: String,
-    var value: String,
-    var enabled: Boolean
-)
+    override var key: String = "",
+    override var value: String = "",
+    override var enabled: Boolean = false
+) : RequestKeyValue(key, value, enabled)

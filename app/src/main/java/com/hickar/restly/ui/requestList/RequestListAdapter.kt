@@ -13,27 +13,7 @@ import com.hickar.restly.utils.MethodCardViewUtil
 
 class RequestListAdapter(
     private val onItemClicked: (Request) -> Unit
-) : ListAdapter<Request, RequestListAdapter.RequestItemViewHolder>(DiffCallback) {
-
-    class RequestItemViewHolder(
-        private var binding: RequestItemViewBinding,
-        private val context: Context
-    ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(request: Request) {
-            val cardBackgroundColorId = MethodCardViewUtil.getBackgroundColorId(request.method)
-            val cardTextColorId = MethodCardViewUtil.getTextColorId(request.method)
-
-            val cardBackgroundColor =
-                ResourcesCompat.getColor(context.resources, cardBackgroundColorId, null)
-            val cardTextColor = ResourcesCompat.getColor(context.resources, cardTextColorId, null)
-
-            binding.requestMethodBox.setCardBackgroundColor(cardBackgroundColor)
-            binding.requestMethodLabel.setTextColor(cardTextColor)
-            binding.requestMethodLabel.text = MethodCardViewUtil.getShortMethodName(request.method)
-            binding.requestNameLabel.text = request.name
-            binding.requestUrlLabel.text = request.url
-        }
-    }
+) : ListAdapter<Request, RequestItemViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RequestItemViewHolder {
         val adapterLayout = RequestItemViewBinding.inflate(
@@ -65,5 +45,25 @@ class RequestListAdapter(
                 return oldItem == newItem
             }
         }
+    }
+}
+
+class RequestItemViewHolder(
+    private var binding: RequestItemViewBinding,
+    private val context: Context
+) : RecyclerView.ViewHolder(binding.root) {
+    fun bind(request: Request) {
+        val cardBackgroundColorId = MethodCardViewUtil.getBackgroundColorId(request.method)
+        val cardTextColorId = MethodCardViewUtil.getTextColorId(request.method)
+
+        val cardBackgroundColor =
+            ResourcesCompat.getColor(context.resources, cardBackgroundColorId, null)
+        val cardTextColor = ResourcesCompat.getColor(context.resources, cardTextColorId, null)
+
+        binding.requestMethodBox.setCardBackgroundColor(cardBackgroundColor)
+        binding.requestMethodLabel.setTextColor(cardTextColor)
+        binding.requestMethodLabel.text = MethodCardViewUtil.getShortMethodName(request.method)
+        binding.requestNameLabel.text = request.name
+        binding.requestUrlLabel.text = request.url
     }
 }

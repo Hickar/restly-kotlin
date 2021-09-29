@@ -2,12 +2,12 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/mobile_navigation"
+    android:id="@+id/nav_graph"
     app:startDestination="@+id/navigation_requests">
 
     <fragment
         android:id="@+id/navigation_requests"
-        android:name="com.hickar.restly.ui.requests.RequestListFragment"
+        android:name="com.hickar.restly.ui.requestList.RequestListFragment"
         android:label="@string/requests_tab_title"
         tools:layout="@layout/fragment_request_list">
         <action
@@ -32,7 +32,7 @@
         tools:layout="@layout/fragment_settings" />
     <fragment
         android:id="@+id/requestDetailFragment"
-        android:name="com.hickar.restly.ui.requests.RequestDetailFragment"
+        android:name="com.hickar.restly.ui.requestDetail.RequestDetailFragment"
         android:label="RequestDetailFragment" >
         <argument
             android:name="requestId"

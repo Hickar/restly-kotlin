@@ -13,4 +13,6 @@
     <string name="request_detail_params_add_button_text">Add parameter</string>
     <string name="request_detail_headers_header_text">Headers</string>
     <string name="request_detail_headers_add_button_text">Add header</string>
+    <string name="request_detail_key_text">Key</string>
+    <string name="request_detail_value_text">Value</string>
 </resources>

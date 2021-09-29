@@ -1,4 +1,4 @@
-package com.hickar.restly.ui.requests
+package com.hickar.restly.ui.requestList
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

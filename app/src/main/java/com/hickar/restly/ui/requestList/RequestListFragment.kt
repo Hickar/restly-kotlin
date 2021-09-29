@@ -1,4 +1,4 @@
-package com.hickar.restly.ui.requests
+package com.hickar.restly.ui.requestList
 
 import android.os.Bundle
 import android.view.*
@@ -55,7 +55,7 @@ class RequestListFragment : Fragment() {
         dividerDecoration.setDrawable(dividerDrawable!!)
         recyclerView.addItemDecoration(dividerDecoration)
 
-        requestListViewModel.allRequests.observe(viewLifecycleOwner, { requests ->
+        requestListViewModel.requests.observe(viewLifecycleOwner, { requests ->
             requests?.let { adapter.submitList(it) }
         })
     }

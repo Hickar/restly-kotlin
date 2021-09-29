@@ -10,7 +10,7 @@ interface RequestDao {
     suspend fun getById(id: Long): RequestDTO
 
     @Query("SELECT * FROM requests")
-    suspend fun getAll(): Flow<List<RequestDTO>>
+    suspend fun getAll(): MutableList<RequestDTO>
 
     @Insert
     suspend fun insert(request: RequestDTO): Long

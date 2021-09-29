@@ -1,26 +1,26 @@
 package com.hickar.restly.repository.dao
 
 import androidx.room.*
-import com.hickar.restly.repository.models.Request
+import com.hickar.restly.repository.models.RequestDTO
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface RequestDao {
     @Query("SELECT * FROM requests WHERE id = :id")
-    suspend fun getById(id: Int): Request
+    suspend fun getById(id: Long): RequestDTO
 
     @Query("SELECT * FROM requests")
-    suspend fun getAll(): Flow<List<Request>>
+    suspend fun getAll(): Flow<List<RequestDTO>>
 
     @Insert
-    suspend fun insert(request: Request): Long
+    suspend fun insert(request: RequestDTO): Long
 
     @Update
-    suspend fun update(request: Request)
+    suspend fun update(request: RequestDTO)
 
     @Delete
-    suspend fun delete(request: Request)
+    suspend fun delete(request: RequestDTO)
 
     @Delete
-    suspend fun deleteAll(vararg requests: Request)
+    suspend fun deleteAll(vararg requests: RequestDTO)
 }

@@ -11,11 +11,12 @@ data class Header(
     val value: String
 )
 
-@Entity(tableName = "requests")
+@Entity(tableName = "requests", primaryKeys = ["id"])
 data class Request(
     @PrimaryKey(autoGenerate = true) val id: Long,
     @NonNull @ColumnInfo(defaultValue = "GET") val method: String,
     @NonNull @ColumnInfo(defaultValue = "New Request") val name: String,
     val url: String,
-//    val headers: List<Header>?
+    val queryParams: String,
+    val headers: String
 )

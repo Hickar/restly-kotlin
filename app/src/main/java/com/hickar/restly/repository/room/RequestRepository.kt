@@ -4,9 +4,6 @@ import androidx.annotation.WorkerThread
 import com.hickar.restly.mappers.RequestToRequestDTOMapper
 import com.hickar.restly.models.Request
 import com.hickar.restly.repository.dao.RequestDao
-import com.hickar.restly.repository.models.RequestDTO
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.runBlocking
 
 class RequestRepository(private val requestDao: RequestDao) {
     private val mapper: RequestToRequestDTOMapper = RequestToRequestDTOMapper()

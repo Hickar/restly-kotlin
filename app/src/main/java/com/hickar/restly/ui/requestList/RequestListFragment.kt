@@ -42,7 +42,8 @@ class RequestListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val adapter = RequestListAdapter {
-            val action = RequestListFragmentDirections.actionNavigationRequestsToRequestDetailFragment(it.id)
+            val action =
+                RequestListFragmentDirections.actionNavigationRequestsToRequestDetailFragment(it.id)
             view.findNavController().navigate(action)
         }
 
@@ -50,14 +51,8 @@ class RequestListFragment : Fragment() {
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        val dividerDecoration = DividerItemDecoration(context, RecyclerView.VERTICAL)
-        val dividerDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.recycler_divider)
-        dividerDecoration.setDrawable(dividerDrawable!!)
-        recyclerView.addItemDecoration(dividerDecoration)
-
-        requestListViewModel.requests.observe(viewLifecycleOwner, { requests ->
-            requests?.let { adapter.submitList(it) }
-        })
+        setupDecoration()
+        setupObservers()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -70,7 +65,10 @@ class RequestListFragment : Fragment() {
                 runBlocking coroutineScope@{
 
                     val newRequestId = requestListViewModel.createNewDefaultRequest()
-                    val action = RequestListFragmentDirections.actionNavigationRequestsToRequestDetailFragment(newRequestId)
+                    val action =
+                        RequestListFragmentDirections.actionNavigationRequestsToRequestDetailFragment(
+                            newRequestId
+                        )
                     findNavController().navigate(action)
 
                     return@coroutineScope true
@@ -83,5 +81,19 @@ class RequestListFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun setupDecoration() {
+        val dividerDecoration = DividerItemDecoration(context, RecyclerView.VERTICAL)
+        val dividerDrawable =
+            ContextCompat.getDrawable(requireContext(), R.drawable.recycler_divider)
+        dividerDecoration.setDrawable(dividerDrawable!!)
+        recyclerView.addItemDecoration(dividerDecoration)
+    }
+
+    private fun setupObservers() {
+        requestListViewModel.requests.observe(viewLifecycleOwner, { requests ->
+            (recyclerView.adapter as RequestListAdapter).submitList(requests)
+        })
     }
 }

@@ -6,13 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
 import com.hickar.restly.RestlyApplication
 import com.hickar.restly.databinding.FragmentRequestDetailBinding
+import com.hickar.restly.models.RequestHeader
+import com.hickar.restly.models.RequestQueryParameter
 import com.hickar.restly.utils.MethodCardViewUtil
 
 class RequestDetailFragment : Fragment() {
@@ -20,7 +21,7 @@ class RequestDetailFragment : Fragment() {
     private var _binding: FragmentRequestDetailBinding? = null
     private val binding get() = _binding!!
 
-    private val requestDetailViewModel: RequestDetailViewModel by activityViewModels {
+    private val requestDetailViewModel: RequestDetailViewModel by viewModels {
         RequestDetailViewModelFactory(
             (activity?.application as RestlyApplication).repository,
             arguments?.get("requestId") as Long
@@ -50,10 +51,11 @@ class RequestDetailFragment : Fragment() {
         paramsRecyclerView = binding.requestDetailParamsRecyclerView
         headersRecyclerView = binding.requestDetailHeadersRecyclerView
 
-        requestDetailViewModel.currentRequest.value.let {
-            paramsRecyclerView.adapter = RequestDetailParamsListAdapter(it!!.queryParams)
-            headersRecyclerView.adapter = RequestDetailParamsListAdapter(it.headers)
-        }
+        val params = requestDetailViewModel.params.value
+        val headers = requestDetailViewModel.headers.value
+
+        paramsRecyclerView.adapter = RequestDetailParamsListAdapter(params!!.toMutableList())
+        headersRecyclerView.adapter = RequestDetailParamsListAdapter(headers!!.toMutableList())
 
 //        tabLayout = binding.requestDetailBodyTabs
 //        viewPager = binding.requestDetailBodyView
@@ -62,18 +64,33 @@ class RequestDetailFragment : Fragment() {
 //            tab.text = "Tab $position"
 //        }.attach()
 
-        requestDetailViewModel.currentRequest.observe(viewLifecycleOwner, { request ->
-            val cardBackgroundColorId = MethodCardViewUtil.getBackgroundColorId(request.method)
-            val cardTextColorId = MethodCardViewUtil.getTextColorId(request.method)
+        setupObservers()
+    }
+
+    private fun setupObservers() {
+        requestDetailViewModel.name.observe(viewLifecycleOwner, { name ->
+            binding.requestNameLabel.text = name
+        })
+
+        requestDetailViewModel.method.observe(viewLifecycleOwner, { method ->
+            val cardBackgroundColorId = MethodCardViewUtil.getBackgroundColorId(method)
+            val cardTextColorId = MethodCardViewUtil.getTextColorId(method)
 
             val cardBackgroundColor =
                 ResourcesCompat.getColor(resources, cardBackgroundColorId, null)
             val cardTextColor = ResourcesCompat.getColor(resources, cardTextColorId, null)
 
-            binding.requestNameLabel.text = request.name
-            binding.requestMethodLabel.text = MethodCardViewUtil.getShortMethodName(request.method)
+            binding.requestMethodLabel.text = MethodCardViewUtil.getShortMethodName(method)
             binding.requestDetailMethodBox.setCardBackgroundColor(cardBackgroundColor)
             binding.requestMethodLabel.setTextColor(cardTextColor)
+        })
+
+        requestDetailViewModel.params.observe(viewLifecycleOwner, { params ->
+            (paramsRecyclerView.adapter as RequestDetailParamsListAdapter<RequestQueryParameter>).submitList(params)
+        })
+
+        requestDetailViewModel.headers.observe(viewLifecycleOwner, { headers ->
+            (headersRecyclerView.adapter as RequestDetailParamsListAdapter<RequestHeader>).submitList(headers)
         })
     }
 

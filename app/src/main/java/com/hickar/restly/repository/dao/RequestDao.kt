@@ -2,7 +2,6 @@ package com.hickar.restly.repository.dao
 
 import androidx.room.*
 import com.hickar.restly.repository.models.RequestDTO
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface RequestDao {

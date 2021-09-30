@@ -1,11 +1,9 @@
 package com.hickar.restly.ui.requestDetail
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
-import com.hickar.restly.mappers.RequestToRequestDTOMapper
-import com.hickar.restly.models.Request
+import com.hickar.restly.models.RequestHeader
+import com.hickar.restly.models.RequestQueryParameter
 import com.hickar.restly.repository.room.RequestRepository
 import kotlinx.coroutines.runBlocking
 
@@ -14,11 +12,18 @@ class RequestDetailViewModel(
     private val currentRequestId: Long
 ) : ViewModel() {
 
-    val currentRequest: MutableLiveData<Request> = MutableLiveData()
+    val name: MutableLiveData<String> = MutableLiveData()
+    val method: MutableLiveData<String> = MutableLiveData()
+    val params: MutableLiveData<MutableList<RequestQueryParameter>> = MutableLiveData()
+    val headers: MutableLiveData<MutableList<RequestHeader>> = MutableLiveData()
 
     init {
         runBlocking {
-            currentRequest.value = repository.getById(currentRequestId)
+            val currentRequest = repository.getById(currentRequestId)
+            name.value = currentRequest.name
+            method.value = currentRequest.method
+            params.value = currentRequest.queryParams
+            headers.value = currentRequest.headers
         }
     }
 

@@ -1,12 +1,8 @@
 package com.hickar.restly.ui.requestList
 
-import androidx.lifecycle.*
-import androidx.lifecycle.viewModelScope
-import com.hickar.restly.mappers.RequestToRequestDTOMapper
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.hickar.restly.models.Request
-import com.hickar.restly.models.RequestBody
-import com.hickar.restly.models.RequestQueryParameter
-import com.hickar.restly.repository.models.RequestDTO
 import com.hickar.restly.repository.room.RequestRepository
 import kotlinx.coroutines.runBlocking
 

@@ -42,8 +42,7 @@ class RequestListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val adapter = RequestListAdapter {
-            val action =
-                RequestListFragmentDirections.actionNavigationRequestsToRequestDetailFragment(it.id)
+            val action = RequestListFragmentDirections.actionNavigationRequestsToRequestDetailFragment(it.id)
             view.findNavController().navigate(action)
         }
 

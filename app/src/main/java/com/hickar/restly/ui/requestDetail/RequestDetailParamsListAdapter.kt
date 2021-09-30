@@ -9,8 +9,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hickar.restly.databinding.RequestDetailParamsItemBinding
 import com.hickar.restly.models.RequestKeyValue
 
-class RequestDetailParamsListAdapter<T : RequestKeyValue>
-    : ListAdapter<T, RequestDetailParamsViewHolder<T>>(BaseItemCallback()) {
+class RequestDetailParamsListAdapter<T : RequestKeyValue>(
+    private val onCheckBoxClicked: (Int) -> Unit
+) : ListAdapter<T, RequestDetailParamsViewHolder<T>>(BaseItemCallback()) {
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -22,7 +23,14 @@ class RequestDetailParamsListAdapter<T : RequestKeyValue>
             false
         )
 
-        return RequestDetailParamsViewHolder(adapterLayout)
+        val viewHolder = RequestDetailParamsViewHolder<T>(adapterLayout)
+
+        adapterLayout.requestDetailParamsItemCheckbox.setOnClickListener {
+            val position = viewHolder.bindingAdapterPosition
+            onCheckBoxClicked(position)
+        }
+
+        return viewHolder
     }
 
     override fun submitList(list: MutableList<T>?) {

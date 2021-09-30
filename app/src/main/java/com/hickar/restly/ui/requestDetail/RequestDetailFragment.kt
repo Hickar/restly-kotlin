@@ -17,6 +17,9 @@ import com.hickar.restly.models.RequestHeader
 import com.hickar.restly.models.RequestQueryParameter
 import com.hickar.restly.utils.MethodCardViewUtil
 
+typealias ParamsListAdapter = RequestDetailParamsListAdapter<RequestQueryParameter>
+typealias HeadersListAdapter = RequestDetailParamsListAdapter<RequestHeader>
+
 class RequestDetailFragment : Fragment() {
 
     private var _binding: FragmentRequestDetailBinding? = null
@@ -82,11 +85,11 @@ class RequestDetailFragment : Fragment() {
         })
 
         requestDetailViewModel.params.observe(viewLifecycleOwner, { params ->
-            (paramsRecyclerView.adapter as RequestDetailParamsListAdapter<RequestQueryParameter>).submitList(params)
+            (paramsRecyclerView.adapter as ParamsListAdapter).submitList(params)
         })
 
         requestDetailViewModel.headers.observe(viewLifecycleOwner, { headers ->
-            (headersRecyclerView.adapter as RequestDetailParamsListAdapter<RequestHeader>).submitList(headers)
+            (headersRecyclerView.adapter as HeadersListAdapter).submitList(headers)
         })
     }
 
@@ -99,11 +102,23 @@ class RequestDetailFragment : Fragment() {
         paramsRecyclerView = binding.requestDetailParamsRecyclerView
         headersRecyclerView = binding.requestDetailHeadersRecyclerView
 
-        paramsRecyclerView.adapter = RequestDetailParamsListAdapter<RequestQueryParameter>()
-        headersRecyclerView.adapter = RequestDetailParamsListAdapter<RequestHeader>()
+        paramsRecyclerView.adapter = RequestDetailParamsListAdapter<RequestQueryParameter> {
+            onParamCheckBoxToggle(it)
+        }
+        headersRecyclerView.adapter = RequestDetailParamsListAdapter<RequestHeader> {
+            onHeaderCheckBoxToggle(it)
+        }
 
         paramsRecyclerView.layoutManager = LinearLayoutManager(context)
         headersRecyclerView.layoutManager = LinearLayoutManager(context)
+    }
+
+    private fun onParamCheckBoxToggle(position: Int) {
+        requestDetailViewModel.toggleParam(position)
+    }
+
+    private fun onHeaderCheckBoxToggle(position: Int) {
+        requestDetailViewModel.toggleHeader(position)
     }
 
     private fun onAddQueryParameter() {

@@ -1,5 +1,6 @@
 package com.hickar.restly.ui.requestDetail
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.hickar.restly.models.RequestHeader
@@ -35,5 +36,13 @@ class RequestDetailViewModel(
     fun addHeader() {
         headers.value?.add(RequestHeader())
         headers.value = headers.value
+    }
+
+    fun toggleParam(position: Int) {
+        params.value!![position].enabled = !params.value?.get(position)!!.enabled
+    }
+
+    fun toggleHeader(position: Int) {
+        headers.value!![position].enabled = headers.value?.get(position)!!.enabled
     }
 }

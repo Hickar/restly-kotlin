@@ -9,9 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hickar.restly.databinding.RequestDetailParamsItemBinding
 import com.hickar.restly.models.RequestKeyValue
 
-class RequestDetailParamsListAdapter<T : RequestKeyValue>(
-    private val params: MutableList<T>
-) : ListAdapter<T, RequestDetailParamsViewHolder<T>>(BaseItemCallback()) {
+class RequestDetailParamsListAdapter<T : RequestKeyValue>
+    : ListAdapter<T, RequestDetailParamsViewHolder<T>>(BaseItemCallback()) {
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -26,11 +25,13 @@ class RequestDetailParamsListAdapter<T : RequestKeyValue>(
         return RequestDetailParamsViewHolder(adapterLayout)
     }
 
-    override fun onBindViewHolder(holder: RequestDetailParamsViewHolder<T>, position: Int) {
-        holder.bind(params[position])
+    override fun submitList(list: MutableList<T>?) {
+        super.submitList(list?.let { ArrayList(list) })
     }
 
-    override fun getItemCount(): Int = params.size
+    override fun onBindViewHolder(holder: RequestDetailParamsViewHolder<T>, position: Int) {
+        holder.bind(getItem(position))
+    }
 }
 
 class RequestDetailParamsViewHolder<T : RequestKeyValue>(
@@ -39,7 +40,7 @@ class RequestDetailParamsViewHolder<T : RequestKeyValue>(
     fun bind(parameter: T) {
         val editableFactory = Editable.Factory.getInstance()
 
-        binding.requestDetailParamsItemCheckbox.isEnabled = parameter.enabled
+        binding.requestDetailParamsItemCheckbox.isChecked = parameter.enabled
         binding.requestDetailParamsItemKeyTextInput.text = editableFactory.newEditable(parameter.key)
         binding.requestDetailParamsItemValueTextInput.text = editableFactory.newEditable(parameter.value)
     }

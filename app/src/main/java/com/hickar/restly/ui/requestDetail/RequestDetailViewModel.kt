@@ -27,4 +27,13 @@ class RequestDetailViewModel(
         }
     }
 
+    fun addQueryParameter() {
+        params.value?.add(RequestQueryParameter())
+        params.value = params.value
+    }
+
+    fun addHeader() {
+        headers.value?.add(RequestHeader())
+        headers.value = headers.value
+    }
 }

@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
@@ -48,14 +49,7 @@ class RequestDetailFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        paramsRecyclerView = binding.requestDetailParamsRecyclerView
-        headersRecyclerView = binding.requestDetailHeadersRecyclerView
 
-        val params = requestDetailViewModel.params.value
-        val headers = requestDetailViewModel.headers.value
-
-        paramsRecyclerView.adapter = RequestDetailParamsListAdapter(params!!.toMutableList())
-        headersRecyclerView.adapter = RequestDetailParamsListAdapter(headers!!.toMutableList())
 
 //        tabLayout = binding.requestDetailBodyTabs
 //        viewPager = binding.requestDetailBodyView
@@ -64,6 +58,8 @@ class RequestDetailFragment : Fragment() {
 //            tab.text = "Tab $position"
 //        }.attach()
 
+        setupListAdapters()
+        setupEventListeners()
         setupObservers()
     }
 
@@ -92,6 +88,30 @@ class RequestDetailFragment : Fragment() {
         requestDetailViewModel.headers.observe(viewLifecycleOwner, { headers ->
             (headersRecyclerView.adapter as RequestDetailParamsListAdapter<RequestHeader>).submitList(headers)
         })
+    }
+
+    private fun setupEventListeners() {
+        binding.requestDetailParamsAddButton.setOnClickListener { onAddQueryParameter() }
+        binding.requestDetailHeadersAddButton.setOnClickListener { onAddHeader() }
+    }
+
+    private fun setupListAdapters() {
+        paramsRecyclerView = binding.requestDetailParamsRecyclerView
+        headersRecyclerView = binding.requestDetailHeadersRecyclerView
+
+        paramsRecyclerView.adapter = RequestDetailParamsListAdapter<RequestQueryParameter>()
+        headersRecyclerView.adapter = RequestDetailParamsListAdapter<RequestHeader>()
+
+        paramsRecyclerView.layoutManager = LinearLayoutManager(context)
+        headersRecyclerView.layoutManager = LinearLayoutManager(context)
+    }
+
+    private fun onAddQueryParameter() {
+        requestDetailViewModel.addQueryParameter()
+    }
+
+    private fun onAddHeader() {
+        requestDetailViewModel.addHeader()
     }
 
     override fun onDestroy() {

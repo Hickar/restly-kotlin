@@ -10,4 +10,11 @@ data class RequestKeyValue(
                 other.key == key &&
                 other.value == value
     }
+
+    override fun hashCode(): Int {
+        var result = key.hashCode()
+        result = 31 * result + value.hashCode()
+        result = 31 * result + enabled.hashCode()
+        return result
+    }
 }

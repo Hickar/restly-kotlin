@@ -2,6 +2,7 @@ package com.hickar.restly.ui.requestDetail
 
 import android.os.Bundle
 import android.text.Editable
+import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
@@ -18,6 +19,7 @@ import com.hickar.restly.R
 import com.hickar.restly.RestlyApplication
 import com.hickar.restly.databinding.FragmentRequestDetailBinding
 import com.hickar.restly.models.RequestKeyValue
+import com.hickar.restly.utils.KeyboardUtil
 import com.hickar.restly.utils.MethodCardViewUtil
 import kotlinx.coroutines.runBlocking
 
@@ -55,6 +57,7 @@ class RequestDetailFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        KeyboardUtil.hideKeyboard(requireActivity())
         setupViewPager()
         setupListAdapters()
         setupEventListeners()
@@ -160,6 +163,7 @@ class RequestDetailFragment : Fragment() {
         inflater.inflate(R.menu.request_detail_action_menu, menu)
     }
 
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.request_detail_menu_save_button -> {
@@ -173,6 +177,12 @@ class RequestDetailFragment : Fragment() {
 //            }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onDetach() {
+        KeyboardUtil.hideKeyboard(requireActivity())
+        Log.d("DetailFragment", "DETACH")
+        super.onDetach()
     }
 
     override fun onDestroy() {

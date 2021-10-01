@@ -44,15 +44,17 @@
             android:id="@+id/request_detail_url_input_layout"
             style="@style/Restly.RequestDetail.TextInput"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_marginVertical="8dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/request_detail_method_box">
+            app:layout_constraintTop_toBottomOf="@+id/request_detail_method_box"
+            app:hintEnabled="false">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/request_detail_url_input_text"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:padding="0dp"
                 android:hint="@string/request_detail_url_placeholder_text"
                 android:inputType="textUri" />
 

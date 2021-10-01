@@ -32,8 +32,7 @@
         tools:layout="@layout/fragment_settings" />
     <fragment
         android:id="@+id/requestDetailFragment"
-        android:name="com.hickar.restly.ui.requestDetail.RequestDetailFragment"
-        android:label="RequestDetailFragment" >
+        android:name="com.hickar.restly.ui.requestDetail.RequestDetailFragment">
         <argument
             android:name="requestId"
             app:argType="long" />

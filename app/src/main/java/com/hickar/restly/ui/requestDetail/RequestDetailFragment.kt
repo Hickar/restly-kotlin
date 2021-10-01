@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import com.hickar.restly.RestlyApplication
 import com.hickar.restly.databinding.FragmentRequestDetailBinding
 import com.hickar.restly.models.RequestHeader
@@ -43,27 +45,30 @@ class RequestDetailFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        super.onCreateView(inflater, container, savedInstanceState)
-
-        setHasOptionsMenu(true)
+        (requireActivity() as AppCompatActivity).supportActionBar?.title = ""
 
         _binding = FragmentRequestDetailBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
-
-//        tabLayout = binding.requestDetailBodyTabs
-//        viewPager = binding.requestDetailBodyView
-//
-//        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-//            tab.text = "Tab $position"
-//        }.attach()
-
+        setupViewPager()
         setupListAdapters()
         setupEventListeners()
         setupObservers()
+    }
+
+    private fun setupViewPager() {
+        tabLayout = binding.requestDetailBodyTabs
+        viewPager = binding.requestDetailBodyView
+
+        viewPager.adapter = RequestDetailViewPagerAdapter(this)
+
+        val tabs = listOf("URLEncoded", "FormData", "Raw", "Binary")
+
+        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+            tab.text = tabs[position]
+        }.attach()
     }
 
     private fun setupObservers() {

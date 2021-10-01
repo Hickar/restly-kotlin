@@ -57,6 +57,8 @@
         <item name="android:minHeight">48dp</item>
     </style>
     <style name="Restly.RequestDetail.TextInputSecondary" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">16sp</item>
         <item name="boxBackgroundColor">@color/design_default_color_surface</item>
         <item name="android:layout_height">34dp</item>
     </style>

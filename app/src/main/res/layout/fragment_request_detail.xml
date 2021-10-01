@@ -77,7 +77,8 @@
             android:layout_height="wrap_content"
             android:layout_marginVertical="8dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/request_detail_params_header" />
+            app:layout_constraintTop_toBottomOf="@+id/request_detail_params_header"
+            android:clipChildren="true"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/request_detail_params_add_button"

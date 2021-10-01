@@ -12,6 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:gravity="center_vertical"
+        android:layout_marginLeft="-6dp"
         android:minWidth="0dp"
         android:minHeight="0dp" />
 
@@ -19,15 +20,18 @@
         android:id="@+id/request_detail_params_item_key_text_layout"
         style="@style/Restly.RequestDetail.TextInputSecondary"
         android:layout_width="0dp"
+        android:layout_height="match_parent"
         android:layout_marginStart="8dp"
         android:layout_weight=".40"
-        app:boxBackgroundColor="@color/design_default_color_surface">
+        app:hintEnabled="false">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/request_detail_params_item_key_text_input"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="@string/request_detail_key_text" />
+            android:padding="0dp"
+            android:hint="@string/request_detail_key_text"
+            android:inputType="text"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -36,13 +40,16 @@
         style="@style/Restly.RequestDetail.TextInputSecondary"
         android:layout_width="0dp"
         android:layout_marginStart="8dp"
-        android:layout_weight=".40">
+        android:layout_weight=".40"
+        app:hintEnabled="false">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/request_detail_params_item_value_text_input"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="@string/request_detail_value_text" />
+            android:padding="0dp"
+            android:hint="@string/request_detail_value_text"
+            android:inputType="text"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 

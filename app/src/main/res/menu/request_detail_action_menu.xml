@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/request_detail_menu_save_button"
+        android:title="@string/requests_menu_button_text"
+        android:icon="@drawable/ic_save_request"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/request_detail_menu_send_button"
+        android:title="@string/requests_menu_button_text"
+        android:icon="@drawable/ic_send_request"
+        app:showAsAction="always"/>
+</menu>

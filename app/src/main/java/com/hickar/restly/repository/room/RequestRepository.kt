@@ -8,10 +8,6 @@ import com.hickar.restly.repository.dao.RequestDao
 class RequestRepository(private val requestDao: RequestDao) {
     private val mapper: RequestToRequestDTOMapper = RequestToRequestDTOMapper()
 
-//    val allRequests: MutableList<Request> = runBlocking {
-//        mapper.toEntityMutableList(requestDao.getAll())
-//    }
-
     @WorkerThread
     suspend fun getAll(): MutableList<Request> {
         return mapper.toEntityMutableList(requestDao.getAll())
@@ -23,7 +19,13 @@ class RequestRepository(private val requestDao: RequestDao) {
     }
 
     @WorkerThread
+    suspend fun update(request: Request) {
+        return requestDao.update(mapper.toDTO(request))
+    }
+
+    @WorkerThread
     suspend fun getById(id: Long): Request {
-        return mapper.toEntity(requestDao.getById(id))
+        val test = requestDao.getById(id)
+        return mapper.toEntity(test)
     }
 }

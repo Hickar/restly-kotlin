@@ -1,11 +1,12 @@
 package com.hickar.restly.ui.requestDetail
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.text.Editable
+import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.widget.doAfterTextChanged
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,14 +14,14 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.hickar.restly.R
 import com.hickar.restly.RestlyApplication
 import com.hickar.restly.databinding.FragmentRequestDetailBinding
-import com.hickar.restly.models.RequestHeader
-import com.hickar.restly.models.RequestQueryParameter
+import com.hickar.restly.models.RequestKeyValue
 import com.hickar.restly.utils.MethodCardViewUtil
+import kotlinx.coroutines.runBlocking
 
-typealias ParamsListAdapter = RequestDetailParamsListAdapter<RequestQueryParameter>
-typealias HeadersListAdapter = RequestDetailParamsListAdapter<RequestHeader>
+typealias ParamsListAdapter = RequestDetailParamsListAdapter<RequestKeyValue>
 
 class RequestDetailFragment : Fragment() {
 
@@ -47,6 +48,8 @@ class RequestDetailFragment : Fragment() {
     ): View {
         (requireActivity() as AppCompatActivity).supportActionBar?.title = ""
 
+        setHasOptionsMenu(true)
+
         _binding = FragmentRequestDetailBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -72,6 +75,9 @@ class RequestDetailFragment : Fragment() {
     }
 
     private fun setupObservers() {
+        val editableFactory = Editable.Factory.getInstance()
+        binding.requestDetailUrlInputText.text = editableFactory.newEditable(requestDetailViewModel.url.value)
+
         requestDetailViewModel.name.observe(viewLifecycleOwner, { name ->
             binding.requestNameLabel.text = name
         })
@@ -94,35 +100,51 @@ class RequestDetailFragment : Fragment() {
         })
 
         requestDetailViewModel.headers.observe(viewLifecycleOwner, { headers ->
-            (headersRecyclerView.adapter as HeadersListAdapter).submitList(headers)
+            (headersRecyclerView.adapter as ParamsListAdapter).submitList(headers)
         })
     }
 
     private fun setupEventListeners() {
         binding.requestDetailParamsAddButton.setOnClickListener { onAddQueryParameter() }
         binding.requestDetailHeadersAddButton.setOnClickListener { onAddHeader() }
+        binding.requestDetailUrlInputText.doAfterTextChanged { text ->
+            requestDetailViewModel.url.value = text.toString()
+        }
     }
 
     private fun setupListAdapters() {
         paramsRecyclerView = binding.requestDetailParamsRecyclerView
         headersRecyclerView = binding.requestDetailHeadersRecyclerView
 
-        paramsRecyclerView.adapter = RequestDetailParamsListAdapter<RequestQueryParameter> {
-            onParamCheckBoxToggle(it)
-        }
-        headersRecyclerView.adapter = RequestDetailParamsListAdapter<RequestHeader> {
-            onHeaderCheckBoxToggle(it)
-        }
+        paramsRecyclerView.adapter = RequestDetailParamsListAdapter<RequestKeyValue>(
+            onParamCheckBoxToggle,
+            { text, position ->
+                requestDetailViewModel.params.value!![position].key = text
+            },
+            { text, position ->
+                requestDetailViewModel.params.value!![position].value = text
+            }
+        )
+
+        headersRecyclerView.adapter = RequestDetailParamsListAdapter<RequestKeyValue>(
+            onHeaderCheckBoxToggle,
+            { text, position ->
+                requestDetailViewModel.headers.value!![position].key = text
+            },
+            { text, position ->
+                requestDetailViewModel.headers.value!![position].value = text
+            }
+        )
 
         paramsRecyclerView.layoutManager = LinearLayoutManager(context)
         headersRecyclerView.layoutManager = LinearLayoutManager(context)
     }
 
-    private fun onParamCheckBoxToggle(position: Int) {
+    private val onParamCheckBoxToggle: (Int) -> Unit = { position ->
         requestDetailViewModel.toggleParam(position)
     }
 
-    private fun onHeaderCheckBoxToggle(position: Int) {
+    private val onHeaderCheckBoxToggle: (Int) -> Unit = { position ->
         requestDetailViewModel.toggleHeader(position)
     }
 
@@ -132,6 +154,25 @@ class RequestDetailFragment : Fragment() {
 
     private fun onAddHeader() {
         requestDetailViewModel.addHeader()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.request_detail_action_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.request_detail_menu_save_button -> {
+                runBlocking {
+                    requestDetailViewModel.saveRequest()
+                    return@runBlocking true
+                }
+            }
+//            R.id.request_detail_menu_send_button -> {
+//
+//            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     override fun onDestroy() {

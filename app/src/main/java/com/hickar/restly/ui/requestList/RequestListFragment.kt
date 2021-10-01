@@ -55,14 +55,13 @@ class RequestListFragment : Fragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.top_action_menu, menu)
+        inflater.inflate(R.menu.request_list_action_menu, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.request_menu_add_button -> {
+            R.id.request_list_menu_add_button -> {
                 runBlocking coroutineScope@{
-
                     val newRequestId = requestListViewModel.createNewDefaultRequest()
                     val action =
                         RequestListFragmentDirections.actionNavigationRequestsToRequestDetailFragment(
@@ -75,6 +74,11 @@ class RequestListFragment : Fragment() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        requestListViewModel.refreshRequests()
     }
 
     override fun onDestroyView() {

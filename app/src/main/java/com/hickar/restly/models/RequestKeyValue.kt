@@ -1,9 +1,9 @@
 package com.hickar.restly.models
 
-open class RequestKeyValue(
-    open var key: String = "",
-    open var value: String = "",
-    open var enabled: Boolean = false
+data class RequestKeyValue(
+    var key: String = "",
+    var value: String = "",
+    var enabled: Boolean = true
 ) {
     override fun equals(other: Any?): Boolean {
         return other is RequestKeyValue &&

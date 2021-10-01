@@ -24,7 +24,7 @@ class RequestListViewModel(
         return newRequestId
     }
 
-    private fun refreshRequests() {
+    fun refreshRequests() {
         runBlocking {
             requests.value = repository.getAll()
         }

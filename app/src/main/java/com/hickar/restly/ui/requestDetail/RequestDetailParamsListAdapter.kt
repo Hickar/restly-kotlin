@@ -3,6 +3,7 @@ package com.hickar.restly.ui.requestDetail
 import android.text.Editable
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -10,7 +11,9 @@ import com.hickar.restly.databinding.RequestDetailParamsItemBinding
 import com.hickar.restly.models.RequestKeyValue
 
 class RequestDetailParamsListAdapter<T : RequestKeyValue>(
-    private val onCheckBoxClicked: (Int) -> Unit
+    private val onCheckBoxClicked: (Int) -> Unit,
+    private val onKeyInputFieldTextChanged: (String, Int) -> Unit,
+    private val onValueInputFieldTextChanged: (String, Int) -> Unit
 ) : ListAdapter<T, RequestDetailParamsViewHolder<T>>(BaseItemCallback()) {
 
     override fun onCreateViewHolder(
@@ -25,9 +28,17 @@ class RequestDetailParamsListAdapter<T : RequestKeyValue>(
 
         val viewHolder = RequestDetailParamsViewHolder<T>(adapterLayout)
 
+
         adapterLayout.requestDetailParamsItemCheckbox.setOnClickListener {
-            val position = viewHolder.bindingAdapterPosition
-            onCheckBoxClicked(position)
+            onCheckBoxClicked(viewHolder.bindingAdapterPosition)
+        }
+
+        adapterLayout.requestDetailParamsItemKeyTextInput.doAfterTextChanged {
+            onKeyInputFieldTextChanged(it.toString(), viewHolder.bindingAdapterPosition)
+        }
+
+        adapterLayout.requestDetailParamsItemValueTextInput.doAfterTextChanged {
+            onValueInputFieldTextChanged(it.toString(), viewHolder.bindingAdapterPosition)
         }
 
         return viewHolder
@@ -39,6 +50,10 @@ class RequestDetailParamsListAdapter<T : RequestKeyValue>(
 
     override fun onBindViewHolder(holder: RequestDetailParamsViewHolder<T>, position: Int) {
         holder.bind(getItem(position))
+    }
+
+    override fun getItemCount(): Int {
+        return currentList.size
     }
 }
 

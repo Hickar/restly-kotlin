@@ -1,23 +1,23 @@
 package com.hickar.restly.mappers
 
 import com.google.gson.GsonBuilder
-import com.hickar.restly.models.Request
-import com.hickar.restly.models.RequestBody
-import com.hickar.restly.models.RequestHeader
-import com.hickar.restly.models.RequestQueryParameter
+import com.hickar.restly.models.*
 import com.hickar.restly.repository.models.RequestDTO
 
 class RequestToRequestDTOMapper {
     fun toDTO(request: Request): RequestDTO {
         val gson = GsonBuilder().create()
 
+        val params = gson.toJson(request.queryParams)
+        val headers = gson.toJson(request.headers)
+
         return RequestDTO(
             request.id,
             request.method,
             request.name,
             request.url,
-            gson.toJson(request.queryParams),
-            gson.toJson(request.headers),
+            params,
+            headers,
             gson.toJson(request.body)
         )
     }
@@ -34,14 +34,14 @@ class RequestToRequestDTOMapper {
     fun toEntity(request: RequestDTO): Request {
         val gson = GsonBuilder().create()
 
-        val queryParams = if (request.queryParams.isEmpty()) {
-            gson.fromJson(request.queryParams, Array<RequestQueryParameter>::class.java).toMutableList()
+        val queryParams = if (request.queryParams.isNotEmpty()) {
+            gson.fromJson(request.queryParams, Array<RequestKeyValue>::class.java).toMutableList()
         } else {
             mutableListOf()
         }
 
-        val headers = if (request.headers.isEmpty()) {
-            gson.fromJson(request.headers, Array<RequestHeader>::class.java).toMutableList()
+        val headers = if (request.headers.isNotEmpty()) {
+            gson.fromJson(request.headers, Array<RequestKeyValue>::class.java).toMutableList()
         } else {
             mutableListOf()
         }

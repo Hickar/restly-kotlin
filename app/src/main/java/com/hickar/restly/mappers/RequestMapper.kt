@@ -4,8 +4,8 @@ import com.google.gson.GsonBuilder
 import com.hickar.restly.models.*
 import com.hickar.restly.repository.models.RequestDTO
 
-class RequestToRequestDTOMapper {
-    fun toDTO(request: Request): RequestDTO {
+class RequestMapper : Mapper<Request, RequestDTO> {
+    override fun toDTO(request: Request): RequestDTO {
         val gson = GsonBuilder().create()
 
         val params = gson.toJson(request.queryParams)
@@ -22,7 +22,7 @@ class RequestToRequestDTOMapper {
         )
     }
 
-    fun toDTOMutableList(requests: MutableList<Request>): MutableList<RequestDTO> {
+    override fun toDTOMutableList(requests: MutableList<Request>): MutableList<RequestDTO> {
         val dtoList: MutableList<RequestDTO> = mutableListOf()
         for (request in requests) {
             dtoList.add(toDTO(request))
@@ -31,7 +31,7 @@ class RequestToRequestDTOMapper {
         return dtoList
     }
 
-    fun toEntity(request: RequestDTO): Request {
+    override fun toEntity(request: RequestDTO): Request {
         val gson = GsonBuilder().create()
 
         val queryParams = if (request.queryParams.isNotEmpty()) {
@@ -57,7 +57,7 @@ class RequestToRequestDTOMapper {
         )
     }
 
-    fun toEntityMutableList(requests: MutableList<RequestDTO>): MutableList<Request> {
+    override fun toEntityMutableList(requests: MutableList<RequestDTO>): MutableList<Request> {
         val entityList: MutableList<Request> = mutableListOf()
         for (request in requests) {
             entityList.add(toEntity(request))

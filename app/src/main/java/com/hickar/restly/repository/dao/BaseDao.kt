@@ -1,31 +1,33 @@
 package com.hickar.restly.repository.dao
 
-import android.database.sqlite.SQLiteQuery
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.RawQuery
-import androidx.room.Update
+import android.database.sqlite.SQLiteException
+import androidx.room.*
 import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteQuery
+import kotlin.jvm.Throws
 
-abstract class BaseDao<EntityDTO>(private val databaseName: String) {
+@Dao
+abstract class BaseDao<EntityDTO>(
+    private val tableName: String
+) {
     @RawQuery
-    protected abstract suspend fun getById(query: SupportSQLiteQuery): EntityDTO
+    protected abstract suspend fun internalGetById(query: SupportSQLiteQuery): EntityDTO
 
     suspend fun getById(id: Long): EntityDTO {
-        val query = SimpleSQLiteQuery("SELECT * FROM $databaseName WHERE id = $id")
-        return getById(query)
+        val query = SimpleSQLiteQuery("SELECT * FROM $tableName WHERE id = $id")
+        return internalGetById(query)
     }
 
+    @Throws(SQLiteException::class)
     @RawQuery
-    protected abstract suspend fun getAll(query: SupportSQLiteQuery): MutableList<EntityDTO>
+    protected abstract suspend fun internalGetAll(query: SupportSQLiteQuery): MutableList<EntityDTO>
 
     suspend fun getAll(): MutableList<EntityDTO> {
-        val query = SimpleSQLiteQuery("SELECT * FROM $databaseName")
-        return getAll(query)
+        val query = SimpleSQLiteQuery("SELECT * FROM $tableName")
+        return internalGetAll(query)
     }
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun insert(entity: EntityDTO): Long
 
     @Update

@@ -1,8 +1,12 @@
 package com.hickar.restly.repository.room
 
+import android.database.sqlite.SQLiteException
+import android.os.strictmode.SqliteObjectLeakedViolation
+import android.util.Log
 import androidx.annotation.WorkerThread
 import com.hickar.restly.mappers.Mapper
 import com.hickar.restly.repository.dao.BaseDao
+import java.lang.Exception
 
 open class BaseRepository<Entity, EntityDTO, DAO : BaseDao<EntityDTO>>(
     private val dao: DAO,
@@ -10,7 +14,16 @@ open class BaseRepository<Entity, EntityDTO, DAO : BaseDao<EntityDTO>>(
 ) {
     @WorkerThread
     suspend fun getAll(): MutableList<Entity> {
-        return mapper.toEntityMutableList(dao.getAll())
+        try {
+            val test = dao.getAll()
+            return mapper.toEntityMutableList(test)
+        } catch (exception: SQLiteException) {
+            Log.d("ROOM getAll()", exception.toString())
+            return mutableListOf()
+        } catch (exception: Exception) {
+            Log.d("ROOM getAll()", exception.toString())
+            return mutableListOf()
+        }
     }
 
     @WorkerThread
@@ -25,6 +38,7 @@ open class BaseRepository<Entity, EntityDTO, DAO : BaseDao<EntityDTO>>(
 
     @WorkerThread
     suspend fun getById(id: Long): Entity {
-        return mapper.toEntity(dao.getById(id))
+        val test = dao.getById(id)
+        return mapper.toEntity(test)
     }
 }

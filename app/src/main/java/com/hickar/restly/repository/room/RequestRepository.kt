@@ -7,8 +7,8 @@ import com.hickar.restly.repository.dao.RequestDao
 import com.hickar.restly.repository.models.RequestDTO
 
 class RequestRepository(
-    private val requestDao: RequestDao,
-    private val mapper: RequestMapper
+    requestDao: RequestDao,
+    mapper: RequestMapper
 ) : BaseRepository<Request, RequestDTO, BaseDao<RequestDTO>>(
     requestDao,
     mapper

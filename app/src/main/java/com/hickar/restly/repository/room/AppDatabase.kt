@@ -10,7 +10,7 @@ import kotlinx.coroutines.CoroutineScope
 
 @Database(entities = [RequestDTO::class], version = 3)
 abstract class AppDatabase: RoomDatabase() {
-    abstract fun requestDao(): RequestDao
+    abstract fun requestDao(database: AppDatabase = this): RequestDao
 
     companion object {
         @Volatile

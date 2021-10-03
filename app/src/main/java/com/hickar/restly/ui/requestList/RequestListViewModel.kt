@@ -1,5 +1,6 @@
 package com.hickar.restly.ui.requestList
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.hickar.restly.models.Request
@@ -27,6 +28,14 @@ class RequestListViewModel(
     fun refreshRequests() {
         runBlocking {
             requests.value = repository.getAll()
+        }
+    }
+
+    fun deleteRequest(position: Int) {
+        runBlocking {
+            repository.delete(requests.value!![position])
+            requests.value?.removeAt(position)
+            requests.value = requests.value
         }
     }
 }

@@ -9,7 +9,7 @@
         android:id="@+id/navigation_requests"
         android:name="com.hickar.restly.ui.requestList.RequestListFragment"
         android:label="@string/requests_tab_title"
-        tools:layout="@layout/fragment_request_list">
+        tools:layout="@layout/request_list">
         <action
             android:id="@+id/action_navigation_requests_to_requestDetailFragment"
             app:destination="@id/requestDetailFragment"
@@ -23,13 +23,13 @@
         android:id="@+id/navigation_history"
         android:name="com.hickar.restly.ui.history.HistoryFragment"
         android:label="@string/history_tab_title"
-        tools:layout="@layout/fragment_history" />
+        tools:layout="@layout/history" />
 
     <fragment
         android:id="@+id/navigation_settings"
         android:name="com.hickar.restly.ui.settings.SettingsFragment"
         android:label="@string/settings_tab_title"
-        tools:layout="@layout/fragment_settings" />
+        tools:layout="@layout/settings" />
     <fragment
         android:id="@+id/requestDetailFragment"
         android:name="com.hickar.restly.ui.requestDetail.RequestDetailFragment">

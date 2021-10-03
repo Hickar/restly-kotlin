@@ -10,6 +10,7 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
@@ -17,17 +18,18 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.hickar.restly.R
 import com.hickar.restly.RestlyApplication
-import com.hickar.restly.databinding.FragmentRequestDetailBinding
+import com.hickar.restly.databinding.RequestDetailBinding
 import com.hickar.restly.models.RequestKeyValue
 import com.hickar.restly.utils.KeyboardUtil
 import com.hickar.restly.utils.MethodCardViewUtil
+import com.hickar.restly.utils.SwipeDeleteCallback
 import kotlinx.coroutines.runBlocking
 
 typealias ParamsListAdapter = RequestDetailParamsListAdapter<RequestKeyValue>
 
 class RequestDetailFragment : Fragment() {
 
-    private var _binding: FragmentRequestDetailBinding? = null
+    private var _binding: RequestDetailBinding? = null
     private val binding get() = _binding!!
 
     private val requestDetailViewModel: RequestDetailViewModel by viewModels {
@@ -52,7 +54,7 @@ class RequestDetailFragment : Fragment() {
 
         setHasOptionsMenu(true)
 
-        _binding = FragmentRequestDetailBinding.inflate(inflater, container, false)
+        _binding = RequestDetailBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -117,8 +119,7 @@ class RequestDetailFragment : Fragment() {
 
     private fun setupListAdapters() {
         paramsRecyclerView = binding.requestDetailParamsRecyclerView
-        headersRecyclerView = binding.requestDetailHeadersRecyclerView
-
+        paramsRecyclerView.layoutManager = LinearLayoutManager(context)
         paramsRecyclerView.adapter = RequestDetailParamsListAdapter<RequestKeyValue>(
             onParamCheckBoxToggle,
             { text, position ->
@@ -128,7 +129,14 @@ class RequestDetailFragment : Fragment() {
                 requestDetailViewModel.params.value!![position].value = text
             }
         )
+        val paramsTouchHelper = ItemTouchHelper(SwipeDeleteCallback(requireContext()) { position ->
+            requestDetailViewModel.deleteQueryParameter(position)
+        })
+        paramsTouchHelper.attachToRecyclerView(paramsRecyclerView)
 
+
+        headersRecyclerView = binding.requestDetailHeadersRecyclerView
+        headersRecyclerView.layoutManager = LinearLayoutManager(context)
         headersRecyclerView.adapter = RequestDetailParamsListAdapter<RequestKeyValue>(
             onHeaderCheckBoxToggle,
             { text, position ->
@@ -138,9 +146,10 @@ class RequestDetailFragment : Fragment() {
                 requestDetailViewModel.headers.value!![position].value = text
             }
         )
-
-        paramsRecyclerView.layoutManager = LinearLayoutManager(context)
-        headersRecyclerView.layoutManager = LinearLayoutManager(context)
+        val headersTouchHelper = ItemTouchHelper(SwipeDeleteCallback(requireContext()) { position ->
+            requestDetailViewModel.deleteHeader(position)
+        })
+        headersTouchHelper.attachToRecyclerView(headersRecyclerView)
     }
 
     private val onParamCheckBoxToggle: (Int) -> Unit = { position ->

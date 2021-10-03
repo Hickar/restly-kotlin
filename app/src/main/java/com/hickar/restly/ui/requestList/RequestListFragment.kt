@@ -5,14 +5,15 @@ import android.view.*
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.hickar.restly.R
 import com.hickar.restly.RestlyApplication
-import com.hickar.restly.databinding.FragmentRequestListBinding
+import com.hickar.restly.databinding.RequestListBinding
+import com.hickar.restly.utils.SwipeDeleteCallback
 import kotlinx.coroutines.*
 
 class RequestListFragment : Fragment() {
@@ -24,7 +25,7 @@ class RequestListFragment : Fragment() {
         )
     }
 
-    private var _binding: FragmentRequestListBinding? = null
+    private var _binding: RequestListBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -34,22 +35,15 @@ class RequestListFragment : Fragment() {
     ): View {
         setHasOptionsMenu(true)
 
-        _binding = FragmentRequestListBinding.inflate(inflater, container, false)
+        _binding = RequestListBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val adapter = RequestListAdapter {
-            val action = RequestListFragmentDirections.actionNavigationRequestsToRequestDetailFragment(it.id)
-            view.findNavController().navigate(action)
-        }
 
-        recyclerView = binding.requestsList
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager = LinearLayoutManager(context)
-
+        setupAdapters()
         setupDecoration()
         setupObservers()
     }
@@ -84,6 +78,22 @@ class RequestListFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun setupAdapters() {
+        val adapter = RequestListAdapter {
+            val action = RequestListFragmentDirections.actionNavigationRequestsToRequestDetailFragment(it.id)
+            this.findNavController().navigate(action)
+        }
+
+        recyclerView = binding.requestsList
+        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.adapter = adapter
+
+        val touchHelper = ItemTouchHelper(SwipeDeleteCallback(requireContext()) { position ->
+            requestListViewModel.deleteRequest(position)
+        })
+        touchHelper.attachToRecyclerView(recyclerView)
     }
 
     private fun setupDecoration() {

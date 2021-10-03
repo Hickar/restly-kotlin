@@ -16,8 +16,6 @@ class RequestDetailViewPagerAdapter(fragment: Fragment) : FragmentStateAdapter(f
         return fragment
     }
 
-
-
     companion object {
         private const val ARG_OBJECT = "object"
     }

@@ -32,7 +32,7 @@
             android:layout_height="match_parent"
             android:padding="0dp"
             android:hint="@string/request_detail_key_text"
-            android:inputType="text"/>
+            android:inputType="text" />
 
     </com.google.android.material.textfield.TextInputLayout>
 

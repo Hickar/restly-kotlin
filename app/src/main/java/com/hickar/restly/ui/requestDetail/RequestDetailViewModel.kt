@@ -38,12 +38,22 @@ class RequestDetailViewModel(
     }
 
     fun addQueryParameter() {
-        params.value?.add(RequestKeyValue())
+        params.value!!.add(RequestKeyValue())
         params.value = params.value
     }
 
     fun addHeader() {
-        headers.value?.add(RequestKeyValue())
+        headers.value!!.add(RequestKeyValue())
+        headers.value = headers.value
+    }
+
+    fun deleteQueryParameter(position: Int) {
+        params.value!!.removeAt(position)
+        params.value = params.value
+    }
+
+    fun deleteHeader(position: Int) {
+        headers.value!!.removeAt(position)
         headers.value = headers.value
     }
 

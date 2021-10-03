@@ -7,7 +7,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.hickar.restly.databinding.RequestItemViewBinding
+import com.hickar.restly.databinding.RequestListItemBinding
 import com.hickar.restly.models.Request
 import com.hickar.restly.utils.MethodCardViewUtil
 
@@ -16,7 +16,7 @@ class RequestListAdapter(
 ) : ListAdapter<Request, RequestItemViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RequestItemViewHolder {
-        val adapterLayout = RequestItemViewBinding.inflate(
+        val adapterLayout = RequestListItemBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
@@ -35,6 +35,10 @@ class RequestListAdapter(
         holder.bind(getItem(position))
     }
 
+    override fun submitList(list: MutableList<Request>?) {
+        super.submitList(list?.let{ ArrayList(list) })
+    }
+
     companion object {
         private val DiffCallback = object : DiffUtil.ItemCallback<Request>() {
             override fun areItemsTheSame(oldItem: Request, newItem: Request): Boolean {
@@ -49,7 +53,7 @@ class RequestListAdapter(
 }
 
 class RequestItemViewHolder(
-    private var binding: RequestItemViewBinding,
+    private var binding: RequestListItemBinding,
     private val context: Context
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(request: Request) {

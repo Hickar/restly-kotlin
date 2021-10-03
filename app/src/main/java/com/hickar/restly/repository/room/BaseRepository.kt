@@ -14,16 +14,7 @@ open class BaseRepository<Entity, EntityDTO, DAO : BaseDao<EntityDTO>>(
 ) {
     @WorkerThread
     suspend fun getAll(): MutableList<Entity> {
-        try {
-            val test = dao.getAll()
-            return mapper.toEntityMutableList(test)
-        } catch (exception: SQLiteException) {
-            Log.d("ROOM getAll()", exception.toString())
-            return mutableListOf()
-        } catch (exception: Exception) {
-            Log.d("ROOM getAll()", exception.toString())
-            return mutableListOf()
-        }
+        return mapper.toEntityMutableList(dao.getAll())
     }
 
     @WorkerThread
@@ -40,5 +31,10 @@ open class BaseRepository<Entity, EntityDTO, DAO : BaseDao<EntityDTO>>(
     suspend fun getById(id: Long): Entity {
         val test = dao.getById(id)
         return mapper.toEntity(test)
+    }
+
+    @WorkerThread
+    suspend fun delete(entity: Entity) {
+        return dao.delete(mapper.toDTO(entity))
     }
 }

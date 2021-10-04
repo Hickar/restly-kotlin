@@ -4,6 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../layout/custom_preview.xml" value="0.2546875" />
+        <entry key="app/src/main/res/drawable/border_bottom.xml" value="0.225" />
         <entry key="app/src/main/res/drawable/recycler_divider.xml" value="0.259375" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.24105668208813794" />
         <entry key="app/src/main/res/layout/fragment_dashboard.xml" value="0.18840579710144928" />
@@ -13,6 +14,7 @@
         <entry key="app/src/main/res/layout/fragment_requestlist.xml" value="0.20018115942028986" />
         <entry key="app/src/main/res/layout/fragment_requests.xml" value="0.1203125" />
         <entry key="app/src/main/res/layout/request_detail.xml" value="0.12291666666666666" />
+        <entry key="app/src/main/res/layout/request_detail_body_binary.xml" value="0.1671195652173913" />
         <entry key="app/src/main/res/layout/request_detail_body_formdata.xml" value="0.13360507246376813" />
         <entry key="app/src/main/res/layout/request_detail_body_raw.xml" value="0.11510416666666666" />
         <entry key="app/src/main/res/layout/request_detail_body_urlencoded.xml" value="0.13360507246376813" />

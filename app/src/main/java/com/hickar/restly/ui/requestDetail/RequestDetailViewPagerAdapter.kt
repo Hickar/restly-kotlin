@@ -1,6 +1,5 @@
 package com.hickar.restly.ui.requestDetail
 
-import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 
@@ -15,13 +14,15 @@ class RequestDetailViewPagerAdapter(private val fragment: RequestDetailFragment)
             1 -> {
                 RequestDetailBodyFormDataFragment(fragment.requestDetailViewModel)
             }
+            2 -> {
+                RequestDetailBodyRawFragment(fragment.requestDetailViewModel)
+            }
+            3 -> {
+                RequestDetailBodyBinaryFragment(fragment.requestDetailViewModel)
+            }
             else -> {
                 return Fragment()
             }
         }
-    }
-
-    companion object {
-        private const val ARG_OBJECT = "object"
     }
 }

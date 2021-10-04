@@ -99,7 +99,7 @@ class RequestListFragment : Fragment() {
     private fun setupDecoration() {
         val dividerDecoration = DividerItemDecoration(context, RecyclerView.VERTICAL)
         val dividerDrawable =
-            ContextCompat.getDrawable(requireContext(), R.drawable.recycler_divider)
+            ContextCompat.getDrawable(requireContext(), R.drawable.item_divider)
         dividerDecoration.setDrawable(dividerDrawable!!)
         recyclerView.addItemDecoration(dividerDecoration)
     }

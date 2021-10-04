@@ -3,19 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/request_detail_body_raw_button"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginVertical="4dp">
 
     <TextView
         style="@style/Restly.RequestDetail.BodyTextLabel"
-        android:text="@string/request_detail_body_raw_label_text"
+        android:text="@string/request_detail_body_binary_label_text"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/request_detail_body_raw_icon_description"
-        android:src="@drawable/ic_arrow_right"
+    <TextView
+        style="@style/Restly.RequestDetail.BodyTextAccentLabel"
+        android:text="@string/request_detail_body_binary_add_label_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

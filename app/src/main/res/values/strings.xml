@@ -15,4 +15,6 @@
     <string name="request_detail_headers_add_button_text">Add header</string>
     <string name="request_detail_key_text">Key</string>
     <string name="request_detail_value_text">Value</string>
+    <string name="request_details_body_urlencoded_add_button_text">Add param</string>
+    <string name="request_detail_body_formdata_add_button_text">Add param</string>
 </resources>

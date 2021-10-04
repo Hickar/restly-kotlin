@@ -20,17 +20,20 @@ class RequestDetailViewModel(
     val method: MutableLiveData<String> = MutableLiveData()
     val params: MutableLiveData<MutableList<RequestKeyValue>> = MutableLiveData()
     val headers: MutableLiveData<MutableList<RequestKeyValue>> = MutableLiveData()
+    val urlencodedParams: MutableLiveData<MutableList<RequestKeyValue>> = MutableLiveData()
+    val formdataParams: MutableLiveData<MutableList<RequestKeyValue>> = MutableLiveData()
 
     init {
         runBlocking {
             try {
                 currentRequest = repository.getById(currentRequestId)
-                Log.d("REQUEST", currentRequest.toString())
                 name.value = currentRequest.name
                 url.value = currentRequest.url
                 method.value = currentRequest.method
                 params.value = currentRequest.queryParams
                 headers.value = currentRequest.headers
+                urlencodedParams.value = currentRequest.body.multipartData.toMutableList()
+                formdataParams.value = currentRequest.body.formData.toMutableList()
             } catch (exception: SQLiteException) {
                 Log.e("ViewModel Init Error", exception.toString())
             }
@@ -65,6 +68,34 @@ class RequestDetailViewModel(
         headers.value!![position].enabled = !headers.value?.get(position)!!.enabled
     }
 
+    fun toggleUrlEncoded(position: Int) {
+        urlencodedParams.value!![position].enabled = !urlencodedParams.value?.get(position)!!.enabled
+    }
+
+    fun toggleFormData(position: Int) {
+        formdataParams.value!![position].enabled = !formdataParams.value?.get(position)!!.enabled
+    }
+
+    fun addUrlEncoded() {
+        urlencodedParams.value!!.add(RequestKeyValue())
+        urlencodedParams.value = urlencodedParams.value
+    }
+
+    fun addFormData() {
+        formdataParams.value!!.add(RequestKeyValue())
+        formdataParams.value = formdataParams.value
+    }
+
+    fun deleteUrlEncoded(position: Int) {
+        urlencodedParams.value!!.removeAt(position)
+        urlencodedParams.value = urlencodedParams.value
+    }
+
+    fun deleteFormData(position: Int) {
+        formdataParams.value!!.removeAt(position)
+        formdataParams.value = formdataParams.value
+    }
+
     suspend fun saveRequest() {
         try {
             currentRequest.name = name.value!!
@@ -72,6 +103,8 @@ class RequestDetailViewModel(
             currentRequest.method = method.value!!
             currentRequest.queryParams = params.value!!
             currentRequest.headers = headers.value!!
+            currentRequest.body.multipartData = urlencodedParams.value!!
+            currentRequest.body.formData = formdataParams.value!!
             repository.insert(currentRequest)
         } catch (exception: SQLiteException) {
             Log.d("ViewModel insert error", exception.toString())

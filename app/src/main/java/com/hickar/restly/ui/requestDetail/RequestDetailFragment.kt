@@ -32,7 +32,7 @@ class RequestDetailFragment : Fragment() {
     private var _binding: RequestDetailBinding? = null
     private val binding get() = _binding!!
 
-    private val requestDetailViewModel: RequestDetailViewModel by viewModels {
+    val requestDetailViewModel: RequestDetailViewModel by viewModels {
         RequestDetailViewModelFactory(
             (activity?.application as RestlyApplication).repository,
             arguments?.get("requestId") as Long

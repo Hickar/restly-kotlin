@@ -1,4 +1,4 @@
-package com.hickar.restly.ui.requestDetail
+package com.hickar.restly.ui.requestDetailBody
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,19 +8,21 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.hickar.restly.databinding.RequestDetailBodyFormdataBinding
 import com.hickar.restly.databinding.RequestDetailBodyUrlencodedBinding
 import com.hickar.restly.models.RequestKeyValue
+import com.hickar.restly.ui.requestDetail.ParamsListAdapter
+import com.hickar.restly.ui.requestDetail.RequestDetailParamsListAdapter
+import com.hickar.restly.ui.requestDetail.RequestDetailViewModel
 import com.hickar.restly.utils.SwipeDeleteCallback
 
-class RequestDetailBodyFormDataFragment(private val viewModel: RequestDetailViewModel) : Fragment() {
-    private var _binding: RequestDetailBodyFormdataBinding? = null
+class RequestDetailBodyUrlEncodedFragment(private val viewModel: RequestDetailViewModel) : Fragment() {
+    private var _binding: RequestDetailBodyUrlencodedBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var recyclerView: RecyclerView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        _binding = RequestDetailBodyFormdataBinding.inflate(inflater, container, false)
+        _binding = RequestDetailBodyUrlencodedBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -31,36 +33,36 @@ class RequestDetailBodyFormDataFragment(private val viewModel: RequestDetailView
     }
 
     private fun setupAdapter() {
-        recyclerView = binding.requestDetailBodyFormdata
+        recyclerView = binding.requestDetailBodyUrlencoded
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = RequestDetailParamsListAdapter<RequestKeyValue>(
             onParamCheckBoxToggle,
             { text, position ->
-                viewModel.formdataParams.value!![position].key = text
+                viewModel.urlencodedParams.value!![position].key = text
             },
             { text, position ->
-                viewModel.formdataParams.value!![position].value = text
+                viewModel.urlencodedParams.value!![position].value = text
             }
         )
         val paramsTouchHelper = ItemTouchHelper(SwipeDeleteCallback(requireContext()) { position ->
-            viewModel.deleteFormData(position)
+            viewModel.deleteUrlEncoded(position)
         })
         paramsTouchHelper.attachToRecyclerView(recyclerView)
     }
 
     private fun setupObservers() {
-        viewModel.formdataParams.observe(viewLifecycleOwner, { params ->
+        viewModel.urlencodedParams.observe(viewLifecycleOwner, { params ->
             (recyclerView.adapter as ParamsListAdapter).submitList(params)
         })
     }
 
     private fun setupEventListeners() {
-        binding.requestDetailBodyFormdataAddButton.setOnClickListener {
-            viewModel.addFormData()
+        binding.requestDetailBodyUrlencodedAddButton.setOnClickListener {
+            viewModel.addUrlEncoded()
         }
     }
 
     private val onParamCheckBoxToggle: (Int) -> Unit = { position ->
-        viewModel.toggleFormData(position)
+        viewModel.toggleUrlEncoded(position)
     }
 }

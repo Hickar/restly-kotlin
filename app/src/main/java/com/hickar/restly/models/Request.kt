@@ -7,5 +7,5 @@ data class Request(
     var url: String = "",
     var queryParams: MutableList<RequestKeyValue> = mutableListOf(),
     var headers: MutableList<RequestKeyValue> = mutableListOf(),
-    var body: RequestBody = RequestBody(),
+    var body: RequestBody = RequestBody()
 )

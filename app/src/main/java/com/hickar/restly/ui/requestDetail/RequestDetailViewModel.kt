@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.hickar.restly.models.Request
+import com.hickar.restly.models.RequestBodyBinary
 import com.hickar.restly.models.RequestKeyValue
 import com.hickar.restly.repository.room.RequestRepository
 import kotlinx.coroutines.runBlocking
@@ -22,6 +23,7 @@ class RequestDetailViewModel(
     val headers: MutableLiveData<MutableList<RequestKeyValue>> = MutableLiveData()
     val urlencodedParams: MutableLiveData<MutableList<RequestKeyValue>> = MutableLiveData()
     val formdataParams: MutableLiveData<MutableList<RequestKeyValue>> = MutableLiveData()
+    val binaryData: MutableLiveData<RequestBodyBinary> = MutableLiveData()
 
     init {
         runBlocking {
@@ -34,6 +36,7 @@ class RequestDetailViewModel(
                 headers.value = currentRequest.headers
                 urlencodedParams.value = currentRequest.body.multipartData.toMutableList()
                 formdataParams.value = currentRequest.body.formData.toMutableList()
+                binaryData.value = currentRequest.body.binaryData
             } catch (exception: SQLiteException) {
                 Log.e("ViewModel Init Error", exception.toString())
             }
@@ -105,9 +108,14 @@ class RequestDetailViewModel(
             currentRequest.headers = headers.value!!
             currentRequest.body.multipartData = urlencodedParams.value!!
             currentRequest.body.formData = formdataParams.value!!
+            currentRequest.body.binaryData = binaryData.value!!
             repository.insert(currentRequest)
         } catch (exception: SQLiteException) {
             Log.d("ViewModel insert error", exception.toString())
         }
+    }
+
+    fun setBinaryBody(fileMetadata: RequestBodyBinary) {
+        binaryData.value = fileMetadata
     }
 }

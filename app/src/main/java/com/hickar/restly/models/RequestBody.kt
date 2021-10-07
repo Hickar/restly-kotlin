@@ -5,5 +5,6 @@ data class RequestBody(
     var type: String = "",
     var rawText: String = "",
     var formData: List<RequestKeyValue> = listOf(),
-    var multipartData: List<RequestKeyValue> = listOf()
+    var multipartData: List<RequestKeyValue> = listOf(),
+    var binaryData: RequestBodyBinary = RequestBodyBinary()
 )

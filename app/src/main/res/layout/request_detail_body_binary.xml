@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/request_detail_body_raw_button"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginVertical="4dp">
@@ -13,6 +12,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:id="@+id/request_detail_body_raw_button"
         style="@style/Restly.RequestDetail.BodyTextAccentLabel"
         android:text="@string/request_detail_body_binary_add_label_text"
         app:layout_constraintEnd_toEndOf="parent"

@@ -1,4 +1,4 @@
-package com.hickar.restly.ui.requestDetail
+package com.hickar.restly.ui.requestDetailBody
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.hickar.restly.databinding.RequestDetailBodyRawBinding
+import com.hickar.restly.ui.requestDetail.RequestDetailViewModel
 
 class RequestDetailBodyRawFragment(private val viewModel: RequestDetailViewModel) : Fragment() {
     private var _binding: RequestDetailBodyRawBinding? = null

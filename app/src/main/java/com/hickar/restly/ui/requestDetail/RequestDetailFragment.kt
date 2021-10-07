@@ -4,11 +4,9 @@ import android.os.Bundle
 import android.text.Editable
 import android.util.Log
 import android.view.*
-import android.widget.PopupWindow
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.doAfterTextChanged
-import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -78,6 +76,11 @@ class RequestDetailFragment : Fragment() {
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             tab.text = tabs[position]
         }.attach()
+
+        val currentTabIndex = requestDetailViewModel.getSelectedBodyType()
+        val currentTab = tabLayout.getTabAt(currentTabIndex)
+        tabLayout.selectTab(currentTab)
+        viewPager.setCurrentItem(currentTabIndex, false)
     }
 
     private fun setupObservers() {
@@ -116,6 +119,16 @@ class RequestDetailFragment : Fragment() {
         binding.requestDetailUrlInputText.doAfterTextChanged { text ->
             requestDetailViewModel.url.value = text.toString()
         }
+
+        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                requestDetailViewModel.setSelectedBodyType(tab!!.position)
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {}
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {}
+        })
     }
 
     private fun setupListAdapters() {

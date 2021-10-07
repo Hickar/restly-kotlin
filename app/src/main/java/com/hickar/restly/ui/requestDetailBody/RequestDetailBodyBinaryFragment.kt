@@ -56,7 +56,7 @@ class RequestDetailBodyBinaryFragment(private val viewModel: RequestDetailViewMo
     private fun setupEventListeners() {
         contentResolver = requireContext().contentResolver
 
-        binding.requestDetailBodyRawButton.setOnClickListener {
+        binding.requestDetailBodyBinaryAddButton.setOnClickListener {
             requireActivity().activityResultRegistry.register("key", ActivityResultContracts.OpenDocument()) { uri ->
                 if (uri == null) return@register
 
@@ -68,7 +68,11 @@ class RequestDetailBodyBinaryFragment(private val viewModel: RequestDetailViewMo
 
     private fun setupObservers() {
         viewModel.binaryData.observe(viewLifecycleOwner) { binaryData ->
-            binding.requestDetailBodyRawButton.text = binaryData.name
+            binding.requestDetailBodyBinaryLabel.text = if (binaryData.name == "") {
+                "Select"
+            } else {
+                binaryData.name
+            }
         }
     }
 }

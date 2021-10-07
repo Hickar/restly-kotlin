@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.hickar.restly.models.Request
+import com.hickar.restly.models.RequestBody
 import com.hickar.restly.models.RequestBodyBinary
 import com.hickar.restly.models.RequestKeyValue
 import com.hickar.restly.repository.room.RequestRepository
@@ -21,6 +22,7 @@ class RequestDetailViewModel(
     val method: MutableLiveData<String> = MutableLiveData()
     val params: MutableLiveData<MutableList<RequestKeyValue>> = MutableLiveData()
     val headers: MutableLiveData<MutableList<RequestKeyValue>> = MutableLiveData()
+    val selectedBodyType: MutableLiveData<String> = MutableLiveData()
     val urlencodedParams: MutableLiveData<MutableList<RequestKeyValue>> = MutableLiveData()
     val formdataParams: MutableLiveData<MutableList<RequestKeyValue>> = MutableLiveData()
     val binaryData: MutableLiveData<RequestBodyBinary> = MutableLiveData()
@@ -34,6 +36,7 @@ class RequestDetailViewModel(
                 method.value = currentRequest.method
                 params.value = currentRequest.queryParams
                 headers.value = currentRequest.headers
+                selectedBodyType.value = currentRequest.body.typeSelected
                 urlencodedParams.value = currentRequest.body.multipartData.toMutableList()
                 formdataParams.value = currentRequest.body.formData.toMutableList()
                 binaryData.value = currentRequest.body.binaryData
@@ -99,6 +102,26 @@ class RequestDetailViewModel(
         formdataParams.value = formdataParams.value
     }
 
+    fun getSelectedBodyType(): Int {
+        return when(selectedBodyType.value) {
+            RequestBody.FORMDATA -> 0
+            RequestBody.MULTIPART -> 1
+            RequestBody.RAW -> 2
+            RequestBody.BINARY -> 3
+            else -> 0
+        }
+    }
+
+    fun setSelectedBodyType(position: Int) {
+        when (position) {
+            0 -> selectedBodyType.value = RequestBody.FORMDATA
+            1 -> selectedBodyType.value = RequestBody.MULTIPART
+            2 -> selectedBodyType.value = RequestBody.RAW
+            3 -> selectedBodyType.value = RequestBody.BINARY
+            else -> selectedBodyType.value = RequestBody.FORMDATA
+        }
+    }
+
     suspend fun saveRequest() {
         try {
             currentRequest.name = name.value!!
@@ -109,6 +132,7 @@ class RequestDetailViewModel(
             currentRequest.body.multipartData = urlencodedParams.value!!
             currentRequest.body.formData = formdataParams.value!!
             currentRequest.body.binaryData = binaryData.value!!
+            currentRequest.body.typeSelected = selectedBodyType.value!!
             repository.insert(currentRequest)
         } catch (exception: SQLiteException) {
             Log.d("ViewModel insert error", exception.toString())

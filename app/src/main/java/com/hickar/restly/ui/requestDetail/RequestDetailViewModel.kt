@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.hickar.restly.models.Request
 import com.hickar.restly.models.RequestBody
 import com.hickar.restly.models.RequestBodyBinary
-import com.hickar.restly.models.RequestKeyValue
+import com.hickar.restly.models.RequestKeyValueParameter
 import com.hickar.restly.repository.room.RequestRepository
 import kotlinx.coroutines.runBlocking
 
@@ -20,11 +20,11 @@ class RequestDetailViewModel(
     val name: MutableLiveData<String> = MutableLiveData()
     val url: MutableLiveData<String> = MutableLiveData()
     val method: MutableLiveData<String> = MutableLiveData()
-    val params: MutableLiveData<MutableList<RequestKeyValue>> = MutableLiveData()
-    val headers: MutableLiveData<MutableList<RequestKeyValue>> = MutableLiveData()
+    val params: MutableLiveData<MutableList<RequestKeyValueParameter>> = MutableLiveData()
+    val headers: MutableLiveData<MutableList<RequestKeyValueParameter>> = MutableLiveData()
     val selectedBodyType: MutableLiveData<String> = MutableLiveData()
-    val urlencodedParams: MutableLiveData<MutableList<RequestKeyValue>> = MutableLiveData()
-    val formdataParams: MutableLiveData<MutableList<RequestKeyValue>> = MutableLiveData()
+    val urlencodedParams: MutableLiveData<MutableList<RequestKeyValueParameter>> = MutableLiveData()
+    val formdataParams: MutableLiveData<MutableList<RequestKeyValueParameter>> = MutableLiveData()
     val binaryData: MutableLiveData<RequestBodyBinary> = MutableLiveData()
 
     init {
@@ -47,12 +47,12 @@ class RequestDetailViewModel(
     }
 
     fun addQueryParameter() {
-        params.value!!.add(RequestKeyValue())
+        params.value!!.add(RequestKeyValueParameter())
         params.value = params.value
     }
 
     fun addHeader() {
-        headers.value!!.add(RequestKeyValue())
+        headers.value!!.add(RequestKeyValueParameter())
         headers.value = headers.value
     }
 
@@ -83,12 +83,12 @@ class RequestDetailViewModel(
     }
 
     fun addUrlEncoded() {
-        urlencodedParams.value!!.add(RequestKeyValue())
+        urlencodedParams.value!!.add(RequestKeyValueParameter())
         urlencodedParams.value = urlencodedParams.value
     }
 
     fun addFormData() {
-        formdataParams.value!!.add(RequestKeyValue())
+        formdataParams.value!!.add(RequestKeyValueParameter())
         formdataParams.value = formdataParams.value
     }
 
@@ -120,6 +120,10 @@ class RequestDetailViewModel(
             3 -> selectedBodyType.value = RequestBody.BINARY
             else -> selectedBodyType.value = RequestBody.FORMDATA
         }
+    }
+
+    fun selectMethod(newMethod: String) {
+        method.value = newMethod
     }
 
     suspend fun saveRequest() {

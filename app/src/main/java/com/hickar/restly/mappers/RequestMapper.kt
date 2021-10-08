@@ -35,13 +35,13 @@ class RequestMapper : Mapper<Request, RequestDTO> {
         val gson = GsonBuilder().create()
 
         val queryParams = if (request.queryParams.isNotEmpty()) {
-            gson.fromJson(request.queryParams, Array<RequestKeyValue>::class.java).toMutableList()
+            gson.fromJson(request.queryParams, Array<RequestKeyValueParameter>::class.java).toMutableList()
         } else {
             mutableListOf()
         }
 
         val headers = if (request.headers.isNotEmpty()) {
-            gson.fromJson(request.headers, Array<RequestKeyValue>::class.java).toMutableList()
+            gson.fromJson(request.headers, Array<RequestKeyValueParameter>::class.java).toMutableList()
         } else {
             mutableListOf()
         }

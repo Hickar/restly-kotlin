@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.hickar.restly.databinding.RequestDetailBodyUrlencodedBinding
-import com.hickar.restly.models.RequestKeyValue
+import com.hickar.restly.models.RequestKeyValueParameter
 import com.hickar.restly.ui.requestDetail.ParamsListAdapter
 import com.hickar.restly.ui.requestDetail.RequestDetailParamsListAdapter
 import com.hickar.restly.ui.requestDetail.RequestDetailViewModel
@@ -35,7 +35,7 @@ class RequestDetailBodyUrlEncodedFragment(private val viewModel: RequestDetailVi
     private fun setupAdapter() {
         recyclerView = binding.requestDetailBodyUrlencoded
         recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.adapter = RequestDetailParamsListAdapter<RequestKeyValue>(
+        recyclerView.adapter = RequestDetailParamsListAdapter<RequestKeyValueParameter>(
             onParamCheckBoxToggle,
             { text, position ->
                 viewModel.urlencodedParams.value!![position].key = text

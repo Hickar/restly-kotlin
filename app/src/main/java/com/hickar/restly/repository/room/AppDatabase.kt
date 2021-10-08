@@ -25,31 +25,12 @@ abstract class AppDatabase: RoomDatabase() {
                     context,
                     AppDatabase::class.java,
                     "restly")
-                    .addCallback(AppDatabaseCallback(scope))
                     .fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance
 
                 instance
             }
-        }
-
-        private class AppDatabaseCallback(
-            private val scope: CoroutineScope
-        ) : RoomDatabase.Callback() {
-
-//            override fun onCreate(db: SupportSQLiteDatabase) {
-//                super.onCreate(db)
-//                INSTANCE?.let { database ->
-//                    scope.launch {
-//                        populateDatabase(database.requestDao())
-//                    }
-//                }
-//            }
-//
-//            suspend fun populateDatabase(requestDao: RequestDao) {
-//                requestDao.delete()
-//            }
         }
     }
 }

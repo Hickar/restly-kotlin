@@ -1,12 +1,12 @@
 package com.hickar.restly.models
 
-data class RequestKeyValue(
+data class RequestKeyValueParameter(
     var key: String = "",
     var value: String = "",
     var enabled: Boolean = true
 ) {
     override fun equals(other: Any?): Boolean {
-        return other is RequestKeyValue &&
+        return other is RequestKeyValueParameter &&
                 other.key == key &&
                 other.value == value
     }

@@ -6,8 +6,8 @@ data class RequestBody(
     var typeSelected: String = FORMDATA,
     var type: String = "",
     var rawText: String = "",
-    var formData: List<RequestKeyValue> = listOf(),
-    var multipartData: List<RequestKeyValue> = listOf(),
+    var formData: List<RequestKeyValueParameter> = listOf(),
+    var multipartData: List<RequestKeyValueParameter> = listOf(),
     var binaryData: RequestBodyBinary = RequestBodyBinary()
 ) {
     companion object {

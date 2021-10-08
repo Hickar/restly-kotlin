@@ -8,9 +8,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.hickar.restly.databinding.RequestDetailParamsItemBinding
-import com.hickar.restly.models.RequestKeyValue
+import com.hickar.restly.models.RequestKeyValueParameter
 
-class RequestDetailParamsListAdapter<T : RequestKeyValue>(
+class RequestDetailParamsListAdapter<T : RequestKeyValueParameter>(
     private val onCheckBoxClicked: (Int) -> Unit,
     private val onKeyInputFieldTextChanged: (String, Int) -> Unit,
     private val onValueInputFieldTextChanged: (String, Int) -> Unit
@@ -56,7 +56,7 @@ class RequestDetailParamsListAdapter<T : RequestKeyValue>(
     }
 }
 
-class RequestDetailParamsViewHolder<T : RequestKeyValue>(
+class RequestDetailParamsViewHolder<T : RequestKeyValueParameter>(
     private val binding: RequestDetailParamsItemBinding
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(parameter: T) {
@@ -68,7 +68,7 @@ class RequestDetailParamsViewHolder<T : RequestKeyValue>(
     }
 }
 
-internal class BaseItemCallback<T : RequestKeyValue> : DiffUtil.ItemCallback<T>() {
+internal class BaseItemCallback<T : RequestKeyValueParameter> : DiffUtil.ItemCallback<T>() {
     override fun areItemsTheSame(oldItem: T, newItem: T) = oldItem.toString() == newItem.toString()
 
     override fun areContentsTheSame(oldItem: T, newItem: T) = false

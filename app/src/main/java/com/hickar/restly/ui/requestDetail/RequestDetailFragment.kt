@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.util.Log
 import android.view.*
+import android.widget.PopupMenu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.doAfterTextChanged
@@ -18,13 +19,14 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.hickar.restly.R
 import com.hickar.restly.RestlyApplication
 import com.hickar.restly.databinding.RequestDetailBinding
-import com.hickar.restly.models.RequestKeyValue
+import com.hickar.restly.models.Request
+import com.hickar.restly.models.RequestKeyValueParameter
 import com.hickar.restly.utils.KeyboardUtil
 import com.hickar.restly.utils.MethodCardViewUtil
 import com.hickar.restly.utils.SwipeDeleteCallback
 import kotlinx.coroutines.runBlocking
 
-typealias ParamsListAdapter = RequestDetailParamsListAdapter<RequestKeyValue>
+typealias ParamsListAdapter = RequestDetailParamsListAdapter<RequestKeyValueParameter>
 
 class RequestDetailFragment : Fragment() {
 
@@ -43,6 +45,8 @@ class RequestDetailFragment : Fragment() {
 
     private lateinit var tabLayout: TabLayout
     private lateinit var viewPager: ViewPager2
+
+    private lateinit var popupMenu: PopupMenu
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -63,6 +67,7 @@ class RequestDetailFragment : Fragment() {
         setupListAdapters()
         setupEventListeners()
         setupObservers()
+        setupPopupMenu()
     }
 
     private fun setupViewPager() {
@@ -129,12 +134,16 @@ class RequestDetailFragment : Fragment() {
 
             override fun onTabReselected(tab: TabLayout.Tab?) {}
         })
+
+        binding.requestDetailMethodBox.setOnClickListener {
+            popupMenu.show()
+        }
     }
 
     private fun setupListAdapters() {
         paramsRecyclerView = binding.requestDetailParamsRecyclerView
         paramsRecyclerView.layoutManager = LinearLayoutManager(context)
-        paramsRecyclerView.adapter = RequestDetailParamsListAdapter<RequestKeyValue>(
+        paramsRecyclerView.adapter = RequestDetailParamsListAdapter<RequestKeyValueParameter>(
             onParamCheckBoxToggle,
             { text, position ->
                 requestDetailViewModel.params.value!![position].key = text
@@ -151,7 +160,7 @@ class RequestDetailFragment : Fragment() {
 
         headersRecyclerView = binding.requestDetailHeadersRecyclerView
         headersRecyclerView.layoutManager = LinearLayoutManager(context)
-        headersRecyclerView.adapter = RequestDetailParamsListAdapter<RequestKeyValue>(
+        headersRecyclerView.adapter = RequestDetailParamsListAdapter<RequestKeyValueParameter>(
             onHeaderCheckBoxToggle,
             { text, position ->
                 requestDetailViewModel.headers.value!![position].key = text
@@ -164,6 +173,26 @@ class RequestDetailFragment : Fragment() {
             requestDetailViewModel.deleteHeader(position)
         })
         headersTouchHelper.attachToRecyclerView(headersRecyclerView)
+    }
+
+    private fun setupPopupMenu() {
+        popupMenu = PopupMenu(requireContext(), binding.requestDetailMethodBox)
+        popupMenu.inflate(R.menu.method_select_popup_menu)
+
+        popupMenu.setOnMenuItemClickListener { item ->
+            val method = when (item.itemId) {
+                R.id.method_popup_option_get -> Request.GET
+                R.id.method_popup_option_post -> Request.POST
+                R.id.method_popup_option_put -> Request.PUT
+                R.id.method_popup_option_patch -> Request.PATCH
+                R.id.method_popup_option_head -> Request.HEAD
+                R.id.method_popup_option_options -> Request.OPTIONS
+                R.id.method_popup_option_delete -> Request.DELETE
+                else -> Request.GET
+            }
+            requestDetailViewModel.selectMethod(method)
+            true
+        }
     }
 
     private val onParamCheckBoxToggle: (Int) -> Unit = { position ->

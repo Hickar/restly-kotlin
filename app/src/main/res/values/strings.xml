@@ -22,6 +22,7 @@
     <string name="request_detail_body_raw_icon_description">Arrow icon</string>
     <string name="request_detail_body_binary_label_text">File</string>
     <string name="request_detail_body_binary_add_label_text">Select</string>
+
     <string name="method_popup_menu_option_get_text">GET</string>
     <string name="method_popup_menu_option_post_text">POST</string>
     <string name="method_popup_menu_option_put_text">PUT</string>
@@ -29,4 +30,9 @@
     <string name="method_popup_menu_option_head_text">HEAD</string>
     <string name="method_popup_menu_option_options_text">OPTIONS</string>
     <string name="method_popup_option_delete">DELETE</string>
+    <string name="request_detail_body_raw_content_type_title">Content-Type</string>
+    <string name="content_type_option_textplain_text">text/plain</string>
+    <string name="content_type_option_applicationjson_text">application/json</string>
+    <string name="content_type_option_applicationxml_text">application/xml</string>
+
 </resources>

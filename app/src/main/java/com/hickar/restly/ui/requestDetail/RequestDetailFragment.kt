@@ -18,8 +18,9 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.hickar.restly.R
 import com.hickar.restly.RestlyApplication
+import com.hickar.restly.consts.RequestMethods
 import com.hickar.restly.databinding.RequestDetailBinding
-import com.hickar.restly.models.Request
+import com.hickar.restly.models.BodyType
 import com.hickar.restly.models.RequestKeyValueParameter
 import com.hickar.restly.utils.KeyboardUtil
 import com.hickar.restly.utils.MethodCardViewUtil
@@ -76,13 +77,14 @@ class RequestDetailFragment : Fragment() {
 
         viewPager.adapter = RequestDetailViewPagerAdapter(this)
 
-        val tabs = listOf("URLEncoded", "FormData", "Raw", "Binary")
+
+        val tabs = BodyType.values().toList()
 
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-            tab.text = tabs[position]
+            tab.text = tabs[position].type
         }.attach()
 
-        val currentTabIndex = requestDetailViewModel.getSelectedBodyType()
+        val currentTabIndex = requestDetailViewModel.getActiveTabPosition()
         val currentTab = tabLayout.getTabAt(currentTabIndex)
         tabLayout.selectTab(currentTab)
         viewPager.setCurrentItem(currentTabIndex, false)
@@ -127,7 +129,7 @@ class RequestDetailFragment : Fragment() {
 
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
-                requestDetailViewModel.setSelectedBodyType(tab!!.position)
+                requestDetailViewModel.setActiveTabPosition(tab!!.position)
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
@@ -181,16 +183,16 @@ class RequestDetailFragment : Fragment() {
 
         popupMenu.setOnMenuItemClickListener { item ->
             val method = when (item.itemId) {
-                R.id.method_popup_option_get -> Request.GET
-                R.id.method_popup_option_post -> Request.POST
-                R.id.method_popup_option_put -> Request.PUT
-                R.id.method_popup_option_patch -> Request.PATCH
-                R.id.method_popup_option_head -> Request.HEAD
-                R.id.method_popup_option_options -> Request.OPTIONS
-                R.id.method_popup_option_delete -> Request.DELETE
-                else -> Request.GET
+                R.id.method_popup_option_get -> RequestMethods.GET
+                R.id.method_popup_option_post -> RequestMethods.POST
+                R.id.method_popup_option_put -> RequestMethods.PUT
+                R.id.method_popup_option_patch -> RequestMethods.PATCH
+                R.id.method_popup_option_head -> RequestMethods.HEAD
+                R.id.method_popup_option_options -> RequestMethods.OPTIONS
+                R.id.method_popup_option_delete -> RequestMethods.DELETE
+                else -> RequestMethods.GET
             }
-            requestDetailViewModel.selectMethod(method)
+            requestDetailViewModel.setMethod(method.toString())
             true
         }
     }

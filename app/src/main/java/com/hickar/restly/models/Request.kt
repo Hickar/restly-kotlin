@@ -8,14 +8,4 @@ data class Request(
     var queryParams: MutableList<RequestKeyValueParameter> = mutableListOf(),
     var headers: MutableList<RequestKeyValueParameter> = mutableListOf(),
     var body: RequestBody = RequestBody()
-) {
-    companion object {
-        const val GET = "GET"
-        const val POST = "POST"
-        const val PUT = "PUT"
-        const val PATCH = "PATCH"
-        const val HEAD = "HEAD"
-        const val OPTIONS = "OPTIONS"
-        const val DELETE = "DELETE"
-    }
-}
+)

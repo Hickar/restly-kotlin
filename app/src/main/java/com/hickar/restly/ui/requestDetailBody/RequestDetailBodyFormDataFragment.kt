@@ -38,10 +38,10 @@ class RequestDetailBodyFormDataFragment(private val viewModel: RequestDetailView
         recyclerView.adapter = RequestDetailParamsListAdapter<RequestKeyValueParameter>(
             onParamCheckBoxToggle,
             { text, position ->
-                viewModel.formdataParams.value!![position].key = text
+                viewModel.multipartData.value!![position].key = text
             },
             { text, position ->
-                viewModel.formdataParams.value!![position].value = text
+                viewModel.multipartData.value!![position].value = text
             }
         )
         val paramsTouchHelper = ItemTouchHelper(SwipeDeleteCallback(requireContext()) { position ->
@@ -51,7 +51,7 @@ class RequestDetailBodyFormDataFragment(private val viewModel: RequestDetailView
     }
 
     private fun setupObservers() {
-        viewModel.formdataParams.observe(viewLifecycleOwner, { params ->
+        viewModel.multipartData.observe(viewLifecycleOwner, { params ->
             (recyclerView.adapter as ParamsListAdapter).submitList(params)
         })
     }

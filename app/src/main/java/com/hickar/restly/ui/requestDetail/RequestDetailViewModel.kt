@@ -4,8 +4,8 @@ import android.database.sqlite.SQLiteException
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.hickar.restly.models.BodyType
 import com.hickar.restly.models.Request
-import com.hickar.restly.models.RequestBody
 import com.hickar.restly.models.RequestBodyBinary
 import com.hickar.restly.models.RequestKeyValueParameter
 import com.hickar.restly.repository.room.RequestRepository
@@ -22,24 +22,31 @@ class RequestDetailViewModel(
     val method: MutableLiveData<String> = MutableLiveData()
     val params: MutableLiveData<MutableList<RequestKeyValueParameter>> = MutableLiveData()
     val headers: MutableLiveData<MutableList<RequestKeyValueParameter>> = MutableLiveData()
-    val selectedBodyType: MutableLiveData<String> = MutableLiveData()
-    val urlencodedParams: MutableLiveData<MutableList<RequestKeyValueParameter>> = MutableLiveData()
-    val formdataParams: MutableLiveData<MutableList<RequestKeyValueParameter>> = MutableLiveData()
+
+    val formData: MutableLiveData<MutableList<RequestKeyValueParameter>> = MutableLiveData()
+    val multipartData: MutableLiveData<MutableList<RequestKeyValueParameter>> = MutableLiveData()
+    val rawData: MutableLiveData<>
     val binaryData: MutableLiveData<RequestBodyBinary> = MutableLiveData()
+
+    val bodyType: MutableLiveData<BodyType> = MutableLiveData()
 
     init {
         runBlocking {
             try {
                 currentRequest = repository.getById(currentRequestId)
-                name.value = currentRequest.name
-                url.value = currentRequest.url
-                method.value = currentRequest.method
-                params.value = currentRequest.queryParams
-                headers.value = currentRequest.headers
-                selectedBodyType.value = currentRequest.body.typeSelected
-                urlencodedParams.value = currentRequest.body.multipartData.toMutableList()
-                formdataParams.value = currentRequest.body.formData.toMutableList()
-                binaryData.value = currentRequest.body.binaryData
+
+                currentRequest.let {
+                    name.value = it.name
+                    url.value = it.url
+                    method.value = it.method
+                    params.value = it.queryParams
+                    headers.value = it.headers
+                    formData.value = it.body.multipartData.toMutableList()
+                    multipartData.value = it.body.formData.toMutableList()
+                    binaryData.value = it.body.binaryData
+                    bodyType.value = it.body.type
+                }
+
             } catch (exception: SQLiteException) {
                 Log.e("ViewModel Init Error", exception.toString())
             }
@@ -75,54 +82,54 @@ class RequestDetailViewModel(
     }
 
     fun toggleUrlEncoded(position: Int) {
-        urlencodedParams.value!![position].enabled = !urlencodedParams.value?.get(position)!!.enabled
+        formData.value!![position].enabled = !formData.value?.get(position)!!.enabled
     }
 
     fun toggleFormData(position: Int) {
-        formdataParams.value!![position].enabled = !formdataParams.value?.get(position)!!.enabled
+        multipartData.value!![position].enabled = !multipartData.value?.get(position)!!.enabled
     }
 
     fun addUrlEncoded() {
-        urlencodedParams.value!!.add(RequestKeyValueParameter())
-        urlencodedParams.value = urlencodedParams.value
+        formData.value!!.add(RequestKeyValueParameter())
+        formData.value = formData.value
     }
 
     fun addFormData() {
-        formdataParams.value!!.add(RequestKeyValueParameter())
-        formdataParams.value = formdataParams.value
+        multipartData.value!!.add(RequestKeyValueParameter())
+        multipartData.value = multipartData.value
     }
 
     fun deleteUrlEncoded(position: Int) {
-        urlencodedParams.value!!.removeAt(position)
-        urlencodedParams.value = urlencodedParams.value
+        formData.value!!.removeAt(position)
+        formData.value = formData.value
     }
 
     fun deleteFormData(position: Int) {
-        formdataParams.value!!.removeAt(position)
-        formdataParams.value = formdataParams.value
+        multipartData.value!!.removeAt(position)
+        multipartData.value = multipartData.value
     }
 
-    fun getSelectedBodyType(): Int {
-        return when(selectedBodyType.value) {
-            RequestBody.FORMDATA -> 0
-            RequestBody.MULTIPART -> 1
-            RequestBody.RAW -> 2
-            RequestBody.BINARY -> 3
-            else -> 0
+    fun getActiveTabPosition(): Int {
+        return when(bodyType.value) {
+            BodyType.FORMDATA -> TABS.FORMDATA.position
+            BodyType.MULTIPART -> TABS.MULTIPART.position
+            BodyType.RAW -> TABS.RAW.position
+            BodyType.BINARY -> TABS.BINARY.position
+            else -> TABS.FORMDATA.position
         }
     }
 
-    fun setSelectedBodyType(position: Int) {
-        when (position) {
-            0 -> selectedBodyType.value = RequestBody.FORMDATA
-            1 -> selectedBodyType.value = RequestBody.MULTIPART
-            2 -> selectedBodyType.value = RequestBody.RAW
-            3 -> selectedBodyType.value = RequestBody.BINARY
-            else -> selectedBodyType.value = RequestBody.FORMDATA
+    fun setActiveTabPosition(position: Int) {
+        bodyType.value = when (position) {
+            0 -> BodyType.FORMDATA
+            1 -> BodyType.MULTIPART
+            2 -> BodyType.RAW
+            3 -> BodyType.BINARY
+            else -> BodyType.NONE
         }
     }
 
-    fun selectMethod(newMethod: String) {
+    fun setMethod(newMethod: String) {
         method.value = newMethod
     }
 
@@ -133,10 +140,10 @@ class RequestDetailViewModel(
             currentRequest.method = method.value!!
             currentRequest.queryParams = params.value!!
             currentRequest.headers = headers.value!!
-            currentRequest.body.multipartData = urlencodedParams.value!!
-            currentRequest.body.formData = formdataParams.value!!
+            currentRequest.body.multipartData = formData.value!!
+            currentRequest.body.formData = multipartData.value!!
             currentRequest.body.binaryData = binaryData.value!!
-            currentRequest.body.typeSelected = selectedBodyType.value!!
+            currentRequest.body.type = bodyType.value!!
             repository.insert(currentRequest)
         } catch (exception: SQLiteException) {
             Log.d("ViewModel insert error", exception.toString())
@@ -146,4 +153,15 @@ class RequestDetailViewModel(
     fun setBinaryBody(fileMetadata: RequestBodyBinary) {
         binaryData.value = fileMetadata
     }
+
+    fun setRawBodyMimeType(mimeType: String) {
+
+    }
+}
+
+internal enum class TABS(val position: Int) {
+    FORMDATA(0),
+    MULTIPART(1),
+    RAW(2),
+    BINARY(3)
 }

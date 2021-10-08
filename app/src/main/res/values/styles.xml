@@ -77,6 +77,7 @@
         <item name="android:textColor">@color/black</item>
         <item name="android:textSize">16sp</item>
         <item name="android:layout_height">34dp</item>
+        <item name="android:gravity">center_vertical</item>
     </style>
     <style name="Restly.RequestDetail.BodyTextAccentLabel" parent="Widget.MaterialComponents.TextView">
         <item name="android:layout_width">wrap_content</item>

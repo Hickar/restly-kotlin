@@ -3,7 +3,7 @@
     <string name="requests_tab_title">Requests</string>
     <string name="history_tab_title">History</string>
     <string name="settings_tab_title">Settings</string>
-    <string name="requests_menu_button_text">Add</string>
+    <string name="request_menu_add_button_text">Add</string>
 
 
     <string name="request_detail_name_default_text">New Request</string>
@@ -34,5 +34,11 @@
     <string name="content_type_option_textplain_text">text/plain</string>
     <string name="content_type_option_applicationjson_text">application/json</string>
     <string name="content_type_option_applicationxml_text">application/xml</string>
+    <string name="request_menu_save_button_text">Save</string>
+    <string name="request_menu_more_button_text">More</string>
+    <string name="request_more_menu_option_rename_text">Rename</string>
 
+    <string name="rename_dialog_title">Rename</string>
+    <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_ok">OK</string>
 </resources>

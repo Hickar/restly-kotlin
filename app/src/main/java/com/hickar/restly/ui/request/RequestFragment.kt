@@ -23,6 +23,7 @@ import com.hickar.restly.databinding.RequestBinding
 import com.hickar.restly.models.BodyType
 import com.hickar.restly.models.RequestHeader
 import com.hickar.restly.models.RequestQueryParameter
+import com.hickar.restly.ui.dialogs.EditTextDialog
 import com.hickar.restly.utils.KeyboardUtil
 import com.hickar.restly.utils.MethodCardViewUtil
 import com.hickar.restly.utils.SwipeDeleteCallback
@@ -49,7 +50,7 @@ class RequestDetailFragment : Fragment() {
     private lateinit var tabLayout: TabLayout
     private lateinit var viewPager: ViewPager2
 
-    private lateinit var popupMenu: PopupMenu
+    private lateinit var methodPopupMenu: PopupMenu
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -70,7 +71,7 @@ class RequestDetailFragment : Fragment() {
         setupListAdapters()
         setupEventListeners()
         setupObservers()
-        setupPopupMenu()
+        setupPopupMenus()
     }
 
     private fun setupViewPager() {
@@ -140,7 +141,7 @@ class RequestDetailFragment : Fragment() {
         })
 
         binding.requestDetailMethodBox.setOnClickListener {
-            popupMenu.show()
+            methodPopupMenu.show()
         }
     }
 
@@ -179,11 +180,11 @@ class RequestDetailFragment : Fragment() {
         headersTouchHelper.attachToRecyclerView(headersRecyclerView)
     }
 
-    private fun setupPopupMenu() {
-        popupMenu = PopupMenu(requireContext(), binding.requestDetailMethodBox)
-        popupMenu.inflate(R.menu.method_select_popup_menu)
+    private fun setupPopupMenus() {
+        methodPopupMenu = PopupMenu(requireContext(), binding.requestDetailMethodBox)
+        methodPopupMenu.inflate(R.menu.request_method_popup_menu)
 
-        popupMenu.setOnMenuItemClickListener { item ->
+        methodPopupMenu.setOnMenuItemClickListener { item ->
             val method = when (item.itemId) {
                 R.id.method_popup_option_get -> RequestMethods.GET
                 R.id.method_popup_option_post -> RequestMethods.POST
@@ -216,21 +217,25 @@ class RequestDetailFragment : Fragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.request_detail_action_menu, menu)
+        inflater.inflate(R.menu.request_action_menu, menu)
     }
 
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.request_detail_menu_save_button -> {
+            R.id.request_menu_save_button -> {
                 runBlocking {
                     requestDetailViewModel.saveRequest()
                     return@runBlocking true
                 }
             }
-//            R.id.request_detail_menu_send_button -> {
-//
-//            }
+            R.id.request_menu_rename_button -> {
+                val nameEditDialog = EditTextDialog(R.string.rename_dialog_title, requestDetailViewModel.name.value!!) { newName ->
+                    requestDetailViewModel.setName(newName)
+                }
+                nameEditDialog.show(parentFragmentManager, "Rename")
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }

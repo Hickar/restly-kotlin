@@ -13,6 +13,7 @@
         <entry key="app/src/main/res/layout/fragment_request_list.xml" value="0.16032608695652173" />
         <entry key="app/src/main/res/layout/fragment_requestlist.xml" value="0.20018115942028986" />
         <entry key="app/src/main/res/layout/fragment_requests.xml" value="0.1203125" />
+        <entry key="app/src/main/res/layout/request_body_raw.xml" value="0.1802536231884058" />
         <entry key="app/src/main/res/layout/request_detail.xml" value="0.12291666666666666" />
         <entry key="app/src/main/res/layout/request_detail_body_binary.xml" value="0.1671195652173913" />
         <entry key="app/src/main/res/layout/request_detail_body_formdata.xml" value="0.13360507246376813" />
@@ -28,6 +29,7 @@
         <entry key="app/src/main/res/menu/method_select_popup_menu.xml" value="0.23958333333333334" />
         <entry key="app/src/main/res/menu/request_content_type_menu.xml" value="0.23958333333333334" />
         <entry key="app/src/main/res/menu/request_detail_action_menu.xml" value="0.24114583333333334" />
+        <entry key="app/src/main/res/menu/request_more_popup_menu.xml" value="0.23958333333333334" />
         <entry key="app/src/main/res/menu/top_action_menu.xml" value="0.23958333333333334" />
       </map>
     </option>

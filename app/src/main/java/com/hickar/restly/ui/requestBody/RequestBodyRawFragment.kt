@@ -29,8 +29,8 @@ class RequestBodyRawFragment(private val viewModel: RequestDetailViewModel) : Fr
     }
 
     private fun setupObservers() {
-        viewModel.bodyType.observe(viewLifecycleOwner) { bodyType ->
-            binding.requestDetailBodyRawContentTypeSelectedText.text = bodyType.type
+        viewModel.rawData.observe(viewLifecycleOwner) { rawData ->
+            binding.requestDetailBodyRawContentTypeSelectedText.text = rawData.mimeType
         }
     }
 

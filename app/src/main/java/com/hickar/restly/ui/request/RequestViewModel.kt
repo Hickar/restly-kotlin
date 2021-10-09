@@ -51,6 +51,10 @@ class RequestDetailViewModel(
         }
     }
 
+    fun setName(newName: String) {
+        name.value = newName
+    }
+
     fun addQueryParameter() {
         params.value!!.add(RequestQueryParameter())
         params.value = params.value
@@ -153,7 +157,8 @@ class RequestDetailViewModel(
     }
 
     fun setRawBodyMimeType(mimeType: String) {
-        rawData.value?.mimeType = mimeType
+        rawData.value!!.mimeType = mimeType
+        rawData.value = rawData.value
     }
 }
 

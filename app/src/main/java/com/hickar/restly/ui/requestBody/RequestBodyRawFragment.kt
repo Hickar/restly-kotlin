@@ -1,4 +1,4 @@
-package com.hickar.restly.ui.requestDetailBody
+package com.hickar.restly.ui.requestBody
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,17 +8,17 @@ import android.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import com.hickar.restly.R
 import com.hickar.restly.consts.MimeTypes
-import com.hickar.restly.databinding.RequestDetailBodyRawBinding
-import com.hickar.restly.ui.requestDetail.RequestDetailViewModel
+import com.hickar.restly.databinding.RequestBodyRawBinding
+import com.hickar.restly.ui.request.RequestDetailViewModel
 
-class RequestDetailBodyRawFragment(private val viewModel: RequestDetailViewModel) : Fragment() {
-    private var _binding: RequestDetailBodyRawBinding? = null
+class RequestBodyRawFragment(private val viewModel: RequestDetailViewModel) : Fragment() {
+    private var _binding: RequestBodyRawBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var popupMenu: PopupMenu
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        _binding = RequestDetailBodyRawBinding.inflate(inflater, container, false)
+        _binding = RequestBodyRawBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -52,7 +52,7 @@ class RequestDetailBodyRawFragment(private val viewModel: RequestDetailViewModel
                 else -> MimeTypes.TEXT_PLAIN
             }
 
-            viewModel.setRawBodyMimeType(mimeType)
+            viewModel.setRawBodyMimeType(mimeType.toString())
             true
         }
     }

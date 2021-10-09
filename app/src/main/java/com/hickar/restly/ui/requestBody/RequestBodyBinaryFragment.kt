@@ -1,29 +1,27 @@
-package com.hickar.restly.ui.requestDetailBody
+package com.hickar.restly.ui.requestBody
 
-import android.content.ContentProvider
 import android.content.ContentResolver
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.OpenableColumns
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
-import com.hickar.restly.databinding.RequestDetailBodyBinaryBinding
-import com.hickar.restly.models.RequestBodyBinary
-import com.hickar.restly.ui.requestDetail.RequestDetailViewModel
+import com.hickar.restly.databinding.RequestBodyBinaryBinding
+import com.hickar.restly.models.RequestBinaryData
+import com.hickar.restly.ui.request.RequestDetailViewModel
 
-class RequestDetailBodyBinaryFragment(private val viewModel: RequestDetailViewModel) : Fragment() {
-    private var _binding: RequestDetailBodyBinaryBinding? = null
+class RequestBodyBinaryFragment(private val viewModel: RequestDetailViewModel) : Fragment() {
+    private var _binding: RequestBodyBinaryBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var contentResolver: ContentResolver
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        _binding = RequestDetailBodyBinaryBinding.inflate(inflater, container, false)
+        _binding = RequestBodyBinaryBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -32,7 +30,7 @@ class RequestDetailBodyBinaryFragment(private val viewModel: RequestDetailViewMo
         setupObservers()
     }
 
-    private fun getFileMetadata(uri: Uri): RequestBodyBinary? {
+    private fun getFileMetadata(uri: Uri): RequestBinaryData? {
         val cursor = contentResolver.query(uri, null, null, null, null)
 
         cursor?.use {
@@ -46,7 +44,7 @@ class RequestDetailBodyBinaryFragment(private val viewModel: RequestDetailViewMo
                     "Unknown"
                 }
 
-                return RequestBodyBinary(name, size, uri.toString())
+                return RequestBinaryData(name, size, uri.toString())
             }
         }
 
@@ -56,7 +54,7 @@ class RequestDetailBodyBinaryFragment(private val viewModel: RequestDetailViewMo
     private fun setupEventListeners() {
         contentResolver = requireContext().contentResolver
 
-        binding.requestDetailBodyBinaryAddButton.setOnClickListener {
+        binding.requestBodyBinaryAddButton.setOnClickListener {
             requireActivity().activityResultRegistry.register("key", ActivityResultContracts.OpenDocument()) { uri ->
                 if (uri == null) return@register
 
@@ -68,7 +66,7 @@ class RequestDetailBodyBinaryFragment(private val viewModel: RequestDetailViewMo
 
     private fun setupObservers() {
         viewModel.binaryData.observe(viewLifecycleOwner) { binaryData ->
-            binding.requestDetailBodyBinaryLabel.text = if (binaryData.name == "") {
+            binding.requestBodyBinaryLabel.text = if (binaryData.name == "") {
                 "Select"
             } else {
                 binaryData.name

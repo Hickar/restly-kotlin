@@ -22,8 +22,8 @@ enum class BodyType(val type: String) {
 data class RequestBody(
     var enabled: Boolean = false,
     var type: BodyType = BodyType.FORMDATA,
-    var rawData: String = "",
-    var formData: List<RequestKeyValueParameter> = listOf(),
-    var multipartData: List<RequestKeyValueParameter> = listOf(),
-    var binaryData: RequestBodyBinary = RequestBodyBinary()
+    var rawData: RequestRawData = RequestRawData(),
+    var formData: List<RequestFormData> = listOf(),
+    var multipartData: List<RequestMultipartData> = listOf(),
+    var binaryData: RequestBinaryData = RequestBinaryData()
 )

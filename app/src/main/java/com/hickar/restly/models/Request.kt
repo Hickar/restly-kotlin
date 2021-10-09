@@ -5,7 +5,7 @@ data class Request(
     var method: String = "GET",
     var name: String = "New Request",
     var url: String = "",
-    var queryParams: MutableList<RequestKeyValueParameter> = mutableListOf(),
-    var headers: MutableList<RequestKeyValueParameter> = mutableListOf(),
+    var queryParams: List<RequestQueryParameter> = mutableListOf(),
+    var headers: List<RequestHeader> = mutableListOf(),
     var body: RequestBody = RequestBody()
 )

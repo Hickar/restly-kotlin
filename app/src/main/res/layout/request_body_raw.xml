@@ -10,7 +10,7 @@
 
         <TextView
             android:gravity="center_vertical"
-            style="@style/Restly.RequestDetail.BodyTextLabel"
+            style="@style/Restly.Request.BodyTextLabel"
             android:text="@string/request_detail_body_raw_label_text" />
 
         <ImageView
@@ -30,14 +30,14 @@
     <TableRow>
 
         <TextView
-            style="@style/Restly.RequestDetail.BodyTextLabel"
+            style="@style/Restly.Request.BodyTextLabel"
             android:text="@string/request_detail_body_raw_content_type_title"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/request_detail_body_raw_content_type_selected_text"
-            style="@style/Restly.RequestDetail.BodyTextLabel"
+            style="@style/Restly.Request.BodyTextLabel"
             android:layout_gravity="right"
             android:text="" />
     </TableRow>

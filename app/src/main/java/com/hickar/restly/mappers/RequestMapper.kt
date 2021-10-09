@@ -5,24 +5,21 @@ import com.hickar.restly.models.*
 import com.hickar.restly.repository.models.RequestDTO
 
 class RequestMapper : Mapper<Request, RequestDTO> {
+    private val gson = GsonBuilder().create()
+
     override fun toDTO(request: Request): RequestDTO {
-        val gson = GsonBuilder().create()
-
-        val params = gson.toJson(request.queryParams)
-        val headers = gson.toJson(request.headers)
-
         return RequestDTO(
             request.id,
             request.method,
             request.name,
             request.url,
-            params,
-            headers,
+            gson.toJson(request.queryParams),
+            gson.toJson(request.headers),
             gson.toJson(request.body)
         )
     }
 
-    override fun toDTOMutableList(requests: MutableList<Request>): MutableList<RequestDTO> {
+    override fun toDTOList(requests: List<Request>): List<RequestDTO> {
         val dtoList: MutableList<RequestDTO> = mutableListOf()
         for (request in requests) {
             dtoList.add(toDTO(request))
@@ -32,18 +29,16 @@ class RequestMapper : Mapper<Request, RequestDTO> {
     }
 
     override fun toEntity(request: RequestDTO): Request {
-        val gson = GsonBuilder().create()
-
         val queryParams = if (request.queryParams.isNotEmpty()) {
-            gson.fromJson(request.queryParams, Array<RequestKeyValueParameter>::class.java).toMutableList()
+            gson.fromJson(request.queryParams, Array<RequestQueryParameter>::class.java).toList()
         } else {
-            mutableListOf()
+            listOf()
         }
 
         val headers = if (request.headers.isNotEmpty()) {
-            gson.fromJson(request.headers, Array<RequestKeyValueParameter>::class.java).toMutableList()
+            gson.fromJson(request.headers, Array<RequestHeader>::class.java).toList()
         } else {
-            mutableListOf()
+            listOf()
         }
 
         return Request(
@@ -57,7 +52,7 @@ class RequestMapper : Mapper<Request, RequestDTO> {
         )
     }
 
-    override fun toEntityMutableList(requests: MutableList<RequestDTO>): MutableList<Request> {
+    override fun toEntityList(requests: List<RequestDTO>): List<Request> {
         val entityList: MutableList<Request> = mutableListOf()
         for (request in requests) {
             entityList.add(toEntity(request))

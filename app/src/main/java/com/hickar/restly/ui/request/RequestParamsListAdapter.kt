@@ -1,4 +1,4 @@
-package com.hickar.restly.ui.requestDetail
+package com.hickar.restly.ui.request
 
 import android.text.Editable
 import android.view.LayoutInflater
@@ -7,10 +7,11 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.hickar.restly.databinding.RequestDetailParamsItemBinding
-import com.hickar.restly.models.RequestKeyValueParameter
+import com.hickar.restly.databinding.RequestParamsItemBinding
+import com.hickar.restly.databinding.RequestParamsItemBinding.inflate
+import com.hickar.restly.models.RequestKeyValueData
 
-class RequestDetailParamsListAdapter<T : RequestKeyValueParameter>(
+class RequestParamsListAdapter<T : RequestKeyValueData>(
     private val onCheckBoxClicked: (Int) -> Unit,
     private val onKeyInputFieldTextChanged: (String, Int) -> Unit,
     private val onValueInputFieldTextChanged: (String, Int) -> Unit
@@ -20,7 +21,7 @@ class RequestDetailParamsListAdapter<T : RequestKeyValueParameter>(
         parent: ViewGroup,
         viewType: Int
     ): RequestDetailParamsViewHolder<T> {
-        val adapterLayout = RequestDetailParamsItemBinding.inflate(
+        val adapterLayout = inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
@@ -56,8 +57,8 @@ class RequestDetailParamsListAdapter<T : RequestKeyValueParameter>(
     }
 }
 
-class RequestDetailParamsViewHolder<T : RequestKeyValueParameter>(
-    private val binding: RequestDetailParamsItemBinding
+class RequestDetailParamsViewHolder<T : RequestKeyValueData>(
+    private val binding: RequestParamsItemBinding
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(parameter: T) {
         val editableFactory = Editable.Factory.getInstance()
@@ -68,7 +69,7 @@ class RequestDetailParamsViewHolder<T : RequestKeyValueParameter>(
     }
 }
 
-internal class BaseItemCallback<T : RequestKeyValueParameter> : DiffUtil.ItemCallback<T>() {
+internal class BaseItemCallback<T : RequestKeyValueData> : DiffUtil.ItemCallback<T>() {
     override fun areItemsTheSame(oldItem: T, newItem: T) = oldItem.toString() == newItem.toString()
 
     override fun areContentsTheSame(oldItem: T, newItem: T) = false

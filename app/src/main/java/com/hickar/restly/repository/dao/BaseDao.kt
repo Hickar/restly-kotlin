@@ -4,7 +4,6 @@ import android.database.sqlite.SQLiteException
 import androidx.room.*
 import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteQuery
-import kotlin.jvm.Throws
 
 @Dao
 abstract class BaseDao<EntityDTO>(
@@ -20,9 +19,9 @@ abstract class BaseDao<EntityDTO>(
 
     @Throws(SQLiteException::class)
     @RawQuery
-    protected abstract suspend fun internalGetAll(query: SupportSQLiteQuery): MutableList<EntityDTO>
+    protected abstract suspend fun internalGetAll(query: SupportSQLiteQuery): List<EntityDTO>
 
-    suspend fun getAll(): MutableList<EntityDTO> {
+    suspend fun getAll(): List<EntityDTO> {
         val query = SimpleSQLiteQuery("SELECT * FROM $tableName")
         return internalGetAll(query)
     }

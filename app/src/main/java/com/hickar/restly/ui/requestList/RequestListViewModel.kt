@@ -1,6 +1,5 @@
 package com.hickar.restly.ui.requestList
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.hickar.restly.models.Request
@@ -27,7 +26,7 @@ class RequestListViewModel(
 
     fun refreshRequests() {
         runBlocking {
-            requests.value = repository.getAll()
+            requests.value = repository.getAll().toMutableList()
         }
     }
 

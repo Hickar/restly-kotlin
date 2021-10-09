@@ -5,7 +5,7 @@ interface Mapper<Entity, DTO> {
 
     fun toEntity(entityDTO: DTO): Entity
 
-    fun toDTOMutableList(entities: MutableList<Entity>): MutableList<DTO>
+    fun toDTOList(entities: List<Entity>): List<DTO>
 
-    fun toEntityMutableList(dtos: MutableList<DTO>): MutableList<Entity>
+    fun toEntityList(dtos: List<DTO>): List<Entity>
 }

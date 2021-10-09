@@ -1,4 +1,4 @@
-package com.hickar.restly.ui.requestDetail
+package com.hickar.restly.ui.request
 
 import android.os.Bundle
 import android.text.Editable
@@ -19,23 +19,25 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.hickar.restly.R
 import com.hickar.restly.RestlyApplication
 import com.hickar.restly.consts.RequestMethods
-import com.hickar.restly.databinding.RequestDetailBinding
+import com.hickar.restly.databinding.RequestBinding
 import com.hickar.restly.models.BodyType
-import com.hickar.restly.models.RequestKeyValueParameter
+import com.hickar.restly.models.RequestHeader
+import com.hickar.restly.models.RequestQueryParameter
 import com.hickar.restly.utils.KeyboardUtil
 import com.hickar.restly.utils.MethodCardViewUtil
 import com.hickar.restly.utils.SwipeDeleteCallback
 import kotlinx.coroutines.runBlocking
 
-typealias ParamsListAdapter = RequestDetailParamsListAdapter<RequestKeyValueParameter>
+typealias ParamsListAdapter = RequestParamsListAdapter<RequestQueryParameter>
+typealias HeadersListAdapter = RequestParamsListAdapter<RequestHeader>
 
 class RequestDetailFragment : Fragment() {
 
-    private var _binding: RequestDetailBinding? = null
+    private var _binding: RequestBinding? = null
     private val binding get() = _binding!!
 
     val requestDetailViewModel: RequestDetailViewModel by viewModels {
-        RequestDetailViewModelFactory(
+        RequestViewModelFactory(
             (activity?.application as RestlyApplication).repository,
             arguments?.get("requestId") as Long
         )
@@ -58,7 +60,7 @@ class RequestDetailFragment : Fragment() {
 
         setHasOptionsMenu(true)
 
-        _binding = RequestDetailBinding.inflate(inflater, container, false)
+        _binding = RequestBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -75,7 +77,7 @@ class RequestDetailFragment : Fragment() {
         tabLayout = binding.requestDetailBodyTabs
         viewPager = binding.requestDetailBodyView
 
-        viewPager.adapter = RequestDetailViewPagerAdapter(this)
+        viewPager.adapter = RequestViewPagerAdapter(this)
 
 
         val tabs = BodyType.values().toList()
@@ -116,7 +118,7 @@ class RequestDetailFragment : Fragment() {
         })
 
         requestDetailViewModel.headers.observe(viewLifecycleOwner, { headers ->
-            (headersRecyclerView.adapter as ParamsListAdapter).submitList(headers)
+            (headersRecyclerView.adapter as HeadersListAdapter).submitList(headers)
         })
     }
 
@@ -145,7 +147,7 @@ class RequestDetailFragment : Fragment() {
     private fun setupListAdapters() {
         paramsRecyclerView = binding.requestDetailParamsRecyclerView
         paramsRecyclerView.layoutManager = LinearLayoutManager(context)
-        paramsRecyclerView.adapter = RequestDetailParamsListAdapter<RequestKeyValueParameter>(
+        paramsRecyclerView.adapter = RequestParamsListAdapter<RequestQueryParameter>(
             onParamCheckBoxToggle,
             { text, position ->
                 requestDetailViewModel.params.value!![position].key = text
@@ -162,7 +164,7 @@ class RequestDetailFragment : Fragment() {
 
         headersRecyclerView = binding.requestDetailHeadersRecyclerView
         headersRecyclerView.layoutManager = LinearLayoutManager(context)
-        headersRecyclerView.adapter = RequestDetailParamsListAdapter<RequestKeyValueParameter>(
+        headersRecyclerView.adapter = RequestParamsListAdapter<RequestHeader>(
             onHeaderCheckBoxToggle,
             { text, position ->
                 requestDetailViewModel.headers.value!![position].key = text

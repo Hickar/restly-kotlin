@@ -1,10 +1,10 @@
-package com.hickar.restly.ui.requestDetail
+package com.hickar.restly.ui.request
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.hickar.restly.repository.room.RequestRepository
 
-class RequestDetailViewModelFactory(
+class RequestViewModelFactory(
     private val repository: RequestRepository,
     private val requestId: Long
 ) : ViewModelProvider.Factory {

@@ -114,29 +114,38 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/request_detail_headers_recycler_view" />
 
-        <TextView
-            android:id="@+id/request_detail_body_header"
-            style="@style/Restly.RequestDetail.SectionHeaderText"
-            android:layout_marginTop="16dp"
-            android:text="@string/request_detail_body_header_text"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/request_detail_headers_add_button" />
-
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/request_detail_body_tabs"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/request_detail_body_section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="8dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/request_detail_body_header"
-            app:tabMode="scrollable" />
+            app:layout_constraintTop_toBottomOf="@+id/request_detail_headers_add_button">
 
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/request_detail_body_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/request_detail_body_tabs" />
+            <TextView
+                android:id="@+id/request_detail_body_header"
+                style="@style/Restly.RequestDetail.SectionHeaderText"
+                android:layout_marginTop="16dp"
+                android:text="@string/request_detail_body_header_text"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/request_detail_body_tabs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="8dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/request_detail_body_header"
+                app:tabMode="scrollable" />
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/request_detail_body_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="8dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/request_detail_body_tabs" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

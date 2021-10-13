@@ -77,9 +77,7 @@ class RequestDetailFragment : Fragment() {
     private fun setupViewPager() {
         tabLayout = binding.requestDetailBodyTabs
         viewPager = binding.requestDetailBodyView
-
         viewPager.adapter = RequestViewPagerAdapter(this)
-
 
         val tabs = BodyType.values().toList()
 
@@ -87,10 +85,7 @@ class RequestDetailFragment : Fragment() {
             tab.text = tabs[position].type
         }.attach()
 
-        val currentTabIndex = requestViewModel.getActiveTabPosition()
-        val currentTab = tabLayout.getTabAt(currentTabIndex)
-        tabLayout.selectTab(currentTab)
-        viewPager.setCurrentItem(currentTabIndex, false)
+        selectBodyTab(requestViewModel.getBodyTypeIndex())
     }
 
     private fun setupObservers() {
@@ -112,6 +107,21 @@ class RequestDetailFragment : Fragment() {
             binding.requestMethodLabel.text = MethodCardViewUtil.getShortMethodName(method)
             binding.requestDetailMethodBox.setCardBackgroundColor(cardBackgroundColor)
             binding.requestMethodLabel.setTextColor(cardTextColor)
+
+            when (method) {
+                RequestMethods.POST.method,
+                RequestMethods.PUT.method,
+                RequestMethods.PATCH.method,
+                RequestMethods.OPTIONS.method -> {
+                    selectBodyTab(TABS.FORMDATA.position)
+                    binding.requestDetailBodySection.visibility = View.VISIBLE
+                    requestViewModel.setBodyTypeIndex(TABS.FORMDATA.position)
+                }
+                else -> {
+                    binding.requestDetailBodySection.visibility = View.GONE
+                    requestViewModel.setBodyTypeIndex(TABS.NONE.position)
+                }
+            }
         })
 
         requestViewModel.params.observe(viewLifecycleOwner, { params ->
@@ -132,7 +142,7 @@ class RequestDetailFragment : Fragment() {
 
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
-                requestViewModel.setActiveTabPosition(tab!!.position)
+                requestViewModel.setBodyTypeIndex(tab!!.position)
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
@@ -200,6 +210,12 @@ class RequestDetailFragment : Fragment() {
         }
     }
 
+    private fun selectBodyTab(position: Int) {
+        val currentTab = tabLayout.getTabAt(position)
+        tabLayout.selectTab(currentTab)
+        viewPager.setCurrentItem(position, false)
+    }
+
     private val onParamCheckBoxToggle: (Int) -> Unit = { position ->
         requestViewModel.toggleParam(position)
     }
@@ -229,9 +245,10 @@ class RequestDetailFragment : Fragment() {
                 }
             }
             R.id.request_menu_rename_button -> {
-                val nameEditDialog = EditTextDialog(R.string.rename_dialog_title, requestViewModel.name.value!!) { newName ->
-                    requestViewModel.setName(newName)
-                }
+                val nameEditDialog =
+                    EditTextDialog(R.string.rename_dialog_title, requestViewModel.name.value!!) { newName ->
+                        requestViewModel.setName(newName)
+                    }
                 nameEditDialog.show(parentFragmentManager, "Rename")
                 true
             }

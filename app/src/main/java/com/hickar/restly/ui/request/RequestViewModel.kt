@@ -111,22 +111,23 @@ class RequestViewModel(
         multipartData.value = multipartData.value
     }
 
-    fun getActiveTabPosition(): Int {
+    fun getBodyTypeIndex(): Int {
         return when(bodyType.value) {
             BodyType.FORMDATA -> TABS.FORMDATA.position
             BodyType.MULTIPART -> TABS.MULTIPART.position
             BodyType.RAW -> TABS.RAW.position
             BodyType.BINARY -> TABS.BINARY.position
-            else -> TABS.FORMDATA.position
+            else -> TABS.NONE.position
         }
     }
 
-    fun setActiveTabPosition(position: Int) {
+    fun setBodyTypeIndex(position: Int) {
         bodyType.value = when (position) {
-            0 -> BodyType.FORMDATA
-            1 -> BodyType.MULTIPART
-            2 -> BodyType.RAW
-            3 -> BodyType.BINARY
+            TABS.FORMDATA.position -> BodyType.FORMDATA
+            TABS.MULTIPART.position -> BodyType.MULTIPART
+            TABS.RAW.position -> BodyType.RAW
+            TABS.BINARY.position -> BodyType.BINARY
+            TABS.NONE.position -> BodyType.NONE
             else -> BodyType.NONE
         }
     }
@@ -171,5 +172,6 @@ internal enum class TABS(val position: Int) {
     FORMDATA(0),
     MULTIPART(1),
     RAW(2),
-    BINARY(3)
+    BINARY(3),
+    NONE(4)
 }

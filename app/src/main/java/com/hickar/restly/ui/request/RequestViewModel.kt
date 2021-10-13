@@ -8,7 +8,7 @@ import com.hickar.restly.models.*
 import com.hickar.restly.repository.room.RequestRepository
 import kotlinx.coroutines.runBlocking
 
-class RequestDetailViewModel(
+class RequestViewModel(
     private val repository: RequestRepository,
     private val currentRequestId: Long
 ) : ViewModel() {
@@ -158,6 +158,11 @@ class RequestDetailViewModel(
 
     fun setRawBodyMimeType(mimeType: String) {
         rawData.value!!.mimeType = mimeType
+        rawData.value = rawData.value
+    }
+
+    fun setRawBodyText(textData: String) {
+        rawData.value!!.text = textData
         rawData.value = rawData.value
     }
 }

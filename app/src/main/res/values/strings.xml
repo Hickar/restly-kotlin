@@ -41,4 +41,7 @@
     <string name="rename_dialog_title">Rename</string>
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_ok">OK</string>
+
+    <string name="edit_text_dialog_title">Body Data</string>
+    <string name="edit_text_menu_done_button">Done</string>
 </resources>

@@ -36,5 +36,21 @@
         <argument
             android:name="requestId"
             app:argType="long" />
+        <action
+            android:id="@+id/action_requestDetailFragment_to_requestBodyEditRawFragment"
+            app:destination="@id/requestBodyEditRawFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+    <fragment
+        android:id="@+id/requestBodyEditRawFragment"
+        android:name="com.hickar.restly.ui.requestBody.RequestBodyEditRawFragment"
+        android:label="RequestBodyEditRawFragment" >
+        <argument
+            android:name="textData"
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
 </navigation>

@@ -10,13 +10,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.hickar.restly.databinding.RequestBodyMultipartBinding
 import com.hickar.restly.models.RequestMultipartData
-import com.hickar.restly.ui.request.RequestDetailViewModel
 import com.hickar.restly.ui.request.RequestParamsListAdapter
+import com.hickar.restly.ui.request.RequestViewModel
 import com.hickar.restly.utils.SwipeDeleteCallback
 
 typealias MultipartListAdapter = RequestParamsListAdapter<RequestMultipartData>
 
-class RequestDetailBodyFormDataFragment(private val viewModel: RequestDetailViewModel) : Fragment() {
+class RequestDetailBodyFormDataFragment(private val viewModel: RequestViewModel) : Fragment() {
     private var _binding: RequestBodyMultipartBinding? = null
     private val binding get() = _binding!!
 

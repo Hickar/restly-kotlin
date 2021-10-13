@@ -6,12 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.hickar.restly.R
 import com.hickar.restly.consts.MimeTypes
 import com.hickar.restly.databinding.RequestBodyRawBinding
-import com.hickar.restly.ui.request.RequestDetailViewModel
+import com.hickar.restly.ui.request.RequestDetailFragmentDirections
+import com.hickar.restly.ui.request.RequestViewModel
 
-class RequestBodyRawFragment(private val viewModel: RequestDetailViewModel) : Fragment() {
+class RequestBodyRawFragment(private val viewModel: RequestViewModel) : Fragment() {
     private var _binding: RequestBodyRawBinding? = null
     private val binding get() = _binding!!
 
@@ -30,18 +32,24 @@ class RequestBodyRawFragment(private val viewModel: RequestDetailViewModel) : Fr
 
     private fun setupObservers() {
         viewModel.rawData.observe(viewLifecycleOwner) { rawData ->
-            binding.requestDetailBodyRawContentTypeSelectedText.text = rawData.mimeType
+            binding.requestBodyRawContentTypeSelectedText.text = rawData.mimeType
         }
     }
 
     private fun setupEventListeners() {
-        binding.requestDetailBodyRawButton.setOnClickListener {
+        binding.requestBodyRawSelectTypeButton.setOnClickListener {
             popupMenu.show()
+        }
+
+        binding.requestBodyRawEditButton.setOnClickListener {
+            val rawData = viewModel.rawData.value?.text
+            val action = RequestDetailFragmentDirections.actionRequestDetailFragmentToRequestBodyEditRawFragment(rawData)
+            findNavController().navigate(action)
         }
     }
 
     private fun setupPopupMenu() {
-        popupMenu = PopupMenu(requireContext(), binding.requestDetailBodyRawButton)
+        popupMenu = PopupMenu(requireContext(), binding.requestBodyRawSelectTypeButton)
         popupMenu.inflate(R.menu.request_content_type_menu)
 
         popupMenu.setOnMenuItemClickListener { item ->

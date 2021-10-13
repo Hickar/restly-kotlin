@@ -12,9 +12,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import com.hickar.restly.databinding.RequestBodyBinaryBinding
 import com.hickar.restly.models.RequestBinaryData
-import com.hickar.restly.ui.request.RequestDetailViewModel
+import com.hickar.restly.ui.request.RequestViewModel
 
-class RequestBodyBinaryFragment(private val viewModel: RequestDetailViewModel) : Fragment() {
+class RequestBodyBinaryFragment(private val viewModel: RequestViewModel) : Fragment() {
     private var _binding: RequestBodyBinaryBinding? = null
     private val binding get() = _binding!!
 

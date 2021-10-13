@@ -9,9 +9,9 @@ class RequestViewModelFactory(
     private val requestId: Long
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(RequestDetailViewModel::class.java)) {
+        if (modelClass.isAssignableFrom(RequestViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return RequestDetailViewModel(repository, requestId) as T
+            return RequestViewModel(repository, requestId) as T
         }
         throw IllegalArgumentException("Unknown ViewModel subclass provided")
     }

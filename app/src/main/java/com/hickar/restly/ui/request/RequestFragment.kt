@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -37,7 +37,7 @@ class RequestDetailFragment : Fragment() {
     private var _binding: RequestBinding? = null
     private val binding get() = _binding!!
 
-    val requestDetailViewModel: RequestDetailViewModel by viewModels {
+    val requestViewModel: RequestViewModel by activityViewModels {
         RequestViewModelFactory(
             (activity?.application as RestlyApplication).repository,
             arguments?.get("requestId") as Long
@@ -87,7 +87,7 @@ class RequestDetailFragment : Fragment() {
             tab.text = tabs[position].type
         }.attach()
 
-        val currentTabIndex = requestDetailViewModel.getActiveTabPosition()
+        val currentTabIndex = requestViewModel.getActiveTabPosition()
         val currentTab = tabLayout.getTabAt(currentTabIndex)
         tabLayout.selectTab(currentTab)
         viewPager.setCurrentItem(currentTabIndex, false)
@@ -95,13 +95,13 @@ class RequestDetailFragment : Fragment() {
 
     private fun setupObservers() {
         val editableFactory = Editable.Factory.getInstance()
-        binding.requestDetailUrlInputText.text = editableFactory.newEditable(requestDetailViewModel.url.value)
+        binding.requestDetailUrlInputText.text = editableFactory.newEditable(requestViewModel.url.value)
 
-        requestDetailViewModel.name.observe(viewLifecycleOwner, { name ->
+        requestViewModel.name.observe(viewLifecycleOwner, { name ->
             binding.requestNameLabel.text = name
         })
 
-        requestDetailViewModel.method.observe(viewLifecycleOwner, { method ->
+        requestViewModel.method.observe(viewLifecycleOwner, { method ->
             val cardBackgroundColorId = MethodCardViewUtil.getBackgroundColorId(method)
             val cardTextColorId = MethodCardViewUtil.getTextColorId(method)
 
@@ -114,11 +114,11 @@ class RequestDetailFragment : Fragment() {
             binding.requestMethodLabel.setTextColor(cardTextColor)
         })
 
-        requestDetailViewModel.params.observe(viewLifecycleOwner, { params ->
+        requestViewModel.params.observe(viewLifecycleOwner, { params ->
             (paramsRecyclerView.adapter as ParamsListAdapter).submitList(params)
         })
 
-        requestDetailViewModel.headers.observe(viewLifecycleOwner, { headers ->
+        requestViewModel.headers.observe(viewLifecycleOwner, { headers ->
             (headersRecyclerView.adapter as HeadersListAdapter).submitList(headers)
         })
     }
@@ -127,12 +127,12 @@ class RequestDetailFragment : Fragment() {
         binding.requestDetailParamsAddButton.setOnClickListener { onAddQueryParameter() }
         binding.requestDetailHeadersAddButton.setOnClickListener { onAddHeader() }
         binding.requestDetailUrlInputText.doAfterTextChanged { text ->
-            requestDetailViewModel.url.value = text.toString()
+            requestViewModel.url.value = text.toString()
         }
 
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
-                requestDetailViewModel.setActiveTabPosition(tab!!.position)
+                requestViewModel.setActiveTabPosition(tab!!.position)
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
@@ -151,14 +151,14 @@ class RequestDetailFragment : Fragment() {
         paramsRecyclerView.adapter = RequestParamsListAdapter<RequestQueryParameter>(
             onParamCheckBoxToggle,
             { text, position ->
-                requestDetailViewModel.params.value!![position].key = text
+                requestViewModel.params.value!![position].key = text
             },
             { text, position ->
-                requestDetailViewModel.params.value!![position].value = text
+                requestViewModel.params.value!![position].value = text
             }
         )
         val paramsTouchHelper = ItemTouchHelper(SwipeDeleteCallback(requireContext()) { position ->
-            requestDetailViewModel.deleteQueryParameter(position)
+            requestViewModel.deleteQueryParameter(position)
         })
         paramsTouchHelper.attachToRecyclerView(paramsRecyclerView)
 
@@ -168,14 +168,14 @@ class RequestDetailFragment : Fragment() {
         headersRecyclerView.adapter = RequestParamsListAdapter<RequestHeader>(
             onHeaderCheckBoxToggle,
             { text, position ->
-                requestDetailViewModel.headers.value!![position].key = text
+                requestViewModel.headers.value!![position].key = text
             },
             { text, position ->
-                requestDetailViewModel.headers.value!![position].value = text
+                requestViewModel.headers.value!![position].value = text
             }
         )
         val headersTouchHelper = ItemTouchHelper(SwipeDeleteCallback(requireContext()) { position ->
-            requestDetailViewModel.deleteHeader(position)
+            requestViewModel.deleteHeader(position)
         })
         headersTouchHelper.attachToRecyclerView(headersRecyclerView)
     }
@@ -195,43 +195,42 @@ class RequestDetailFragment : Fragment() {
                 R.id.method_popup_option_delete -> RequestMethods.DELETE
                 else -> RequestMethods.GET
             }
-            requestDetailViewModel.setMethod(method.toString())
+            requestViewModel.setMethod(method.toString())
             true
         }
     }
 
     private val onParamCheckBoxToggle: (Int) -> Unit = { position ->
-        requestDetailViewModel.toggleParam(position)
+        requestViewModel.toggleParam(position)
     }
 
     private val onHeaderCheckBoxToggle: (Int) -> Unit = { position ->
-        requestDetailViewModel.toggleHeader(position)
+        requestViewModel.toggleHeader(position)
     }
 
     private fun onAddQueryParameter() {
-        requestDetailViewModel.addQueryParameter()
+        requestViewModel.addQueryParameter()
     }
 
     private fun onAddHeader() {
-        requestDetailViewModel.addHeader()
+        requestViewModel.addHeader()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.request_action_menu, menu)
     }
 
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.request_menu_save_button -> {
                 runBlocking {
-                    requestDetailViewModel.saveRequest()
+                    requestViewModel.saveRequest()
                     return@runBlocking true
                 }
             }
             R.id.request_menu_rename_button -> {
-                val nameEditDialog = EditTextDialog(R.string.rename_dialog_title, requestDetailViewModel.name.value!!) { newName ->
-                    requestDetailViewModel.setName(newName)
+                val nameEditDialog = EditTextDialog(R.string.rename_dialog_title, requestViewModel.name.value!!) { newName ->
+                    requestViewModel.setName(newName)
                 }
                 nameEditDialog.show(parentFragmentManager, "Rename")
                 true
@@ -248,6 +247,7 @@ class RequestDetailFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
+        activity?.viewModelStore?.clear()
         _binding = null
     }
 }

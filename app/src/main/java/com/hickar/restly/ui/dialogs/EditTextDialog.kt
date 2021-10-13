@@ -2,11 +2,9 @@ package com.hickar.restly.ui.dialogs
 
 import android.app.AlertDialog
 import android.app.Dialog
-import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Editable
 import android.widget.EditText
-import androidx.core.view.marginStart
 import androidx.fragment.app.DialogFragment
 import com.hickar.restly.R
 

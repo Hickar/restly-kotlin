@@ -12,13 +12,15 @@ import kotlinx.coroutines.runBlocking
 import okhttp3.Call
 import okhttp3.Response
 import java.io.IOException
+import java.net.URI
 
 class RequestViewModel(
     private val repository: RequestRepository,
     private val currentRequestId: Long
 ) : ViewModel(), okhttp3.Callback {
 
-    private var currentRequest: Request = Request()
+    private lateinit var currentRequest: Request
+
     val name: MutableLiveData<String> = MutableLiveData()
     val url: MutableLiveData<String> = MutableLiveData()
     val method: MutableLiveData<String> = MutableLiveData()
@@ -101,8 +103,8 @@ class RequestViewModel(
         formData.value = formData.value
     }
 
-    fun addMultipartData() {
-        multipartData.value!!.add(RequestMultipartData())
+    fun addMultipartData(type: String) {
+        multipartData.value!!.add(RequestMultipartData(type = type))
         multipartData.value = multipartData.value
     }
 
@@ -244,6 +246,11 @@ class RequestViewModel(
         } catch (exception: SQLiteException) {
             Log.d("ViewModel insert error", exception.toString())
         }
+    }
+
+    fun setMultipartFileBody(position: Int, uri: String) {
+        multipartData.value!![position].uri = uri
+        multipartData.value = multipartData.value
     }
 
     fun setBinaryBody(fileMetadata: RequestBinaryData) {

@@ -113,7 +113,6 @@ class RequestDetailFragment : Fragment() {
                 RequestMethods.PUT.method,
                 RequestMethods.PATCH.method,
                 RequestMethods.OPTIONS.method -> {
-                    selectBodyTab(TABS.FORMDATA.position)
                     binding.requestDetailBodySection.visibility = View.VISIBLE
                     requestViewModel.setBodyTypeIndex(TABS.FORMDATA.position)
                 }

@@ -44,4 +44,6 @@
 
     <string name="edit_text_dialog_title">Body Data</string>
     <string name="edit_text_menu_done_button">Done</string>
+    <string name="request_multipart_type_menu_option_text">Text</string>
+    <string name="request_multipart_type_menu_option_file">File</string>
 </resources>

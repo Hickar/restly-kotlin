@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_centerVertical="true"
+    android:orientation="horizontal"
+    android:paddingVertical="4dp">
+
+    <com.google.android.material.checkbox.MaterialCheckBox
+        android:id="@+id/request_detail_params_item_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:layout_marginStart="-6dp"
+        android:minWidth="0dp"
+        android:minHeight="0dp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/request_multipart_item_key_text_layout"
+        style="@style/Restly.RequestDetail.TextInputSecondary"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="8dp"
+        android:layout_weight=".40"
+        android:weightSum=".40"
+        app:hintEnabled="false"
+        app:errorEnabled="false">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/request_multipart_item_key_text_input"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="0dp"
+            android:hint="@string/request_detail_key_text"
+            android:inputType="text" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/request_multipart_item_value_text_layout"
+        style="@style/Restly.RequestDetail.TextInputSecondary"
+        android:layout_width="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_weight=".40"
+        app:hintEnabled="false"
+        app:errorEnabled="false">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/request_multipart_item_value_text_input"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="0dp"
+            android:hint="@string/request_detail_value_text"
+            android:inputType="text"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/request_multipart_select_file_label"
+        style="@style/Restly.Request.BodyTextAccentLabel"
+        android:text="@string/request_detail_body_binary_add_label_text"
+        android:width="0dp"
+        android:textAlignment="textEnd"
+        android:layout_weight=".40"
+        android:layout_marginStart="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</LinearLayout>

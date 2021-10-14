@@ -1,5 +1,6 @@
 package com.hickar.restly.services
 
+import android.webkit.MimeTypeMap
 import com.hickar.restly.models.*
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
@@ -8,6 +9,7 @@ import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
+import java.net.URI
 
 class NetworkClient {
     private fun requestRaw(url: String, method: String, headers: List<RequestHeader>, body: RequestBody?, callback: Callback) {
@@ -57,7 +59,9 @@ class NetworkClient {
 
     @JvmName("post_binary")
     fun post(url: String, headers: List<RequestHeader>, body: RequestBinaryData, callback: Callback) {
-        val file = File(body.uri).asRequestBody()
+        val extension = MimeTypeMap.getFileExtensionFromUrl(body.name)
+        val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
+        val file = File(URI(body.uri)).asRequestBody(mimeType!!.toMediaType())
 
         requestRaw(url, "POST", headers, file, callback)
     }
@@ -92,7 +96,8 @@ class NetworkClient {
 
     @JvmName("put_binary")
     fun put(url: String, headers: List<RequestHeader>, body: RequestBinaryData, callback: Callback) {
-        val file = File(body.uri).asRequestBody()
+        val mimeType = MimeTypeMap.getFileExtensionFromUrl(url)
+        val file = File(body.uri).asRequestBody(mimeType.toMediaType())
 
         requestRaw(url, "PUT", headers, file, callback)
     }
@@ -127,7 +132,8 @@ class NetworkClient {
 
     @JvmName("patch_binary")
     fun patch(url: String, headers: List<RequestHeader>, body: RequestBinaryData, callback: Callback) {
-        val file = File(body.uri).asRequestBody()
+        val mimeType = MimeTypeMap.getFileExtensionFromUrl(url)
+        val file = File(body.uri).asRequestBody(mimeType.toMediaType())
 
         requestRaw(url, "PATCH", headers, file, callback)
     }
@@ -162,7 +168,8 @@ class NetworkClient {
 
     @JvmName("options_binary")
     fun options(url: String, headers: List<RequestHeader>, body: RequestBinaryData, callback: Callback) {
-        val file = File(body.uri).asRequestBody()
+        val mimeType = MimeTypeMap.getFileExtensionFromUrl(url)
+        val file = File(body.uri).asRequestBody(mimeType.toMediaType())
 
         requestRaw(url, "OPTIONS", headers, file, callback)
     }

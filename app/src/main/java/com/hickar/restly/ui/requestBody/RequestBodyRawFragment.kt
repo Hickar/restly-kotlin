@@ -46,11 +46,6 @@ class RequestBodyRawFragment(private val viewModel: RequestViewModel) : Fragment
             val action = RequestDetailFragmentDirections.actionRequestDetailFragmentToRequestBodyEditRawFragment(rawData)
             findNavController().navigate(action)
         }
-    }
-
-    private fun setupPopupMenu() {
-        popupMenu = PopupMenu(requireContext(), binding.requestBodyRawSelectTypeButton)
-        popupMenu.inflate(R.menu.request_content_type_menu)
 
         popupMenu.setOnMenuItemClickListener { item ->
             val mimeType = when (item.itemId) {
@@ -63,5 +58,10 @@ class RequestBodyRawFragment(private val viewModel: RequestViewModel) : Fragment
             viewModel.setRawBodyMimeType(mimeType.toString())
             true
         }
+    }
+
+    private fun setupPopupMenu() {
+        popupMenu = PopupMenu(requireContext(), binding.requestBodyRawSelectTypeButton)
+        popupMenu.inflate(R.menu.request_content_type_menu)
     }
 }

@@ -44,7 +44,7 @@ class RequestBodyBinaryFragment(private val viewModel: RequestViewModel) : Fragm
                     "Unknown"
                 }
 
-                return RequestBinaryData(name, size, uri.toString())
+                return RequestBinaryData(name, size, uri.path!!)
             }
         }
 

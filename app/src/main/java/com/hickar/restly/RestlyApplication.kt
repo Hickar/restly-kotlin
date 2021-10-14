@@ -4,6 +4,7 @@ import android.app.Application
 import com.hickar.restly.mappers.RequestMapper
 import com.hickar.restly.repository.room.AppDatabase
 import com.hickar.restly.repository.room.RequestRepository
+import com.hickar.restly.services.NetworkClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 

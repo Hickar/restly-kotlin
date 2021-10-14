@@ -252,13 +252,19 @@ class RequestDetailFragment : Fragment() {
                 nameEditDialog.show(parentFragmentManager, "Rename")
                 true
             }
+            R.id.request_menu_send_button -> {
+                runBlocking {
+                    requestViewModel.saveRequest()
+                    requestViewModel.sendRequest()
+                    return@runBlocking true
+                }
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
 
     override fun onDetach() {
         KeyboardUtil.hideKeyboard(requireActivity())
-        Log.d("DetailFragment", "DETACH")
         super.onDetach()
     }
 

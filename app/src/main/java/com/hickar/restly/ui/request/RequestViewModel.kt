@@ -4,14 +4,19 @@ import android.database.sqlite.SQLiteException
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.hickar.restly.consts.RequestMethods
 import com.hickar.restly.models.*
 import com.hickar.restly.repository.room.RequestRepository
+import com.hickar.restly.services.NetworkClient
 import kotlinx.coroutines.runBlocking
+import okhttp3.Call
+import okhttp3.Response
+import java.io.IOException
 
 class RequestViewModel(
     private val repository: RequestRepository,
     private val currentRequestId: Long
-) : ViewModel() {
+) : ViewModel(), okhttp3.Callback {
 
     private var currentRequest: Request = Request()
     val name: MutableLiveData<String> = MutableLiveData()
@@ -112,7 +117,7 @@ class RequestViewModel(
     }
 
     fun getBodyTypeIndex(): Int {
-        return when(bodyType.value) {
+        return when (bodyType.value) {
             BodyType.FORMDATA -> TABS.FORMDATA.position
             BodyType.MULTIPART -> TABS.MULTIPART.position
             BodyType.RAW -> TABS.RAW.position
@@ -134,6 +139,94 @@ class RequestViewModel(
 
     fun setMethod(newMethod: String) {
         method.value = newMethod
+    }
+
+    fun sendRequest() {
+        val client = NetworkClient.getInstance()
+
+        runBlocking {
+            when (method.value) {
+                RequestMethods.GET.method -> {
+                    client.get(url.value!!, headers.value!!, this@RequestViewModel)
+                }
+                RequestMethods.POST.method -> {
+                    when (bodyType.value!!) {
+                        BodyType.FORMDATA -> {
+                            client.post(url.value!!, headers.value!!, formData.value!!, this@RequestViewModel)
+                        }
+                        BodyType.MULTIPART -> {
+                            client.post(url.value!!, headers.value!!, multipartData.value!!, this@RequestViewModel)
+                        }
+                        BodyType.RAW -> {
+                            client.post(url.value!!, headers.value!!, rawData.value!!, this@RequestViewModel)
+                        }
+                        BodyType.BINARY -> {
+                            client.post(url.value!!, headers.value!!, binaryData.value!!, this@RequestViewModel)
+                        }
+                        else -> throw IllegalStateException("BodyType is missing")
+                    }
+                }
+                RequestMethods.PUT.method -> {
+                    when (bodyType.value!!) {
+                        BodyType.FORMDATA -> {
+                            client.put(url.value!!, headers.value!!, formData.value!!, this@RequestViewModel)
+                        }
+                        BodyType.MULTIPART -> {
+                            client.put(url.value!!, headers.value!!, multipartData.value!!, this@RequestViewModel)
+                        }
+                        BodyType.RAW -> {
+                            client.put(url.value!!, headers.value!!, rawData.value!!, this@RequestViewModel)
+                        }
+                        BodyType.BINARY -> {
+                            client.put(url.value!!, headers.value!!, binaryData.value!!, this@RequestViewModel)
+                        }
+                        else -> throw IllegalStateException("BodyType is missing")
+                    }
+                }
+                RequestMethods.PATCH.method -> {
+                    when (bodyType.value!!) {
+                        BodyType.FORMDATA -> {
+                            client.patch(url.value!!, headers.value!!, formData.value!!, this@RequestViewModel)
+                        }
+                        BodyType.MULTIPART -> {
+                            client.patch(url.value!!, headers.value!!, multipartData.value!!, this@RequestViewModel)
+                        }
+                        BodyType.RAW -> {
+                            client.patch(url.value!!, headers.value!!, rawData.value!!, this@RequestViewModel)
+                        }
+                        BodyType.BINARY -> {
+                            client.patch(url.value!!, headers.value!!, binaryData.value!!, this@RequestViewModel)
+                        }
+                        else -> throw IllegalStateException("BodyType is missing")
+                    }
+                }
+                RequestMethods.OPTIONS.method -> {
+                    when (bodyType.value!!) {
+                        BodyType.FORMDATA -> {
+                            client.options(url.value!!, headers.value!!, formData.value!!, this@RequestViewModel)
+                        }
+                        BodyType.MULTIPART -> {
+                            client.options(url.value!!, headers.value!!, multipartData.value!!, this@RequestViewModel)
+                        }
+                        BodyType.RAW -> {
+                            client.options(url.value!!, headers.value!!, rawData.value!!, this@RequestViewModel)
+                        }
+                        BodyType.BINARY -> {
+                            client.options(url.value!!, headers.value!!, binaryData.value!!, this@RequestViewModel)
+                        }
+                        else -> throw IllegalStateException("BodyType is missing")
+                    }
+                }
+                RequestMethods.HEAD.method -> {
+                    client.head(url.value!!, headers.value!!, this@RequestViewModel)
+                }
+                RequestMethods.DELETE.method -> {
+                    client.delete(url.value!!, headers.value!!, this@RequestViewModel)
+                }
+                else -> null
+            }
+        }
+
     }
 
     suspend fun saveRequest() {
@@ -165,6 +258,14 @@ class RequestViewModel(
     fun setRawBodyText(textData: String) {
         rawData.value!!.text = textData
         rawData.value = rawData.value
+    }
+
+    override fun onFailure(call: Call, e: IOException) {
+        e.printStackTrace()
+    }
+
+    override fun onResponse(call: Call, response: Response) {
+        Log.d("RESPONSE", response.body!!.string())
     }
 }
 

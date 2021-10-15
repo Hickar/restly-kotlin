@@ -1,8 +1,6 @@
 package com.hickar.restly.ui.request
 
 import android.os.Bundle
-import android.text.Editable
-import android.util.Log
 import android.view.*
 import android.widget.PopupMenu
 import androidx.appcompat.app.AppCompatActivity
@@ -20,6 +18,9 @@ import com.hickar.restly.R
 import com.hickar.restly.RestlyApplication
 import com.hickar.restly.consts.RequestMethods
 import com.hickar.restly.databinding.RequestBinding
+import com.hickar.restly.extensions.hide
+import com.hickar.restly.extensions.show
+import com.hickar.restly.extensions.toEditable
 import com.hickar.restly.models.BodyType
 import com.hickar.restly.models.RequestHeader
 import com.hickar.restly.models.RequestQueryParameter
@@ -75,8 +76,8 @@ class RequestDetailFragment : Fragment() {
     }
 
     private fun setupViewPager() {
-        tabLayout = binding.requestDetailBodyTabs
-        viewPager = binding.requestDetailBodyView
+        tabLayout = binding.requestBodyTabs
+        viewPager = binding.requestBodyView
         viewPager.adapter = RequestViewPagerAdapter(this)
 
         val tabs = BodyType.values().toList()
@@ -89,8 +90,7 @@ class RequestDetailFragment : Fragment() {
     }
 
     private fun setupObservers() {
-        val editableFactory = Editable.Factory.getInstance()
-        binding.requestDetailUrlInputText.text = editableFactory.newEditable(requestViewModel.url.value)
+        binding.requestUrlInputField.text = requestViewModel.url.value?.toEditable()
 
         requestViewModel.name.observe(viewLifecycleOwner, { name ->
             binding.requestNameLabel.text = name
@@ -105,7 +105,7 @@ class RequestDetailFragment : Fragment() {
             val cardTextColor = ResourcesCompat.getColor(resources, cardTextColorId, null)
 
             binding.requestMethodLabel.text = MethodCardViewUtil.getShortMethodName(method)
-            binding.requestDetailMethodBox.setCardBackgroundColor(cardBackgroundColor)
+            binding.requestMethodBox.setCardBackgroundColor(cardBackgroundColor)
             binding.requestMethodLabel.setTextColor(cardTextColor)
 
             when (method) {
@@ -113,11 +113,11 @@ class RequestDetailFragment : Fragment() {
                 RequestMethods.PUT.method,
                 RequestMethods.PATCH.method,
                 RequestMethods.OPTIONS.method -> {
-                    binding.requestDetailBodySection.visibility = View.VISIBLE
+                    binding.requestSectionBody.show()
                     requestViewModel.setBodyTypeIndex(TABS.FORMDATA.position)
                 }
                 else -> {
-                    binding.requestDetailBodySection.visibility = View.GONE
+                    binding.requestSectionBody.hide()
                     requestViewModel.setBodyTypeIndex(TABS.NONE.position)
                 }
             }
@@ -133,9 +133,9 @@ class RequestDetailFragment : Fragment() {
     }
 
     private fun setupEventListeners() {
-        binding.requestDetailParamsAddButton.setOnClickListener { onAddQueryParameter() }
-        binding.requestDetailHeadersAddButton.setOnClickListener { onAddHeader() }
-        binding.requestDetailUrlInputText.doAfterTextChanged { text ->
+        binding.requestSectionParamsAddButton.setOnClickListener { onAddQueryParameter() }
+        binding.requestSectionHeadersAddButton.setOnClickListener { onAddHeader() }
+        binding.requestUrlInputField.doAfterTextChanged { text ->
             requestViewModel.url.value = text.toString()
         }
 
@@ -149,13 +149,13 @@ class RequestDetailFragment : Fragment() {
             override fun onTabReselected(tab: TabLayout.Tab?) {}
         })
 
-        binding.requestDetailMethodBox.setOnClickListener {
+        binding.requestMethodBox.setOnClickListener {
             methodPopupMenu.show()
         }
     }
 
     private fun setupListAdapters() {
-        paramsRecyclerView = binding.requestDetailParamsRecyclerView
+        paramsRecyclerView = binding.requestSectionParamsList
         paramsRecyclerView.layoutManager = LinearLayoutManager(context)
         paramsRecyclerView.adapter = RequestParamsListAdapter<RequestQueryParameter>(
             onParamCheckBoxToggle,
@@ -172,7 +172,7 @@ class RequestDetailFragment : Fragment() {
         paramsTouchHelper.attachToRecyclerView(paramsRecyclerView)
 
 
-        headersRecyclerView = binding.requestDetailHeadersRecyclerView
+        headersRecyclerView = binding.requestSectionHeadersList
         headersRecyclerView.layoutManager = LinearLayoutManager(context)
         headersRecyclerView.adapter = RequestParamsListAdapter<RequestHeader>(
             onHeaderCheckBoxToggle,
@@ -190,7 +190,7 @@ class RequestDetailFragment : Fragment() {
     }
 
     private fun setupPopupMenus() {
-        methodPopupMenu = PopupMenu(requireContext(), binding.requestDetailMethodBox)
+        methodPopupMenu = PopupMenu(requireContext(), binding.requestMethodBox)
         methodPopupMenu.inflate(R.menu.request_method_popup_menu)
 
         methodPopupMenu.setOnMenuItemClickListener { item ->
@@ -213,6 +213,7 @@ class RequestDetailFragment : Fragment() {
         val currentTab = tabLayout.getTabAt(position)
         tabLayout.selectTab(currentTab)
         viewPager.setCurrentItem(position, false)
+        requestViewModel.setBodyTypeIndex(position)
     }
 
     private val onParamCheckBoxToggle: (Int) -> Unit = { position ->

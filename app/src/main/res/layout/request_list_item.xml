@@ -8,7 +8,7 @@
 
 
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/request_method_box"
+        android:id="@+id/request_list_item_method_box"
         android:layout_width="40dp"
         android:layout_height="20dp"
         style="@style/Restly.Request.MethodBox"
@@ -20,7 +20,7 @@
             android:layout_height="match_parent">
 
             <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/request_method_label"
+                android:id="@+id/request_list_item_method_label"
                 style="@style/Restly.Request.MethodText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
@@ -28,19 +28,19 @@
     </com.google.android.material.card.MaterialCardView>
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/request_name_label"
+        android:id="@+id/request_list_item_name_label"
         style="@style/Restly.Request.NameText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toEndOf="@+id/request_method_box"
-        app:layout_constraintTop_toTopOf="@+id/request_method_box" />
+        app:layout_constraintStart_toEndOf="@+id/request_list_item_method_box"
+        app:layout_constraintTop_toTopOf="@+id/request_list_item_method_box" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/request_url_label"
+        android:id="@+id/request_list_item_url_label"
         style="@style/Restly.Request.UrlText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@+id/request_name_label"
-        app:layout_constraintTop_toBottomOf="@+id/request_name_label" />
+        app:layout_constraintStart_toStartOf="@+id/request_list_item_name_label"
+        app:layout_constraintTop_toBottomOf="@+id/request_list_item_name_label" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

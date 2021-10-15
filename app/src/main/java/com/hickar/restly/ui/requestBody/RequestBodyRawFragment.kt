@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.hickar.restly.R
 import com.hickar.restly.consts.MimeTypes
@@ -13,10 +14,11 @@ import com.hickar.restly.databinding.RequestBodyRawBinding
 import com.hickar.restly.ui.request.RequestDetailFragmentDirections
 import com.hickar.restly.ui.request.RequestViewModel
 
-class RequestBodyRawFragment(private val viewModel: RequestViewModel) : Fragment() {
+class RequestBodyRawFragment : Fragment() {
     private var _binding: RequestBodyRawBinding? = null
     private val binding get() = _binding!!
 
+    private val viewModel: RequestViewModel by activityViewModels()
     private lateinit var popupMenu: PopupMenu
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -32,7 +34,7 @@ class RequestBodyRawFragment(private val viewModel: RequestViewModel) : Fragment
 
     private fun setupObservers() {
         viewModel.rawData.observe(viewLifecycleOwner) { rawData ->
-            binding.requestBodyRawContentTypeSelectedText.text = rawData.mimeType
+            binding.requestBodyRawContentTypeSelectedLabel.text = rawData.mimeType
         }
     }
 

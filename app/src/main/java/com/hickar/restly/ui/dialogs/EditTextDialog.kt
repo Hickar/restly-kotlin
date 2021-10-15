@@ -3,10 +3,10 @@ package com.hickar.restly.ui.dialogs
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
-import android.text.Editable
 import android.widget.EditText
 import androidx.fragment.app.DialogFragment
 import com.hickar.restly.R
+import com.hickar.restly.extensions.toEditable
 
 class EditTextDialog(
     private val titleId: Int,
@@ -16,10 +16,8 @@ class EditTextDialog(
     private lateinit var textInput: EditText
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val editableFactory = Editable.Factory()
-
         textInput = EditText(activity)
-        textInput.text = editableFactory.newEditable(textInputValue)
+        textInput.text = textInputValue.toEditable()
 
         val builder = AlertDialog.Builder(activity)
             .setTitle(titleId)

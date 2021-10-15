@@ -1,6 +1,5 @@
 package com.hickar.restly.ui.request
 
-import android.text.Editable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.widget.doAfterTextChanged
@@ -9,6 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.hickar.restly.databinding.RequestParamsItemBinding
 import com.hickar.restly.databinding.RequestParamsItemBinding.inflate
+import com.hickar.restly.extensions.toEditable
 import com.hickar.restly.models.RequestKeyValueData
 
 class RequestParamsListAdapter<T : RequestKeyValueData>(
@@ -29,15 +29,15 @@ class RequestParamsListAdapter<T : RequestKeyValueData>(
 
         val viewHolder = RequestDetailParamsViewHolder<T>(adapterLayout)
 
-        adapterLayout.requestDetailParamsItemCheckbox.setOnClickListener {
+        adapterLayout.requestParamsItemCheckbox.setOnClickListener {
             onCheckBoxClicked(viewHolder.bindingAdapterPosition)
         }
 
-        adapterLayout.requestDetailParamsItemKeyTextInput.doAfterTextChanged {
+        adapterLayout.requestParamsItemKeyInputField.doAfterTextChanged {
             onKeyInputFieldTextChanged(it.toString(), viewHolder.bindingAdapterPosition)
         }
 
-        adapterLayout.requestDetailParamsItemValueTextInput.doAfterTextChanged {
+        adapterLayout.requestParamsItemValueInputField.doAfterTextChanged {
             onValueInputFieldTextChanged(it.toString(), viewHolder.bindingAdapterPosition)
         }
 
@@ -60,13 +60,15 @@ class RequestParamsListAdapter<T : RequestKeyValueData>(
 class RequestDetailParamsViewHolder<T : RequestKeyValueData>(
     private val binding: RequestParamsItemBinding
 ) : RecyclerView.ViewHolder(binding.root) {
-    fun bind(parameter: T) {
-        val editableFactory = Editable.Factory.getInstance()
 
-        binding.requestDetailParamsItemCheckbox.isChecked = parameter.enabled
-        binding.requestDetailParamsItemKeyTextInput.text = editableFactory.newEditable(parameter.key)
-        binding.requestDetailParamsItemValueTextInput.text = editableFactory.newEditable(parameter.value)
+    fun bind(parameter: T) {
+        binding.apply {
+            requestParamsItemCheckbox.isChecked = parameter.enabled
+            requestParamsItemKeyInputField.text = parameter.key.toEditable()
+            requestParamsItemValueInputField.text = parameter.value.toEditable()
+        }
     }
+
 }
 
 internal class BaseItemCallback<T : RequestKeyValueData> : DiffUtil.ItemCallback<T>() {

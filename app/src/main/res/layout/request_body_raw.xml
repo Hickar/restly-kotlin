@@ -38,7 +38,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/request_body_raw_content_type_selected_text"
+            android:id="@+id/request_body_raw_content_type_selected_label"
             style="@style/Restly.Request.BodyTextLabel"
             android:layout_gravity="right"
             android:text="" />

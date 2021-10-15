@@ -7,7 +7,7 @@
     tools:context=".ui.requestList.RequestListFragment">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/requests_list"
+        android:id="@+id/request_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="vertical"

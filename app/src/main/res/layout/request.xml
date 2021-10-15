@@ -11,7 +11,7 @@
         android:padding="@dimen/activity_horizontal_padding">
 
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/request_detail_method_box"
+            android:id="@+id/request_method_box"
             style="@style/Restly.RequestDetail.MethodBox"
             android:layout_width="64dp"
             android:layout_height="32dp"
@@ -38,21 +38,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/request_detail_name_default_text"
-            app:layout_constraintStart_toEndOf="@+id/request_detail_method_box"
+            app:layout_constraintStart_toEndOf="@+id/request_method_box"
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/request_detail_url_input_layout"
+            android:id="@+id/request_url_input_layout"
             style="@style/Restly.RequestDetail.TextInput"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginVertical="8dp"
             app:hintEnabled="false"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/request_detail_method_box">
+            app:layout_constraintTop_toBottomOf="@+id/request_method_box">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/request_detail_url_input_text"
+                android:id="@+id/request_url_input_field"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="@string/request_detail_url_placeholder_text"
@@ -62,67 +62,67 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
-            android:id="@+id/request_detail_params_header"
+            android:id="@+id/request_section_params_title"
             style="@style/Restly.RequestDetail.SectionHeaderText"
             android:layout_marginTop="16dp"
             android:text="@string/request_detail_params_header_text"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/request_detail_url_input_layout" />
+            app:layout_constraintTop_toBottomOf="@+id/request_url_input_layout" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/request_detail_params_recycler_view"
+            android:id="@+id/request_section_params_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="8dp"
             android:clipChildren="true"
             android:overScrollMode="never"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/request_detail_params_header" />
+            app:layout_constraintTop_toBottomOf="@+id/request_section_params_title" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/request_detail_params_add_button"
+            android:id="@+id/request_section_params_add_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="8dp"
             android:text="@string/request_detail_params_add_button_text"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/request_detail_params_recycler_view" />
+            app:layout_constraintTop_toBottomOf="@+id/request_section_params_list" />
 
         <TextView
-            android:id="@+id/request_detail_headers_header"
+            android:id="@+id/request_section_headers_title"
             style="@style/Restly.RequestDetail.SectionHeaderText"
             android:layout_marginTop="16dp"
             android:text="@string/request_detail_headers_header_text"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/request_detail_params_add_button" />
+            app:layout_constraintTop_toBottomOf="@+id/request_section_params_add_button" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/request_detail_headers_recycler_view"
+            android:id="@+id/request_section_headers_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="8dp"
             android:overScrollMode="never"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/request_detail_headers_header" />
+            app:layout_constraintTop_toBottomOf="@+id/request_section_headers_title" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/request_detail_headers_add_button"
+            android:id="@+id/request_section_headers_add_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="8dp"
             android:text="@string/request_detail_headers_add_button_text"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/request_detail_headers_recycler_view" />
+            app:layout_constraintTop_toBottomOf="@+id/request_section_headers_list" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/request_detail_body_section"
+            android:id="@+id/request_section_body"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/request_detail_headers_add_button">
+            app:layout_constraintTop_toBottomOf="@+id/request_section_headers_add_button">
 
             <TextView
-                android:id="@+id/request_detail_body_header"
+                android:id="@+id/request_body_header"
                 style="@style/Restly.RequestDetail.SectionHeaderText"
                 android:layout_marginTop="16dp"
                 android:text="@string/request_detail_body_header_text"
@@ -130,21 +130,21 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <com.google.android.material.tabs.TabLayout
-                android:id="@+id/request_detail_body_tabs"
+                android:id="@+id/request_body_tabs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="8dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/request_detail_body_header"
+                app:layout_constraintTop_toBottomOf="@+id/request_body_header"
                 app:tabMode="scrollable" />
 
             <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/request_detail_body_view"
+                android:id="@+id/request_body_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="8dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/request_detail_body_tabs" />
+                app:layout_constraintTop_toBottomOf="@+id/request_body_tabs" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

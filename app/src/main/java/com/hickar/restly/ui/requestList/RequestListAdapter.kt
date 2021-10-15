@@ -64,10 +64,10 @@ class RequestItemViewHolder(
             ResourcesCompat.getColor(context.resources, cardBackgroundColorId, null)
         val cardTextColor = ResourcesCompat.getColor(context.resources, cardTextColorId, null)
 
-        binding.requestMethodBox.setCardBackgroundColor(cardBackgroundColor)
-        binding.requestMethodLabel.setTextColor(cardTextColor)
-        binding.requestMethodLabel.text = MethodCardViewUtil.getShortMethodName(request.method)
-        binding.requestNameLabel.text = request.name
-        binding.requestUrlLabel.text = request.url
+        binding.requestListItemMethodBox.setCardBackgroundColor(cardBackgroundColor)
+        binding.requestListItemMethodLabel.setTextColor(cardTextColor)
+        binding.requestListItemMethodLabel.text = MethodCardViewUtil.getShortMethodName(request.method)
+        binding.requestListItemNameLabel.text = request.name
+        binding.requestListItemUrlLabel.text = request.url
     }
 }

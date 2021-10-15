@@ -12,7 +12,6 @@ import kotlinx.coroutines.runBlocking
 import okhttp3.Call
 import okhttp3.Response
 import java.io.IOException
-import java.net.URI
 
 class RequestViewModel(
     private val repository: RequestRepository,

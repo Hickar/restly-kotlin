@@ -11,23 +11,21 @@ import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.hickar.restly.R
 import com.hickar.restly.databinding.RequestBodyMultipartBinding
 import com.hickar.restly.models.RequestBinaryData
-import com.hickar.restly.models.RequestMultipartData
-import com.hickar.restly.ui.request.RequestParamsListAdapter
 import com.hickar.restly.ui.request.RequestViewModel
 import com.hickar.restly.utils.SwipeDeleteCallback
 
-typealias MultipartListAdapter = RequestParamsListAdapter<RequestMultipartData>
-
-class RequestDetailBodyFormDataFragment(private val viewModel: RequestViewModel) : Fragment() {
+class RequestDetailBodyFormDataFragment() : Fragment() {
     private var _binding: RequestBodyMultipartBinding? = null
     private val binding get() = _binding!!
 
+    private val viewModel: RequestViewModel by activityViewModels()
     private lateinit var contentResolver: ContentResolver
 
     private lateinit var recyclerView: RecyclerView
@@ -49,7 +47,7 @@ class RequestDetailBodyFormDataFragment(private val viewModel: RequestViewModel)
 
 
     private fun setupAdapter() {
-        recyclerView = binding.requestDetailBodyFormdata
+        recyclerView = binding.requestBodyMultipart
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = RequestMultipartDataItemsAdapter(
             onParamCheckBoxToggle,
@@ -81,7 +79,7 @@ class RequestDetailBodyFormDataFragment(private val viewModel: RequestViewModel)
     }
 
     private fun setupEventListeners() {
-        binding.requestDetailBodyFormdataAddButton.setOnClickListener {
+        binding.requestBodyMultipartAddButton.setOnClickListener {
             popupMenu.show()
         }
 
@@ -101,7 +99,7 @@ class RequestDetailBodyFormDataFragment(private val viewModel: RequestViewModel)
     }
 
     private fun setupPopupMenu() {
-        popupMenu = PopupMenu(requireContext(), binding.requestDetailBodyFormdataAddButton)
+        popupMenu = PopupMenu(requireContext(), binding.requestBodyMultipartAddButton)
         popupMenu.inflate(R.menu.request_multipart_type_menu)
     }
 

@@ -86,7 +86,7 @@ class RequestListFragment : Fragment() {
             this.findNavController().navigate(action)
         }
 
-        recyclerView = binding.requestsList
+        recyclerView = binding.requestList
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = adapter
 

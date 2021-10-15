@@ -1,8 +1,6 @@
 package com.hickar.restly.ui.requestBody
 
-import android.text.Editable
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.DiffUtil
@@ -10,6 +8,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.hickar.restly.databinding.RequestMultipartItemBinding
 import com.hickar.restly.databinding.RequestMultipartItemBinding.inflate
+import com.hickar.restly.extensions.hide
+import com.hickar.restly.extensions.show
+import com.hickar.restly.extensions.toEditable
 import com.hickar.restly.models.RequestMultipartData
 
 class RequestMultipartDataItemsAdapter(
@@ -31,15 +32,15 @@ class RequestMultipartDataItemsAdapter(
 
         val viewHolder = RequestMultipartDataViewHolder(adapterLayout)
 
-        adapterLayout.requestDetailParamsItemCheckbox.setOnClickListener {
+        adapterLayout.requestMultipartItemCheckbox.setOnClickListener {
             onCheckBoxClicked(viewHolder.bindingAdapterPosition)
         }
 
-        adapterLayout.requestMultipartItemKeyTextInput.doAfterTextChanged {
+        adapterLayout.requestMultipartItemKeyInputField.doAfterTextChanged {
             onKeyInputFieldTextChanged(it.toString(), viewHolder.bindingAdapterPosition)
         }
 
-        adapterLayout.requestMultipartItemValueTextInput.doAfterTextChanged {
+        adapterLayout.requestMultipartItemValueInputField.doAfterTextChanged {
             onValueInputFieldTextChanged(it.toString(), viewHolder.bindingAdapterPosition)
         }
 
@@ -67,22 +68,23 @@ class RequestMultipartDataViewHolder(
     private val binding: RequestMultipartItemBinding
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(parameter: RequestMultipartData) {
-        val editableFactory = Editable.Factory.getInstance()
 
-        binding.requestDetailParamsItemCheckbox.isChecked = parameter.enabled
-        binding.requestMultipartItemKeyTextInput.text = editableFactory.newEditable(parameter.key)
+        binding.apply {
+            requestMultipartItemCheckbox.isChecked = parameter.enabled
+            requestMultipartItemKeyInputField.text = parameter.key.toEditable()
 
-        if (parameter.type == "text") {
-            binding.requestMultipartSelectFileLabel.visibility = View.GONE
-            binding.requestMultipartItemValueTextLayout.visibility = View.VISIBLE
-            binding.requestMultipartItemValueTextInput.text = editableFactory.newEditable(parameter.value)
-        } else {
-            binding.requestMultipartItemValueTextLayout.visibility = View.GONE
-            binding.requestMultipartSelectFileLabel.visibility = View.VISIBLE
-            binding.requestMultipartSelectFileLabel.text = if (parameter.value.isEmpty()) {
-                parameter.uri
+            if (parameter.type == "text") {
+                requestMultipartSelectFileLabel.hide()
+                requestMultipartItemValueInputLayout.show()
+                requestMultipartItemValueInputField.text = parameter.value.toEditable()
             } else {
-                "SELECT"
+                requestMultipartItemValueInputLayout.hide()
+                requestMultipartSelectFileLabel.show()
+                requestMultipartSelectFileLabel.text = if (parameter.value.isEmpty()) {
+                    parameter.uri
+                } else {
+                    "SELECT"
+                }
             }
         }
     }

@@ -13,7 +13,7 @@
         android:layout_margin="16dp">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/fullscreen_edit_text_input"
+            android:id="@+id/request_body_raw_edit_field"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="top|start"

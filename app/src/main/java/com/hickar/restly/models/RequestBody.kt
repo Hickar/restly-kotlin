@@ -3,11 +3,11 @@ package com.hickar.restly.models
 import com.google.gson.annotations.SerializedName
 
 enum class BodyType(val type: String) {
-    @SerializedName("urlencoded")
-    FORMDATA("URLEncoded"),
+    @SerializedName("formdata")
+    FORMDATA("Formdata"),
 
     @SerializedName("multipart")
-    MULTIPART("FormData"),
+    MULTIPART("Multipart"),
 
     @SerializedName("raw")
     RAW("Raw"),

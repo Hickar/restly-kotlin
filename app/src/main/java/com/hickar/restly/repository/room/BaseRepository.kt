@@ -25,8 +25,7 @@ open class BaseRepository<Entity, EntityDTO, DAO : BaseDao<EntityDTO>>(
 
     @WorkerThread
     suspend fun getById(id: Long): Entity {
-        val test = dao.getById(id)
-        return mapper.toEntity(test)
+        return mapper.toEntity(dao.getById(id))
     }
 
     @WorkerThread

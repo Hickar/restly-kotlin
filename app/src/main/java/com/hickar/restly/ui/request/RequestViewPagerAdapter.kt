@@ -13,16 +13,16 @@ class RequestViewPagerAdapter(private val fragment: RequestDetailFragment) : Fra
     override fun createFragment(position: Int): Fragment {
         return when(position) {
             0 -> {
-                RequestBodyFormdataFragment(fragment.requestViewModel)
+                RequestBodyFormdataFragment()
             }
             1 -> {
-                RequestDetailBodyFormDataFragment(fragment.requestViewModel)
+                RequestDetailBodyFormDataFragment()
             }
             2 -> {
-                RequestBodyRawFragment(fragment.requestViewModel)
+                RequestBodyRawFragment()
             }
             3 -> {
-                RequestBodyBinaryFragment(fragment.requestViewModel)
+                RequestBodyBinaryFragment()
             }
             else -> {
                 return Fragment()

@@ -1,12 +1,12 @@
 package com.hickar.restly.ui.requestBody
 
 import android.os.Bundle
-import android.text.Editable
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.hickar.restly.R
 import com.hickar.restly.databinding.RequestBodyEditRawBinding
+import com.hickar.restly.extensions.toEditable
 import com.hickar.restly.ui.request.RequestViewModel
 
 class RequestBodyEditRawFragment : Fragment() {
@@ -26,10 +26,8 @@ class RequestBodyEditRawFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val editableFactory = Editable.Factory()
         val textData = arguments?.getString("textData")
-
-        binding.fullscreenEditTextInput.text = editableFactory.newEditable(textData)
+        binding.requestBodyRawEditField.text = textData?.toEditable()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -39,7 +37,7 @@ class RequestBodyEditRawFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.edit_text_menu_done_button -> {
-                requestViewModel.setRawBodyText(binding.fullscreenEditTextInput.text.toString())
+                requestViewModel.setRawBodyText(binding.requestBodyRawEditField.text.toString())
                 true
             }
             else -> super.onOptionsItemSelected(item)

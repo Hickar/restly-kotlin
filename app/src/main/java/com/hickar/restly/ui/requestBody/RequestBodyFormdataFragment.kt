@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,9 +18,11 @@ import com.hickar.restly.utils.SwipeDeleteCallback
 
 typealias FormDataListAdapter = RequestParamsListAdapter<RequestFormData>
 
-class RequestBodyFormdataFragment(private val viewModel: RequestViewModel) : Fragment() {
+class RequestBodyFormdataFragment : Fragment() {
     private var _binding: RequestBodyFormdataBinding? = null
     private val binding get() = _binding!!
+
+    private val viewModel: RequestViewModel by activityViewModels()
 
     private lateinit var recyclerView: RecyclerView
 
@@ -35,7 +38,7 @@ class RequestBodyFormdataFragment(private val viewModel: RequestViewModel) : Fra
     }
 
     private fun setupAdapter() {
-        recyclerView = binding.requestDetailBodyUrlencoded
+        recyclerView = binding.requestBodyFormdataList
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = RequestParamsListAdapter<RequestKeyValueData>(
             onParamCheckBoxToggle,
@@ -59,7 +62,7 @@ class RequestBodyFormdataFragment(private val viewModel: RequestViewModel) : Fra
     }
 
     private fun setupEventListeners() {
-        binding.requestDetailBodyUrlencodedAddButton.setOnClickListener {
+        binding.requestBodyFormdataAddButton.setOnClickListener {
             viewModel.addFormData()
         }
     }

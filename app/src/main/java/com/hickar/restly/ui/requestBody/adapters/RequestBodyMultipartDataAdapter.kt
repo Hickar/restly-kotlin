@@ -1,4 +1,4 @@
-package com.hickar.restly.ui.requestBody
+package com.hickar.restly.ui.requestBody.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -76,12 +76,12 @@ class RequestMultipartDataViewHolder(
             if (parameter.type == "text") {
                 requestMultipartSelectFileLabel.hide()
                 requestMultipartItemValueInputLayout.show()
-                requestMultipartItemValueInputField.text = parameter.value.toEditable()
+                requestMultipartItemValueInputField.text = parameter.valueText.toEditable()
             } else {
                 requestMultipartItemValueInputLayout.hide()
                 requestMultipartSelectFileLabel.show()
-                requestMultipartSelectFileLabel.text = if (parameter.value.isEmpty()) {
-                    parameter.uri
+                requestMultipartSelectFileLabel.text = if (parameter.valueFile != null) {
+                    parameter.valueFile?.name
                 } else {
                     "SELECT"
                 }

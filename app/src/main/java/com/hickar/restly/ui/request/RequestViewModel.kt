@@ -1,6 +1,7 @@
 package com.hickar.restly.ui.request
 
 import android.database.sqlite.SQLiteException
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,8 +9,9 @@ import androidx.lifecycle.viewModelScope
 import com.hickar.restly.consts.RequestMethods
 import com.hickar.restly.models.*
 import com.hickar.restly.repository.room.RequestRepository
-import com.hickar.restly.services.NetworkClient
+import com.hickar.restly.services.ServiceLocator
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import okhttp3.Call
 import okhttp3.Response
 import java.io.IOException
@@ -35,7 +37,7 @@ class RequestViewModel(
     val bodyType: MutableLiveData<BodyType> = MutableLiveData()
 
     init {
-        viewModelScope.launch {
+        runBlocking {
             try {
                 currentRequest = repository.getById(currentRequestId)
 
@@ -52,8 +54,9 @@ class RequestViewModel(
                     bodyType.value = it.body.type
                 }
 
-            } catch (exception: SQLiteException) {
-                Log.e("ViewModel Init Error", exception.toString())
+            } catch (e: SQLiteException) {
+                Log.e("ViewModel Init Error", e.toString())
+                e.printStackTrace()
             }
         }
     }
@@ -144,7 +147,7 @@ class RequestViewModel(
     }
 
     fun sendRequest() {
-        val client = NetworkClient.getInstance()
+        val client = ServiceLocator.getInstance().getNetworkClient()
 
         viewModelScope.launch {
             when (method.value) {
@@ -250,13 +253,15 @@ class RequestViewModel(
         }
     }
 
-    fun setMultipartFileBody(position: Int, uri: String) {
-        multipartData.value!![position].uri = uri
+    fun setMultipartFileBody(position: Int, uri: Uri) {
+        val fileManager = ServiceLocator.getInstance().getFileManager()
+        multipartData.value!![position].valueFile = fileManager.getRequestFile(uri)!!
         multipartData.value = multipartData.value
     }
 
-    fun setBinaryBody(fileMetadata: RequestBinaryData) {
-        binaryData.value = fileMetadata
+    fun setBinaryBody(uri: Uri) {
+        val fileManager = ServiceLocator.getInstance().getFileManager()
+        binaryData.value!!.file = fileManager.getRequestFile(uri)!!
     }
 
     fun setRawBodyMimeType(mimeType: String) {

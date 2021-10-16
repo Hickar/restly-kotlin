@@ -2,24 +2,21 @@ package com.hickar.restly.ui.requestBody
 
 import android.content.ContentResolver
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.provider.OpenableColumns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.hickar.restly.R
 import com.hickar.restly.databinding.RequestBodyMultipartBinding
-import com.hickar.restly.models.RequestBinaryData
 import com.hickar.restly.ui.request.RequestViewModel
+import com.hickar.restly.ui.requestBody.adapters.RequestMultipartDataItemsAdapter
 import com.hickar.restly.utils.SwipeDeleteCallback
 
 class RequestDetailBodyFormDataFragment() : Fragment() {
@@ -56,14 +53,14 @@ class RequestDetailBodyFormDataFragment() : Fragment() {
                 viewModel.multipartData.value!![position].key = text
             },
             { text, position ->
-                viewModel.multipartData.value!![position].value = text
+                viewModel.multipartData.value!![position].valueText = text
             },
             { position ->
                 requireActivity().activityResultRegistry.register("key", ActivityResultContracts.OpenDocument()) { uri ->
                     if (uri == null) return@register
 
                     contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                    getFileMetadata(uri)?.let { fileMeta -> viewModel.setMultipartFileBody(position, fileMeta.uri) }
+                    viewModel.setMultipartFileBody(position, uri)
                 }.launch(arrayOf("audio/*", "image/*", "video/*", "text/*", "application/*"))
             }
         )
@@ -106,26 +103,5 @@ class RequestDetailBodyFormDataFragment() : Fragment() {
 
     private val onParamCheckBoxToggle: (Int) -> Unit = { position ->
         viewModel.toggleMultipartData(position)
-    }
-
-    private fun getFileMetadata(uri: Uri): RequestBinaryData? {
-        val cursor = contentResolver.query(uri, null, null, null, null)
-
-        cursor?.use {
-            if (it.moveToFirst()) {
-                val name = it.getString(it.getColumnIndex(OpenableColumns.DISPLAY_NAME))
-
-                val sizeIndex = it.getColumnIndex(OpenableColumns.SIZE)
-                val size = if (!it.isNull(sizeIndex)) {
-                    it.getString(sizeIndex)
-                } else {
-                    "Unknown"
-                }
-
-                return RequestBinaryData(name, size, uri.toString())
-            }
-        }
-
-        return null
     }
 }

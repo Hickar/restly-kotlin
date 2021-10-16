@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,8 +12,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hickar.restly.databinding.RequestBodyFormdataBinding
 import com.hickar.restly.models.RequestFormData
 import com.hickar.restly.models.RequestKeyValueData
-import com.hickar.restly.ui.request.RequestParamsListAdapter
 import com.hickar.restly.ui.request.RequestViewModel
+import com.hickar.restly.ui.request.adapters.RequestParamsListAdapter
 import com.hickar.restly.utils.SwipeDeleteCallback
 
 typealias FormDataListAdapter = RequestParamsListAdapter<RequestFormData>
@@ -47,7 +46,7 @@ class RequestBodyFormdataFragment : Fragment() {
                 viewModel.formData.value!![position].key = text
             },
             { text, position ->
-                viewModel.formData.value!![position].value = text
+                viewModel.formData.value!![position].valueText = text
             }
         )
         val paramsTouchHelper = ItemTouchHelper(SwipeDeleteCallback(requireContext()) { position ->

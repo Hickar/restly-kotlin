@@ -1,4 +1,4 @@
-package com.hickar.restly.ui.requestList
+package com.hickar.restly.ui.requestList.adapters
 
 import android.content.Context
 import android.view.LayoutInflater

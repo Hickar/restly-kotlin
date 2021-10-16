@@ -25,6 +25,8 @@ import com.hickar.restly.models.BodyType
 import com.hickar.restly.models.RequestHeader
 import com.hickar.restly.models.RequestQueryParameter
 import com.hickar.restly.ui.dialogs.EditTextDialog
+import com.hickar.restly.ui.request.adapters.RequestParamsListAdapter
+import com.hickar.restly.ui.request.adapters.RequestViewPagerAdapter
 import com.hickar.restly.utils.KeyboardUtil
 import com.hickar.restly.utils.MethodCardViewUtil
 import com.hickar.restly.utils.SwipeDeleteCallback
@@ -162,7 +164,7 @@ class RequestDetailFragment : Fragment() {
                 requestViewModel.params.value!![position].key = text
             },
             { text, position ->
-                requestViewModel.params.value!![position].value = text
+                requestViewModel.params.value!![position].valueText = text
             }
         )
         val paramsTouchHelper = ItemTouchHelper(SwipeDeleteCallback(requireContext()) { position ->
@@ -179,7 +181,7 @@ class RequestDetailFragment : Fragment() {
                 requestViewModel.headers.value!![position].key = text
             },
             { text, position ->
-                requestViewModel.headers.value!![position].value = text
+                requestViewModel.headers.value!![position].valueText = text
             }
         )
         val headersTouchHelper = ItemTouchHelper(SwipeDeleteCallback(requireContext()) { position ->

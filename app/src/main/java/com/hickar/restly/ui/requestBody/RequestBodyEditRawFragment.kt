@@ -3,7 +3,6 @@ package com.hickar.restly.ui.requestBody
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.hickar.restly.R
 import com.hickar.restly.databinding.RequestBodyEditRawBinding

@@ -1,12 +1,12 @@
 package com.hickar.restly.mappers
 
-import com.google.gson.GsonBuilder
+import com.google.gson.Gson
 import com.hickar.restly.models.*
 import com.hickar.restly.repository.models.RequestDTO
 
-class RequestMapper : Mapper<Request, RequestDTO> {
-    private val gson = GsonBuilder().create()
-
+class RequestMapper(
+    private val gson: Gson
+) : Mapper<Request, RequestDTO> {
     override fun toDTO(request: Request): RequestDTO {
         return RequestDTO(
             request.id,

@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.*
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -14,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hickar.restly.R
 import com.hickar.restly.RestlyApplication
 import com.hickar.restly.databinding.RequestListBinding
+import com.hickar.restly.ui.requestList.adapters.RequestListAdapter
 import com.hickar.restly.utils.SwipeDeleteCallback
 import kotlinx.coroutines.*
 

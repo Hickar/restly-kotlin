@@ -1,4 +1,4 @@
-package com.hickar.restly.ui.request
+package com.hickar.restly.ui.request.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -65,7 +65,7 @@ class RequestDetailParamsViewHolder<T : RequestKeyValueData>(
         binding.apply {
             requestParamsItemCheckbox.isChecked = parameter.enabled
             requestParamsItemKeyInputField.text = parameter.key.toEditable()
-            requestParamsItemValueInputField.text = parameter.value.toEditable()
+            requestParamsItemValueInputField.text = parameter.valueText.toEditable()
         }
     }
 

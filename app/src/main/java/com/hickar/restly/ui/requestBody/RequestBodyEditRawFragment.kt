@@ -4,13 +4,14 @@ import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import com.hickar.restly.R
 import com.hickar.restly.databinding.RequestBodyEditRawBinding
 import com.hickar.restly.extensions.toEditable
 import com.hickar.restly.ui.request.RequestViewModel
 
 class RequestBodyEditRawFragment : Fragment() {
-    private val requestViewModel: RequestViewModel by activityViewModels()
+    private val requestViewModel: RequestViewModel by viewModels({ requireParentFragment() })
 
     private var _binding: RequestBodyEditRawBinding? = null
     private val binding get() = _binding!!

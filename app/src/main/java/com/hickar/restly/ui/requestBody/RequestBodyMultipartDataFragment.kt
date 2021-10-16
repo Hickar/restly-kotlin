@@ -12,6 +12,7 @@ import android.widget.PopupMenu
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -25,7 +26,7 @@ class RequestDetailBodyFormDataFragment() : Fragment() {
     private var _binding: RequestBodyMultipartBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: RequestViewModel by activityViewModels()
+    private val viewModel: RequestViewModel by viewModels({ requireParentFragment() })
     private lateinit var contentResolver: ContentResolver
 
     private lateinit var recyclerView: RecyclerView

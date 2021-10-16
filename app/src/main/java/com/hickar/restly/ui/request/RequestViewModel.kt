@@ -4,11 +4,12 @@ import android.database.sqlite.SQLiteException
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.hickar.restly.consts.RequestMethods
 import com.hickar.restly.models.*
 import com.hickar.restly.repository.room.RequestRepository
 import com.hickar.restly.services.NetworkClient
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 import okhttp3.Call
 import okhttp3.Response
 import java.io.IOException
@@ -34,7 +35,7 @@ class RequestViewModel(
     val bodyType: MutableLiveData<BodyType> = MutableLiveData()
 
     init {
-        runBlocking {
+        viewModelScope.launch {
             try {
                 currentRequest = repository.getById(currentRequestId)
 
@@ -145,7 +146,7 @@ class RequestViewModel(
     fun sendRequest() {
         val client = NetworkClient.getInstance()
 
-        runBlocking {
+        viewModelScope.launch {
             when (method.value) {
                 RequestMethods.GET.method -> {
                     client.get(url.value!!, headers.value!!, this@RequestViewModel)
@@ -230,20 +231,22 @@ class RequestViewModel(
 
     }
 
-    suspend fun saveRequest() {
-        try {
-            currentRequest.name = name.value!!
-            currentRequest.url = url.value!!
-            currentRequest.method = method.value!!
-            currentRequest.queryParams = params.value!!
-            currentRequest.headers = headers.value!!
-            currentRequest.body.formData = formData.value!!
-            currentRequest.body.multipartData = multipartData.value!!
-            currentRequest.body.binaryData = binaryData.value!!
-            currentRequest.body.type = bodyType.value!!
-            repository.insert(currentRequest)
-        } catch (exception: SQLiteException) {
-            Log.d("ViewModel insert error", exception.toString())
+    fun saveRequest() {
+        viewModelScope.launch {
+            try {
+                currentRequest.name = name.value!!
+                currentRequest.url = url.value!!
+                currentRequest.method = method.value!!
+                currentRequest.queryParams = params.value!!
+                currentRequest.headers = headers.value!!
+                currentRequest.body.formData = formData.value!!
+                currentRequest.body.multipartData = multipartData.value!!
+                currentRequest.body.binaryData = binaryData.value!!
+                currentRequest.body.type = bodyType.value!!
+                repository.insert(currentRequest)
+            } catch (exception: SQLiteException) {
+                Log.d("ViewModel insert error", exception.toString())
+            }
         }
     }
 

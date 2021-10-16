@@ -5,6 +5,7 @@ import android.view.*
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -19,7 +20,7 @@ import kotlinx.coroutines.*
 class RequestListFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
-    private val requestListViewModel: RequestListViewModel by activityViewModels {
+    private val requestListViewModel: RequestListViewModel by viewModels {
         RequestListViewModelFactory(
             (activity?.application as RestlyApplication).repository
         )
@@ -41,7 +42,6 @@ class RequestListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
 
         setupAdapters()
         setupDecoration()

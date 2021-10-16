@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -28,7 +28,8 @@ import com.hickar.restly.ui.dialogs.EditTextDialog
 import com.hickar.restly.utils.KeyboardUtil
 import com.hickar.restly.utils.MethodCardViewUtil
 import com.hickar.restly.utils.SwipeDeleteCallback
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 typealias ParamsListAdapter = RequestParamsListAdapter<RequestQueryParameter>
 typealias HeadersListAdapter = RequestParamsListAdapter<RequestHeader>
@@ -38,7 +39,7 @@ class RequestDetailFragment : Fragment() {
     private var _binding: RequestBinding? = null
     private val binding get() = _binding!!
 
-    val requestViewModel: RequestViewModel by activityViewModels {
+    val requestViewModel: RequestViewModel by viewModels {
         RequestViewModelFactory(
             (activity?.application as RestlyApplication).repository,
             arguments?.get("requestId") as Long
@@ -114,11 +115,9 @@ class RequestDetailFragment : Fragment() {
                 RequestMethods.PATCH.method,
                 RequestMethods.OPTIONS.method -> {
                     binding.requestSectionBody.show()
-                    requestViewModel.setBodyTypeIndex(TABS.FORMDATA.position)
                 }
                 else -> {
                     binding.requestSectionBody.hide()
-                    requestViewModel.setBodyTypeIndex(TABS.NONE.position)
                 }
             }
         })
@@ -204,7 +203,7 @@ class RequestDetailFragment : Fragment() {
                 R.id.method_popup_option_delete -> RequestMethods.DELETE
                 else -> RequestMethods.GET
             }
-            requestViewModel.setMethod(method.toString())
+            requestViewModel.setMethod(method.method)
             true
         }
     }
@@ -239,10 +238,8 @@ class RequestDetailFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.request_menu_save_button -> {
-                runBlocking {
-                    requestViewModel.saveRequest()
-                    return@runBlocking true
-                }
+                requestViewModel.saveRequest()
+                return true
             }
             R.id.request_menu_rename_button -> {
                 val nameEditDialog =
@@ -253,11 +250,11 @@ class RequestDetailFragment : Fragment() {
                 true
             }
             R.id.request_menu_send_button -> {
-                runBlocking {
+                GlobalScope.launch {
                     requestViewModel.saveRequest()
                     requestViewModel.sendRequest()
-                    return@runBlocking true
                 }
+                true
             }
             else -> super.onOptionsItemSelected(item)
         }

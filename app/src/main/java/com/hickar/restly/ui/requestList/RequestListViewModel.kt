@@ -2,8 +2,11 @@ package com.hickar.restly.ui.requestList
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.hickar.restly.models.Request
 import com.hickar.restly.repository.room.RequestRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 class RequestListViewModel(
@@ -25,13 +28,13 @@ class RequestListViewModel(
     }
 
     fun refreshRequests() {
-        runBlocking {
+        viewModelScope.launch {
             requests.value = repository.getAll().toMutableList()
         }
     }
 
     fun deleteRequest(position: Int) {
-        runBlocking {
+        viewModelScope.launch {
             repository.delete(requests.value!![position])
             requests.value?.removeAt(position)
             requests.value = requests.value

@@ -3,8 +3,10 @@ package com.hickar.restly.utils
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.ColorFilter
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.util.TypedValue
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -17,8 +19,17 @@ class SwipeDeleteCallback(
     0,
     ItemTouchHelper.START
 ) {
-    private val background: ColorDrawable = ColorDrawable(Color.RED)
-    private val icon: Drawable = ContextCompat.getDrawable(context, R.drawable.ic_delete_list_item)!!
+    private val background: ColorDrawable
+    private val icon: Drawable
+
+    init {
+        val iconColor = context.getColor(R.color.white)
+        icon = ContextCompat.getDrawable(context, R.drawable.ic_delete_list_item)!!
+        icon.setTint(iconColor)
+
+        val backgroundColor = context.getColor(R.color.red_500)
+        background = ColorDrawable(backgroundColor)
+    }
 
     override fun onMove(
         recyclerView: RecyclerView,
@@ -68,10 +79,24 @@ class SwipeDeleteCallback(
             }
             else -> {
                 background.setBounds(0, 0, 0, 0)
+                icon.setBounds(0, 0, 0, 0)
             }
         }
 
         background.draw(c)
         icon.draw(c)
+    }
+
+    override fun onMoved(
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder,
+        fromPos: Int,
+        target: RecyclerView.ViewHolder,
+        toPos: Int,
+        x: Int,
+        y: Int
+    ) {
+        super.onMoved(recyclerView, viewHolder, fromPos, target, toPos, x, y)
+        icon
     }
 }

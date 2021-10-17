@@ -19,6 +19,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
 
+    private var isScrolling: Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -44,19 +46,47 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun dispatchTouchEvent(event: MotionEvent?): Boolean {
-        if (event != null && event.action == MotionEvent.ACTION_DOWN) {
-            val view = currentFocus
+        if (event != null) {
+            when (event.action) {
+                MotionEvent.ACTION_UP -> {
+                    val view = currentFocus
 
-            if (view is EditText) {
-                val outRect = Rect()
-                view.getGlobalVisibleRect(outRect)
+                    if (view is EditText) {
+                        val outRect = Rect()
+                        view.getGlobalVisibleRect(outRect)
 
-                if (!outRect.contains(event.rawX.toInt(), event.rawY.toInt())) {
-                    KeyboardUtil.hideKeyboard(this, view)
+                        if (!outRect.contains(event.x.toInt(), event.y.toInt()) && !isScrolling) {
+                            KeyboardUtil.hideKeyboard(this, view)
+                        }
+                    }
+
+                    isScrolling = false
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    isScrolling = true
                 }
             }
         }
 
         return super.dispatchTouchEvent(event)
     }
+
+
+
+//    override fun onTouchEvent(event: MotionEvent?): Boolean {
+//        if (event != null && event.action == MotionEvent.ACTION_DOWN) {
+//            val view = currentFocus
+//
+//            if (view is EditText) {
+//                val outRect = Rect()
+//                view.getGlobalVisibleRect(outRect)
+//
+//                if (!outRect.contains(event.rawX.toInt(), event.rawY.toInt())) {
+//                    KeyboardUtil.hideKeyboard(this, view)
+//                }
+//            }
+//        }
+//
+//        return super.dispatchTouchEvent(event)
+//    }
 }

@@ -6,7 +6,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hickar.restly.consts.RequestMethods
+import com.hickar.restly.consts.RequestMethod
 import com.hickar.restly.models.*
 import com.hickar.restly.repository.room.RequestRepository
 import com.hickar.restly.services.ServiceLocator
@@ -25,7 +25,7 @@ class RequestViewModel(
 
     val name: MutableLiveData<String> = MutableLiveData()
     val url: MutableLiveData<String> = MutableLiveData()
-    val method: MutableLiveData<String> = MutableLiveData()
+    val method: MutableLiveData<RequestMethod> = MutableLiveData()
     val params: MutableLiveData<MutableList<RequestQueryParameter>> = MutableLiveData()
     val headers: MutableLiveData<MutableList<RequestHeader>> = MutableLiveData()
 
@@ -142,90 +142,36 @@ class RequestViewModel(
         }
     }
 
-    fun setMethod(newMethod: String) {
-        method.value = newMethod
+    fun setMethod(method: RequestMethod) {
+        this.method.value = method
     }
 
     fun sendRequest() {
-        val client = ServiceLocator.getInstance().getNetworkClient()
-
         viewModelScope.launch {
+            val client = ServiceLocator.getInstance().getNetworkClient()
+            val builder = ServiceLocator.getInstance().getRequestBodyBuilder()
+            val requestBody = builder.createRequestBody(currentRequest.body)
+
             when (method.value) {
-                RequestMethods.GET.method -> {
+                RequestMethod.GET -> {
                     client.get(url.value!!, headers.value!!, this@RequestViewModel)
                 }
-                RequestMethods.POST.method -> {
-                    when (bodyType.value!!) {
-                        BodyType.FORMDATA -> {
-                            client.post(url.value!!, headers.value!!, formData.value!!, this@RequestViewModel)
-                        }
-                        BodyType.MULTIPART -> {
-                            client.post(url.value!!, headers.value!!, multipartData.value!!, this@RequestViewModel)
-                        }
-                        BodyType.RAW -> {
-                            client.post(url.value!!, headers.value!!, rawData.value!!, this@RequestViewModel)
-                        }
-                        BodyType.BINARY -> {
-                            client.post(url.value!!, headers.value!!, binaryData.value!!, this@RequestViewModel)
-                        }
-                        else -> throw IllegalStateException("BodyType is missing")
-                    }
+                RequestMethod.POST -> {
+                    client.post(url.value!!, headers.value!!, requestBody!!, this@RequestViewModel)
                 }
-                RequestMethods.PUT.method -> {
-                    when (bodyType.value!!) {
-                        BodyType.FORMDATA -> {
-                            client.put(url.value!!, headers.value!!, formData.value!!, this@RequestViewModel)
-                        }
-                        BodyType.MULTIPART -> {
-                            client.put(url.value!!, headers.value!!, multipartData.value!!, this@RequestViewModel)
-                        }
-                        BodyType.RAW -> {
-                            client.put(url.value!!, headers.value!!, rawData.value!!, this@RequestViewModel)
-                        }
-                        BodyType.BINARY -> {
-                            client.put(url.value!!, headers.value!!, binaryData.value!!, this@RequestViewModel)
-                        }
-                        else -> throw IllegalStateException("BodyType is missing")
-                    }
+                RequestMethod.PUT -> {
+                    client.put(url.value!!, headers.value!!, requestBody!!, this@RequestViewModel)
                 }
-                RequestMethods.PATCH.method -> {
-                    when (bodyType.value!!) {
-                        BodyType.FORMDATA -> {
-                            client.patch(url.value!!, headers.value!!, formData.value!!, this@RequestViewModel)
-                        }
-                        BodyType.MULTIPART -> {
-                            client.patch(url.value!!, headers.value!!, multipartData.value!!, this@RequestViewModel)
-                        }
-                        BodyType.RAW -> {
-                            client.patch(url.value!!, headers.value!!, rawData.value!!, this@RequestViewModel)
-                        }
-                        BodyType.BINARY -> {
-                            client.patch(url.value!!, headers.value!!, binaryData.value!!, this@RequestViewModel)
-                        }
-                        else -> throw IllegalStateException("BodyType is missing")
-                    }
+                RequestMethod.PATCH -> {
+                    client.patch(url.value!!, headers.value!!, requestBody!!, this@RequestViewModel)
                 }
-                RequestMethods.OPTIONS.method -> {
-                    when (bodyType.value!!) {
-                        BodyType.FORMDATA -> {
-                            client.options(url.value!!, headers.value!!, formData.value!!, this@RequestViewModel)
-                        }
-                        BodyType.MULTIPART -> {
-                            client.options(url.value!!, headers.value!!, multipartData.value!!, this@RequestViewModel)
-                        }
-                        BodyType.RAW -> {
-                            client.options(url.value!!, headers.value!!, rawData.value!!, this@RequestViewModel)
-                        }
-                        BodyType.BINARY -> {
-                            client.options(url.value!!, headers.value!!, binaryData.value!!, this@RequestViewModel)
-                        }
-                        else -> throw IllegalStateException("BodyType is missing")
-                    }
+                RequestMethod.OPTIONS -> {
+                    client.options(url.value!!, headers.value!!, requestBody!!, this@RequestViewModel)
                 }
-                RequestMethods.HEAD.method -> {
+                RequestMethod.HEAD -> {
                     client.head(url.value!!, headers.value!!, this@RequestViewModel)
                 }
-                RequestMethods.DELETE.method -> {
+                RequestMethod.DELETE -> {
                     client.delete(url.value!!, headers.value!!, this@RequestViewModel)
                 }
                 else -> null
@@ -262,6 +208,7 @@ class RequestViewModel(
     fun setBinaryBody(uri: Uri) {
         val fileManager = ServiceLocator.getInstance().getFileManager()
         binaryData.value!!.file = fileManager.getRequestFile(uri)!!
+        binaryData.value = binaryData.value
     }
 
     fun setRawBodyMimeType(mimeType: String) {

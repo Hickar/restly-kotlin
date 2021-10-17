@@ -8,10 +8,11 @@ class ServiceLocator {
     private lateinit var networkService: NetworkService
     private lateinit var gson: Gson
     private lateinit var fileManager: FileService
+    private lateinit var requestBodyBuilder: RequestBodyBuilderService
 
     fun getNetworkClient(): NetworkService {
         if (!this::networkService.isInitialized) {
-            networkService = NetworkService(application.contentResolver)
+            networkService = NetworkService()
         }
 
         return networkService
@@ -32,6 +33,14 @@ class ServiceLocator {
         }
 
         return fileManager
+    }
+
+    fun getRequestBodyBuilder(): RequestBodyBuilderService {
+        if (!this::requestBodyBuilder.isInitialized) {
+            requestBodyBuilder = RequestBodyBuilderService(application.contentResolver)
+        }
+
+        return requestBodyBuilder
     }
 
     companion object {

@@ -1,8 +1,10 @@
 package com.hickar.restly.models
 
+import com.hickar.restly.consts.RequestMethod
+
 data class Request(
     var id: Long = 0,
-    var method: String = "GET",
+    var method: RequestMethod = RequestMethod.GET,
     var name: String = "New Request",
     var url: String = "",
     var queryParams: List<RequestQueryParameter> = mutableListOf(),

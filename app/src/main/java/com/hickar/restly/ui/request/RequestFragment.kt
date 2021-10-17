@@ -1,22 +1,25 @@
 package com.hickar.restly.ui.request
 
+import android.graphics.Rect
 import android.os.Bundle
 import android.view.*
 import android.widget.PopupMenu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.marginStart
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.hickar.restly.R
 import com.hickar.restly.RestlyApplication
-import com.hickar.restly.consts.RequestMethods
+import com.hickar.restly.consts.RequestMethod
 import com.hickar.restly.databinding.RequestBinding
 import com.hickar.restly.extensions.hide
 import com.hickar.restly.extensions.show
@@ -82,6 +85,7 @@ class RequestDetailFragment : Fragment() {
         tabLayout = binding.requestBodyTabs
         viewPager = binding.requestBodyView
         viewPager.adapter = RequestViewPagerAdapter(this)
+        viewPager.setPageTransformer(MarginPageTransformer(48))
 
         val tabs = BodyType.values().toList()
 
@@ -100,22 +104,22 @@ class RequestDetailFragment : Fragment() {
         })
 
         requestViewModel.method.observe(viewLifecycleOwner, { method ->
-            val cardBackgroundColorId = MethodCardViewUtil.getBackgroundColorId(method)
-            val cardTextColorId = MethodCardViewUtil.getTextColorId(method)
+            val cardBackgroundColorId = MethodCardViewUtil.getBackgroundColorId(method.method)
+            val cardTextColorId = MethodCardViewUtil.getTextColorId(method.method)
 
             val cardBackgroundColor =
                 ResourcesCompat.getColor(resources, cardBackgroundColorId, null)
             val cardTextColor = ResourcesCompat.getColor(resources, cardTextColorId, null)
 
-            binding.requestMethodLabel.text = MethodCardViewUtil.getShortMethodName(method)
+            binding.requestMethodLabel.text = MethodCardViewUtil.getShortMethodName(method.method)
             binding.requestMethodBox.setCardBackgroundColor(cardBackgroundColor)
             binding.requestMethodLabel.setTextColor(cardTextColor)
 
             when (method) {
-                RequestMethods.POST.method,
-                RequestMethods.PUT.method,
-                RequestMethods.PATCH.method,
-                RequestMethods.OPTIONS.method -> {
+                RequestMethod.POST,
+                RequestMethod.PUT,
+                RequestMethod.PATCH,
+                RequestMethod.OPTIONS -> {
                     binding.requestSectionBody.show()
                 }
                 else -> {
@@ -196,16 +200,16 @@ class RequestDetailFragment : Fragment() {
 
         methodPopupMenu.setOnMenuItemClickListener { item ->
             val method = when (item.itemId) {
-                R.id.method_popup_option_get -> RequestMethods.GET
-                R.id.method_popup_option_post -> RequestMethods.POST
-                R.id.method_popup_option_put -> RequestMethods.PUT
-                R.id.method_popup_option_patch -> RequestMethods.PATCH
-                R.id.method_popup_option_head -> RequestMethods.HEAD
-                R.id.method_popup_option_options -> RequestMethods.OPTIONS
-                R.id.method_popup_option_delete -> RequestMethods.DELETE
-                else -> RequestMethods.GET
+                R.id.method_popup_option_get -> RequestMethod.GET
+                R.id.method_popup_option_post -> RequestMethod.POST
+                R.id.method_popup_option_put -> RequestMethod.PUT
+                R.id.method_popup_option_patch -> RequestMethod.PATCH
+                R.id.method_popup_option_head -> RequestMethod.HEAD
+                R.id.method_popup_option_options -> RequestMethod.OPTIONS
+                R.id.method_popup_option_delete -> RequestMethod.DELETE
+                else -> RequestMethod.GET
             }
-            requestViewModel.setMethod(method.method)
+            requestViewModel.setMethod(method)
             true
         }
     }

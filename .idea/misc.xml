@@ -15,7 +15,7 @@
         <entry key="app/src/main/res/layout/fragment_requests.xml" value="0.1203125" />
         <entry key="app/src/main/res/layout/fullscreen_edit_text_dialog.xml" value="0.1802536231884058" />
         <entry key="app/src/main/res/layout/request.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/request_body_binary.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/request_body_binary.xml" value="0.45" />
         <entry key="app/src/main/res/layout/request_body_edit_raw.xml" value="0.1" />
         <entry key="app/src/main/res/layout/request_body_formdata.xml" value="0.129981884057971" />
         <entry key="app/src/main/res/layout/request_body_multipart.xml" value="0.129981884057971" />

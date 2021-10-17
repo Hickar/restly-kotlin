@@ -23,7 +23,6 @@ class FileService(
                     0
                 }
 
-//                MediaStore.getDocumentUri()
                 val extension = MimeTypeMap.getFileExtensionFromUrl(name)
                 val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
 

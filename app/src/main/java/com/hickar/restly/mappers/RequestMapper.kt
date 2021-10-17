@@ -1,6 +1,7 @@
 package com.hickar.restly.mappers
 
 import com.google.gson.Gson
+import com.hickar.restly.consts.RequestMethod
 import com.hickar.restly.models.*
 import com.hickar.restly.repository.models.RequestDTO
 
@@ -10,7 +11,7 @@ class RequestMapper(
     override fun toDTO(request: Request): RequestDTO {
         return RequestDTO(
             request.id,
-            request.method,
+            gson.toJson(request.method),
             request.name,
             request.url,
             gson.toJson(request.queryParams),
@@ -43,7 +44,7 @@ class RequestMapper(
 
         return Request(
             request.id,
-            request.method,
+            gson.fromJson(request.method, RequestMethod::class.java),
             request.name,
             request.url,
             queryParams,

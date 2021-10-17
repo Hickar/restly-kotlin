@@ -16,8 +16,8 @@
     <string name="request_detail_key_text">Key</string>
     <string name="request_detail_value_text">Value</string>
     <string name="request_detail_body_header_text">Body</string>
-    <string name="request_details_body_urlencoded_add_button_text">Add param</string>
-    <string name="request_detail_body_formdata_add_button_text">Add param</string>
+    <string name="request_details_body_urlencoded_add_button_text">Add item</string>
+    <string name="request_detail_body_formdata_add_button_text">Add item</string>
     <string name="request_detail_body_raw_label_text">Body data</string>
     <string name="request_detail_body_raw_icon_description">Arrow icon</string>
     <string name="request_detail_body_binary_label_text">File</string>

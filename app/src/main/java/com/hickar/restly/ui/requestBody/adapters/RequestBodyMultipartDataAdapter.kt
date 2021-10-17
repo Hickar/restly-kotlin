@@ -73,7 +73,7 @@ class RequestMultipartDataViewHolder(
             requestMultipartItemCheckbox.isChecked = parameter.enabled
             requestMultipartItemKeyInputField.text = parameter.key.toEditable()
 
-            if (parameter.type == "text") {
+            if (parameter.type == RequestMultipartData.TEXT) {
                 requestMultipartSelectFileLabel.hide()
                 requestMultipartItemValueInputLayout.show()
                 requestMultipartItemValueInputField.text = parameter.valueText.toEditable()

@@ -11,7 +11,7 @@ class ServiceLocator {
 
     fun getNetworkClient(): NetworkService {
         if (!this::networkService.isInitialized) {
-            networkService = NetworkService()
+            networkService = NetworkService(application.contentResolver)
         }
 
         return networkService

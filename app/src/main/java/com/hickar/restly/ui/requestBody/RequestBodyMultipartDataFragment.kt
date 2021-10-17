@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.hickar.restly.R
 import com.hickar.restly.databinding.RequestBodyMultipartBinding
+import com.hickar.restly.models.RequestMultipartData
 import com.hickar.restly.ui.request.RequestViewModel
 import com.hickar.restly.ui.requestBody.adapters.RequestMultipartDataItemsAdapter
 import com.hickar.restly.utils.SwipeDeleteCallback
@@ -84,11 +85,11 @@ class RequestDetailBodyFormDataFragment() : Fragment() {
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.request_multipart_type_menu_option_text -> {
-                    viewModel.addMultipartData("text")
+                    viewModel.addMultipartData(RequestMultipartData.TEXT)
                     true
                 }
                 R.id.request_multipart_type_menu_option_file -> {
-                    viewModel.addMultipartData("file")
+                    viewModel.addMultipartData(RequestMultipartData.FILE)
                     true
                 }
                 else -> throw IllegalArgumentException("Invalid menu item id was provided: ${item.itemId}")

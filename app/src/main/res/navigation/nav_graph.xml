@@ -11,7 +11,7 @@
         android:label="@string/requests_tab_title"
         tools:layout="@layout/request_list">
         <action
-            android:id="@+id/action_navigation_requests_to_requestDetailFragment"
+            android:id="@+id/action_navigation_requests_to_requestFragment"
             app:destination="@id/requestDetailFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
@@ -32,7 +32,7 @@
         tools:layout="@layout/settings" />
     <fragment
         android:id="@+id/requestDetailFragment"
-        android:name="com.hickar.restly.ui.request.RequestDetailFragment">
+        android:name="com.hickar.restly.ui.request.RequestFragment">
         <argument
             android:name="requestId"
             app:argType="long" />

@@ -2,11 +2,8 @@ package com.hickar.restly.utils
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.ColorFilter
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
-import android.util.TypedValue
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -85,18 +82,5 @@ class SwipeDeleteCallback(
 
         background.draw(c)
         icon.draw(c)
-    }
-
-    override fun onMoved(
-        recyclerView: RecyclerView,
-        viewHolder: RecyclerView.ViewHolder,
-        fromPos: Int,
-        target: RecyclerView.ViewHolder,
-        toPos: Int,
-        x: Int,
-        y: Int
-    ) {
-        super.onMoved(recyclerView, viewHolder, fromPos, target, toPos, x, y)
-        icon
     }
 }

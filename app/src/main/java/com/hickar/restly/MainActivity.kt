@@ -70,23 +70,4 @@ class MainActivity : AppCompatActivity() {
 
         return super.dispatchTouchEvent(event)
     }
-
-
-
-//    override fun onTouchEvent(event: MotionEvent?): Boolean {
-//        if (event != null && event.action == MotionEvent.ACTION_DOWN) {
-//            val view = currentFocus
-//
-//            if (view is EditText) {
-//                val outRect = Rect()
-//                view.getGlobalVisibleRect(outRect)
-//
-//                if (!outRect.contains(event.rawX.toInt(), event.rawY.toInt())) {
-//                    KeyboardUtil.hideKeyboard(this, view)
-//                }
-//            }
-//        }
-//
-//        return super.dispatchTouchEvent(event)
-//    }
 }

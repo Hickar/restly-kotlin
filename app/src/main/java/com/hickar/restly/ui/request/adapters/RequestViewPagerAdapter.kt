@@ -2,28 +2,20 @@ package com.hickar.restly.ui.request.adapters
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.hickar.restly.ui.request.RequestDetailFragment
-import com.hickar.restly.ui.requestBody.RequestBodyBinaryFragment
-import com.hickar.restly.ui.requestBody.RequestBodyFormdataFragment
-import com.hickar.restly.ui.requestBody.RequestBodyRawFragment
-import com.hickar.restly.ui.requestBody.RequestDetailBodyFormDataFragment
+import com.hickar.restly.ui.request.RequestFragment
+import com.hickar.restly.ui.request.RequestTabFragment
+import com.hickar.restly.ui.request.ResponseTabFragment
 
-class RequestViewPagerAdapter(fragment: RequestDetailFragment) : FragmentStateAdapter(fragment) {
-    override fun getItemCount(): Int = 4
+class RequestViewPagerAdapter(fragment: RequestFragment) : FragmentStateAdapter(fragment) {
+    override fun getItemCount(): Int = 2
 
     override fun createFragment(position: Int): Fragment {
         return when(position) {
             0 -> {
-                RequestBodyFormdataFragment()
+                RequestTabFragment()
             }
             1 -> {
-                RequestDetailBodyFormDataFragment()
-            }
-            2 -> {
-                RequestBodyRawFragment()
-            }
-            3 -> {
-                RequestBodyBinaryFragment()
+                ResponseTabFragment()
             }
             else -> {
                 return Fragment()

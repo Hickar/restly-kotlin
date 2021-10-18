@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.hickar.restly.R
 import com.hickar.restly.RestlyApplication
+import com.hickar.restly.ViewModelFactory
 import com.hickar.restly.databinding.RequestListBinding
 import com.hickar.restly.ui.requestList.adapters.RequestListAdapter
 import com.hickar.restly.utils.SwipeDeleteCallback
@@ -20,10 +21,8 @@ import kotlinx.coroutines.*
 class RequestListFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
-    private val requestListViewModel: RequestListViewModel by viewModels {
-        RequestListViewModelFactory(
-            (activity?.application as RestlyApplication).repository
-        )
+    private val viewModel: RequestListViewModel by viewModels {
+        ViewModelFactory((requireActivity().application as RestlyApplication).repository)
     }
 
     private var _binding: RequestListBinding? = null
@@ -56,9 +55,9 @@ class RequestListFragment : Fragment() {
         return when (item.itemId) {
             R.id.request_list_menu_add_button -> {
                 runBlocking coroutineScope@{
-                    val newRequestId = requestListViewModel.createNewDefaultRequest()
+                    val newRequestId = viewModel.createNewDefaultRequest()
                     val action =
-                        RequestListFragmentDirections.actionNavigationRequestsToRequestDetailFragment(
+                        RequestListFragmentDirections.actionNavigationRequestsToRequestFragment(
                             newRequestId
                         )
                     findNavController().navigate(action)
@@ -72,7 +71,7 @@ class RequestListFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        requestListViewModel.refreshRequests()
+        viewModel.refreshRequests()
     }
 
     override fun onDestroyView() {
@@ -82,7 +81,7 @@ class RequestListFragment : Fragment() {
 
     private fun setupAdapters() {
         val adapter = RequestListAdapter {
-            val action = RequestListFragmentDirections.actionNavigationRequestsToRequestDetailFragment(it.id)
+            val action = RequestListFragmentDirections.actionNavigationRequestsToRequestFragment(it.id)
             this.findNavController().navigate(action)
         }
 
@@ -91,7 +90,7 @@ class RequestListFragment : Fragment() {
         recyclerView.adapter = adapter
 
         val touchHelper = ItemTouchHelper(SwipeDeleteCallback(requireContext()) { position ->
-            requestListViewModel.deleteRequest(position)
+            viewModel.deleteRequest(position)
         })
         touchHelper.attachToRecyclerView(recyclerView)
     }
@@ -105,7 +104,7 @@ class RequestListFragment : Fragment() {
     }
 
     private fun setupObservers() {
-        requestListViewModel.requests.observe(viewLifecycleOwner, { requests ->
+        viewModel.requests.observe(viewLifecycleOwner, { requests ->
             (recyclerView.adapter as RequestListAdapter).submitList(requests)
         })
     }

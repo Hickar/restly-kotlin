@@ -15,10 +15,10 @@ import kotlinx.coroutines.runBlocking
 import okhttp3.Call
 import okhttp3.Response
 import java.io.IOException
+import java.lang.IllegalArgumentException
 
-class RequestViewModel(
-    private val repository: RequestRepository,
-    private val currentRequestId: Long
+class RequestViewModel constructor(
+    private val repository: RequestRepository
 ) : ViewModel(), okhttp3.Callback {
 
     private lateinit var currentRequest: Request
@@ -36,10 +36,10 @@ class RequestViewModel(
 
     val bodyType: MutableLiveData<BodyType> = MutableLiveData()
 
-    init {
+    fun loadRequest(requestId: Long) {
         runBlocking {
             try {
-                currentRequest = repository.getById(currentRequestId)
+                currentRequest = repository.getById(requestId)
 
                 currentRequest.let {
                     name.value = it.name
@@ -54,9 +54,9 @@ class RequestViewModel(
                     bodyType.value = it.body.type
                 }
 
-            } catch (e: SQLiteException) {
-                Log.e("ViewModel Init Error", e.toString())
-                e.printStackTrace()
+            } catch (exception: SQLiteException) {
+                Log.e("ViewModel Init Error", exception.toString())
+                exception.printStackTrace()
             }
         }
     }
@@ -65,14 +65,13 @@ class RequestViewModel(
         name.value = newName
     }
 
+    fun setMethod(method: RequestMethod) {
+        this.method.value = method
+    }
+
     fun addQueryParameter() {
         params.value!!.add(RequestQueryParameter())
         params.value = params.value
-    }
-
-    fun addHeader() {
-        headers.value!!.add(RequestHeader())
-        headers.value = headers.value
     }
 
     fun deleteQueryParameter(position: Int) {
@@ -80,45 +79,22 @@ class RequestViewModel(
         params.value = params.value
     }
 
+    fun toggleQueryParameter(position: Int) {
+        params.value!![position].enabled = !params.value?.get(position)!!.enabled
+    }
+
+    fun addHeader() {
+        headers.value!!.add(RequestHeader())
+        headers.value = headers.value
+    }
+
     fun deleteHeader(position: Int) {
         headers.value!!.removeAt(position)
         headers.value = headers.value
     }
 
-    fun toggleParam(position: Int) {
-        params.value!![position].enabled = !params.value?.get(position)!!.enabled
-    }
-
     fun toggleHeader(position: Int) {
         headers.value!![position].enabled = !headers.value?.get(position)!!.enabled
-    }
-
-    fun toggleFormData(position: Int) {
-        formData.value!![position].enabled = !formData.value?.get(position)!!.enabled
-    }
-
-    fun toggleMultipartData(position: Int) {
-        multipartData.value!![position].enabled = !multipartData.value?.get(position)!!.enabled
-    }
-
-    fun addFormData() {
-        formData.value!!.add(RequestFormData())
-        formData.value = formData.value
-    }
-
-    fun addMultipartData(type: String) {
-        multipartData.value!!.add(RequestMultipartData(type = type))
-        multipartData.value = multipartData.value
-    }
-
-    fun deleteFormData(position: Int) {
-        formData.value!!.removeAt(position)
-        formData.value = formData.value
-    }
-
-    fun deleteMultipartData(position: Int) {
-        multipartData.value!!.removeAt(position)
-        multipartData.value = multipartData.value
     }
 
     fun getBodyTypeIndex(): Int {
@@ -142,8 +118,54 @@ class RequestViewModel(
         }
     }
 
-    fun setMethod(method: RequestMethod) {
-        this.method.value = method
+    fun addFormData() {
+        formData.value!!.add(RequestFormData())
+        formData.value = formData.value
+    }
+
+    fun deleteFormData(position: Int) {
+        formData.value!!.removeAt(position)
+        formData.value = formData.value
+    }
+
+    fun toggleFormData(position: Int) {
+        formData.value!![position].enabled = !formData.value?.get(position)!!.enabled
+    }
+
+    fun addMultipartData(type: String) {
+        multipartData.value!!.add(RequestMultipartData(type = type))
+        multipartData.value = multipartData.value
+    }
+
+    fun deleteMultipartData(position: Int) {
+        multipartData.value!!.removeAt(position)
+        multipartData.value = multipartData.value
+    }
+
+    fun toggleMultipartData(position: Int) {
+        multipartData.value!![position].enabled = !multipartData.value?.get(position)!!.enabled
+    }
+
+    fun setMultipartFileBody(position: Int, uri: Uri) {
+        val fileManager = ServiceLocator.getInstance().getFileManager()
+        multipartData.value!![position].valueFile = fileManager.getRequestFile(uri)!!
+        multipartData.value = multipartData.value
+    }
+
+    fun setRawBodyMimeType(mimeType: String) {
+        rawData.value!!.mimeType = mimeType
+        rawData.value = rawData.value
+    }
+
+    fun setRawBodyText(textData: String) {
+        rawData.value!!.text = textData
+        rawData.value = rawData.value
+    }
+
+    fun setBinaryBody(uri: Uri) {
+        val fileManager = ServiceLocator.getInstance().getFileManager()
+        binaryData.value!!.file = fileManager.getRequestFile(uri)!!
+        binaryData.value = binaryData.value
     }
 
     fun sendRequest() {
@@ -174,10 +196,9 @@ class RequestViewModel(
                 RequestMethod.DELETE -> {
                     client.delete(url.value!!, headers.value!!, this@RequestViewModel)
                 }
-                else -> null
+                else -> throw IllegalArgumentException("Non-existent HTTP-method was provided: ${method.value}")
             }
         }
-
     }
 
     fun saveRequest() {
@@ -194,31 +215,10 @@ class RequestViewModel(
                 currentRequest.body.type = bodyType.value!!
                 repository.insert(currentRequest)
             } catch (exception: SQLiteException) {
-                Log.d("ViewModel insert error", exception.toString())
+                Log.e("ViewModel insert error", exception.toString())
+                exception.printStackTrace()
             }
         }
-    }
-
-    fun setMultipartFileBody(position: Int, uri: Uri) {
-        val fileManager = ServiceLocator.getInstance().getFileManager()
-        multipartData.value!![position].valueFile = fileManager.getRequestFile(uri)!!
-        multipartData.value = multipartData.value
-    }
-
-    fun setBinaryBody(uri: Uri) {
-        val fileManager = ServiceLocator.getInstance().getFileManager()
-        binaryData.value!!.file = fileManager.getRequestFile(uri)!!
-        binaryData.value = binaryData.value
-    }
-
-    fun setRawBodyMimeType(mimeType: String) {
-        rawData.value!!.mimeType = mimeType
-        rawData.value = rawData.value
-    }
-
-    fun setRawBodyText(textData: String) {
-        rawData.value!!.text = textData
-        rawData.value = rawData.value
     }
 
     override fun onFailure(call: Call, e: IOException) {

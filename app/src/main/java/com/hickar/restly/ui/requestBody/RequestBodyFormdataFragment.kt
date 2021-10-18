@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,8 +22,7 @@ class RequestBodyFormdataFragment : Fragment() {
     private var _binding: RequestBodyFormdataBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: RequestViewModel by viewModels({ requireParentFragment() })
-
+    private val viewModel: RequestViewModel by activityViewModels()
     private lateinit var recyclerView: RecyclerView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

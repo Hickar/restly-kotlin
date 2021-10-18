@@ -6,19 +6,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.hickar.restly.R
 import com.hickar.restly.consts.MimeTypes
 import com.hickar.restly.databinding.RequestBodyRawBinding
-import com.hickar.restly.ui.request.RequestDetailFragmentDirections
+import com.hickar.restly.ui.request.RequestFragmentDirections
 import com.hickar.restly.ui.request.RequestViewModel
 
 class RequestBodyRawFragment : Fragment() {
     private var _binding: RequestBodyRawBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: RequestViewModel by viewModels({ requireParentFragment() })
+    private val viewModel: RequestViewModel by activityViewModels()
     private lateinit var popupMenu: PopupMenu
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -45,7 +45,7 @@ class RequestBodyRawFragment : Fragment() {
 
         binding.requestBodyRawEditButton.setOnClickListener {
             val rawData = viewModel.rawData.value?.text
-            val action = RequestDetailFragmentDirections.actionRequestDetailFragmentToRequestBodyEditRawFragment(rawData)
+            val action = RequestFragmentDirections.actionRequestDetailFragmentToRequestBodyEditRawFragment(rawData)
             findNavController().navigate(action)
         }
 

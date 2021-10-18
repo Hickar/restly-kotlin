@@ -4,14 +4,14 @@ import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import com.hickar.restly.R
 import com.hickar.restly.databinding.RequestBodyEditRawBinding
 import com.hickar.restly.extensions.toEditable
 import com.hickar.restly.ui.request.RequestViewModel
 
 class RequestBodyEditRawFragment : Fragment() {
-    private val requestViewModel: RequestViewModel by viewModels({ requireParentFragment() })
+    private val viewModel: RequestViewModel by activityViewModels()
 
     private var _binding: RequestBodyEditRawBinding? = null
     private val binding get() = _binding!!
@@ -19,6 +19,11 @@ class RequestBodyEditRawFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         (requireActivity() as AppCompatActivity).supportActionBar?.title = ""
+
+//        viewModel = ViewModelProvider(
+//            this,
+//            ViewModelFactory.getInstance(requireActivity().application as RestlyApplication)
+//        ).get(RequestViewModel::class.java)
 
         setHasOptionsMenu(true)
     }
@@ -40,7 +45,7 @@ class RequestBodyEditRawFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.edit_text_menu_done_button -> {
-                requestViewModel.setRawBodyText(binding.requestBodyRawEditField.text.toString())
+                viewModel.setRawBodyText(binding.requestBodyRawEditField.text.toString())
                 true
             }
             else -> super.onOptionsItemSelected(item)

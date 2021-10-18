@@ -1,10 +1,10 @@
 package com.hickar.restly.services
 
 import com.hickar.restly.models.RequestHeader
+import okhttp3.Callback
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
-import okhttp3.Callback
 
 class NetworkService {
     private var client: OkHttpClient = OkHttpClient.Builder()

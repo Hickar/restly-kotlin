@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -24,13 +24,18 @@ class RequestDetailBodyFormDataFragment() : Fragment() {
     private var _binding: RequestBodyMultipartBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: RequestViewModel by viewModels({ requireParentFragment() })
+    private val viewModel: RequestViewModel by activityViewModels()
     private lateinit var contentResolver: ContentResolver
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var popupMenu: PopupMenu
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+//        viewModel = ViewModelProvider(
+//            this,
+//            ViewModelFactory.getInstance(requireActivity().application as RestlyApplication)
+//        ).get(RequestViewModel::class.java)
+
         _binding = RequestBodyMultipartBinding.inflate(inflater, container, false)
         return binding.root
     }

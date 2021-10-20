@@ -34,6 +34,7 @@ class ResponseTabFragment : Fragment() {
         viewPager = binding.responseBodyView
         viewPager.adapter = ResponseBodyViewPagerAdapter(this)
         viewPager.setPageTransformer(MarginPageTransformer(48))
+        viewPager.isUserInputEnabled = false
 
         val bodyTabs = listOf("Raw", "Preview")
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->

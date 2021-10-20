@@ -36,7 +36,7 @@ class RequestViewModel constructor(
 
     val bodyType: MutableLiveData<BodyType> = MutableLiveData()
 
-    val response: MutableLiveData<okhttp3.Response> = MutableLiveData()
+    val response: MutableLiveData<com.hickar.restly.models.Response> = MutableLiveData()
 
     fun loadRequest(requestId: Long) {
         runBlocking {
@@ -228,7 +228,18 @@ class RequestViewModel constructor(
     }
 
     override fun onResponse(call: Call, response: Response) {
-        this.response.postValue(response)
+        val body = response.body
+
+        val newResponse = Response(
+            currentRequest.url,
+            listOf(),
+            body?.contentType().toString(),
+            body!!.string(),
+            response.code
+        )
+        this.response.postValue(newResponse)
+
+        response.close()
     }
 }
 

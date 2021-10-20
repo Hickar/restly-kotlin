@@ -34,6 +34,9 @@
         <entry key="app/src/main/res/layout/request_multipart_item.xml" value="0.375" />
         <entry key="app/src/main/res/layout/request_params_item.xml" value="0.20352597937365538" />
         <entry key="app/src/main/res/layout/request_tab.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/response_body_preview.xml" value="0.17572463768115942" />
+        <entry key="app/src/main/res/layout/response_body_raw.xml" value="0.17572463768115942" />
+        <entry key="app/src/main/res/layout/response_tab.xml" value="0.17572463768115942" />
         <entry key="app/src/main/res/menu/bottom_nav_menu.xml" value="0.23958333333333334" />
         <entry key="app/src/main/res/menu/fullscreen_edit_text_menu.xml" value="0.1" />
         <entry key="app/src/main/res/menu/method_select_popup_menu.xml" value="0.23958333333333334" />

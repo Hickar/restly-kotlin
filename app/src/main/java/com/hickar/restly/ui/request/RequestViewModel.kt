@@ -36,6 +36,8 @@ class RequestViewModel constructor(
 
     val bodyType: MutableLiveData<BodyType> = MutableLiveData()
 
+    val response: MutableLiveData<okhttp3.Response> = MutableLiveData()
+
     fun loadRequest(requestId: Long) {
         runBlocking {
             try {
@@ -215,7 +217,7 @@ class RequestViewModel constructor(
                 currentRequest.body.type = bodyType.value!!
                 repository.insert(currentRequest)
             } catch (exception: SQLiteException) {
-                Log.e("ViewModel insert error", exception.toString())
+                Log.e("Unable to save request", exception.toString())
                 exception.printStackTrace()
             }
         }
@@ -226,7 +228,7 @@ class RequestViewModel constructor(
     }
 
     override fun onResponse(call: Call, response: Response) {
-        Log.d("RESPONSE", response.body!!.string())
+        this.response.postValue(response)
     }
 }
 

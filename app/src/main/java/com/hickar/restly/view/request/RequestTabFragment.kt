@@ -25,11 +25,11 @@ import com.hickar.restly.extensions.toEditable
 import com.hickar.restly.models.BodyType
 import com.hickar.restly.models.RequestHeader
 import com.hickar.restly.models.RequestQueryParameter
-import com.hickar.restly.view.request.adapters.RequestBodyViewPagerAdapter
-import com.hickar.restly.view.request.adapters.RequestParamsListAdapter
 import com.hickar.restly.utils.KeyboardUtil
 import com.hickar.restly.utils.MethodCardViewUtil
 import com.hickar.restly.utils.SwipeDeleteCallback
+import com.hickar.restly.view.request.adapters.RequestBodyViewPagerAdapter
+import com.hickar.restly.view.request.adapters.RequestParamsListAdapter
 import com.hickar.restly.viewModel.RequestViewModel
 
 typealias ParamsListAdapter = RequestParamsListAdapter<RequestQueryParameter>
@@ -228,6 +228,11 @@ class RequestTabFragment : Fragment() {
     override fun onDetach() {
         KeyboardUtil.hideKeyboard(requireActivity())
         super.onDetach()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.root.requestLayout()
     }
 
     override fun onDestroy() {

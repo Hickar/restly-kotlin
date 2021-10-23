@@ -41,6 +41,7 @@ class RequestBodyEditRawFragment : Fragment() {
         return when (item.itemId) {
             R.id.edit_text_menu_done_button -> {
                 viewModel.setRawBodyText(binding.requestBodyRawEditField.text.toString())
+                requireActivity().onBackPressed()
                 true
             }
             else -> super.onOptionsItemSelected(item)

@@ -15,7 +15,6 @@ import kotlinx.coroutines.runBlocking
 import okhttp3.Call
 import okhttp3.Response
 import java.io.IOException
-import java.lang.IllegalArgumentException
 
 class RequestViewModel constructor(
     private val repository: RequestRepository

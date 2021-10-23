@@ -22,7 +22,7 @@ class NetworkService {
             .method(method, body)
 
         for (header in headers) {
-            if (header.enabled) builder.addHeader(header.key, header.valueText)
+            if (header.enabled && !header.isEmpty()) builder.addHeader(header.key, header.valueText)
         }
 
         val request = builder.build()

@@ -21,15 +21,15 @@ class EditTextDialog(
 
         val builder = AlertDialog.Builder(activity)
             .setTitle(titleId)
-            .setNegativeButton(R.string.dialog_cancel) { dialog, _ ->
+            .setNegativeButton(R.string.dialog_cancel_option) { dialog, _ ->
                 dialog.cancel()
             }
-            .setPositiveButton(R.string.dialog_ok) { _, _ ->
+            .setPositiveButton(R.string.dialog_ok_option) { _, _ ->
                 onSubmitCallback(textInput.text.toString())
             }
 
         val dialog = builder.create()
-        dialog.setView(textInput, 60, 8, 60, 8)
+        dialog.setView(textInput, 56, 8, 56, 8)
 
         return dialog
     }

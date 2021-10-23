@@ -40,4 +40,14 @@ class ResponseTabFragment : Fragment() {
             tab.text = bodyTabs[position]
         }.attach()
     }
+
+    override fun onResume() {
+        super.onResume()
+        binding.root.requestLayout()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
 }

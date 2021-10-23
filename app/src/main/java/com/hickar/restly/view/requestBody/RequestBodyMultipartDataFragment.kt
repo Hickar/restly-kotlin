@@ -16,8 +16,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hickar.restly.R
 import com.hickar.restly.databinding.RequestBodyMultipartBinding
 import com.hickar.restly.models.RequestMultipartData
-import com.hickar.restly.view.requestBody.adapters.RequestMultipartDataItemsAdapter
 import com.hickar.restly.utils.SwipeDeleteCallback
+import com.hickar.restly.view.requestBody.adapters.RequestMultipartDataItemsAdapter
 import com.hickar.restly.viewModel.RequestViewModel
 
 class RequestDetailBodyFormDataFragment() : Fragment() {

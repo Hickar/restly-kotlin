@@ -12,8 +12,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hickar.restly.databinding.RequestBodyFormdataBinding
 import com.hickar.restly.models.RequestFormData
 import com.hickar.restly.models.RequestKeyValueData
-import com.hickar.restly.view.request.adapters.RequestParamsListAdapter
 import com.hickar.restly.utils.SwipeDeleteCallback
+import com.hickar.restly.view.request.adapters.RequestParamsListAdapter
 import com.hickar.restly.viewModel.RequestViewModel
 
 typealias FormDataListAdapter = RequestParamsListAdapter<RequestFormData>

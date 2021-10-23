@@ -9,18 +9,20 @@ import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.hickar.restly.MainActivity
 import com.hickar.restly.R
 import com.hickar.restly.RestlyApplication
 import com.hickar.restly.ViewModelFactory
 import com.hickar.restly.databinding.RequestBinding
-import com.hickar.restly.view.dialogs.EditTextDialog
-import com.hickar.restly.view.request.adapters.RequestViewPagerAdapter
+import com.hickar.restly.extensions.hide
+import com.hickar.restly.extensions.show
 import com.hickar.restly.utils.KeyboardUtil
+import com.hickar.restly.view.dialogs.EditTextDialog
+import com.hickar.restly.view.dialogs.WarningDialog
+import com.hickar.restly.view.request.adapters.RequestViewPagerAdapter
 import com.hickar.restly.viewModel.RequestViewModel
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlin.coroutines.CoroutineContext
 
 class RequestFragment : Fragment() {
     private var _binding: RequestBinding? = null
@@ -43,7 +45,8 @@ class RequestFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        (requireActivity() as AppCompatActivity).supportActionBar?.title = ""
+        (requireActivity() as AppCompatActivity).supportActionBar?.title = viewModel.name.value
+        (requireActivity() as MainActivity).navView.hide()
 
         setHasOptionsMenu(true)
 
@@ -54,6 +57,7 @@ class RequestFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         KeyboardUtil.hideKeyboard(requireActivity())
         setupViewPager()
+        setupObservers()
     }
 
     private fun setupViewPager() {
@@ -70,6 +74,12 @@ class RequestFragment : Fragment() {
         }.attach()
     }
 
+    private fun setupObservers() {
+        viewModel.name.observe(viewLifecycleOwner) { name ->
+            (requireActivity() as AppCompatActivity).supportActionBar?.title = name
+        }
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.request_menu_save_button -> {
@@ -78,16 +88,21 @@ class RequestFragment : Fragment() {
             }
             R.id.request_menu_rename_button -> {
                 val nameEditDialog =
-                    EditTextDialog(R.string.rename_dialog_title, viewModel.name.value!!) { newName ->
+                    EditTextDialog(R.string.dialog_rename_title, viewModel.name.value!!) { newName ->
                         viewModel.setName(newName)
                     }
                 nameEditDialog.show(parentFragmentManager, "Rename")
                 true
             }
             R.id.request_menu_send_button -> {
-                applicationScope.launch {
-                    viewModel.saveRequest()
-                    viewModel.sendRequest()
+                if (viewModel.url.value?.isEmpty() == true) {
+                    val warningDialog = WarningDialog(R.string.dialog_warning_title, R.string.dialog_emptyurl_message)
+                    warningDialog.show(parentFragmentManager, "Warning")
+                } else {
+                    applicationScope.launch {
+                        viewModel.saveRequest()
+                        viewModel.sendRequest()
+                    }
                 }
                 true
             }
@@ -100,8 +115,9 @@ class RequestFragment : Fragment() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
+        (requireActivity() as MainActivity).navView.show()
         requireActivity().viewModelStore.clear()
         _binding = null
+        super.onDestroy()
     }
 }

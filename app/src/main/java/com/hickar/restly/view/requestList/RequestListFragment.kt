@@ -14,8 +14,8 @@ import com.hickar.restly.R
 import com.hickar.restly.RestlyApplication
 import com.hickar.restly.ViewModelFactory
 import com.hickar.restly.databinding.RequestListBinding
-import com.hickar.restly.view.requestList.adapters.RequestListAdapter
 import com.hickar.restly.utils.SwipeDeleteCallback
+import com.hickar.restly.view.requestList.adapters.RequestListAdapter
 import com.hickar.restly.viewModel.RequestListViewModel
 import kotlinx.coroutines.*
 

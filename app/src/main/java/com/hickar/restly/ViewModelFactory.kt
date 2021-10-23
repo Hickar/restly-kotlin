@@ -3,8 +3,8 @@ package com.hickar.restly
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.hickar.restly.repository.room.RequestRepository
-import com.hickar.restly.viewModel.RequestViewModel
 import com.hickar.restly.viewModel.RequestListViewModel
+import com.hickar.restly.viewModel.RequestViewModel
 
 class ViewModelFactory(
     private val requestRepository: RequestRepository

@@ -56,4 +56,9 @@ class RequestBodyBinaryFragment : Fragment() {
         super.onDestroy()
         _binding = null
     }
+
+    override fun onResume() {
+        super.onResume()
+        binding.root.requestLayout()
+    }
 }

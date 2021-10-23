@@ -69,4 +69,9 @@ class RequestBodyFormdataFragment : Fragment() {
     private val onParamCheckBoxToggle: (Int) -> Unit = { position ->
         viewModel.toggleFormData(position)
     }
+
+    override fun onResume() {
+        super.onResume()
+        binding.root.requestLayout()
+    }
 }

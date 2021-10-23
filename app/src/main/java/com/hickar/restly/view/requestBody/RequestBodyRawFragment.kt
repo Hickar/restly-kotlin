@@ -66,4 +66,9 @@ class RequestBodyRawFragment : Fragment() {
         popupMenu = PopupMenu(requireContext(), binding.requestBodyRawSelectTypeButton)
         popupMenu.inflate(R.menu.request_content_type_menu)
     }
+
+    override fun onResume() {
+        super.onResume()
+        binding.root.requestLayout()
+    }
 }

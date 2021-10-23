@@ -105,4 +105,9 @@ class RequestDetailBodyFormDataFragment() : Fragment() {
     private val onParamCheckBoxToggle: (Int) -> Unit = { position ->
         viewModel.toggleMultipartData(position)
     }
+
+    override fun onResume() {
+        super.onResume()
+        binding.root.requestLayout()
+    }
 }

@@ -29,4 +29,9 @@ class ResponseBodyRawFragment : Fragment() {
             binding.responseBodyRawData.text = response.body
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        binding.root.requestLayout()
+    }
 }

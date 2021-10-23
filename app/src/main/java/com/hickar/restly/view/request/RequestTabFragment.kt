@@ -135,8 +135,6 @@ class RequestTabFragment : Fragment() {
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 viewModel.setBodyTypeIndex(tab!!.position)
-//                viewPager.
-//                root.measure(binding.root.width, 1000)
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {}

@@ -39,4 +39,9 @@ class ResponseBodyPreviewFragment : Fragment() {
             webView.loadDataWithBaseURL(response.url, response.body, "text/html", "utf-8", response.url)
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        binding.root.requestLayout()
+    }
 }

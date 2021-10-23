@@ -7,7 +7,7 @@ data class RequestFile(
     val mimeType: String,
     val size: Int,
 ) {
-    fun isEmpty(): Boolean {
-        return uri.isEmpty() || name.isEmpty()
+    fun isValid(): Boolean {
+        return uri.isNotEmpty() || name.isNotEmpty()
     }
 }

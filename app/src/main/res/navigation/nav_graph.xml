@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/navigation_requests"
-        android:name="com.hickar.restly.ui.requestList.RequestListFragment"
+        android:name="com.hickar.restly.view.requestList.RequestListFragment"
         android:label="@string/requests_tab_title"
         tools:layout="@layout/request_list">
         <action
@@ -21,18 +21,18 @@
 
     <fragment
         android:id="@+id/navigation_history"
-        android:name="com.hickar.restly.ui.history.HistoryFragment"
+        android:name="com.hickar.restly.view.history.HistoryFragment"
         android:label="@string/history_tab_title"
         tools:layout="@layout/history" />
 
     <fragment
         android:id="@+id/navigation_settings"
-        android:name="com.hickar.restly.ui.settings.SettingsFragment"
+        android:name="com.hickar.restly.view.settings.SettingsFragment"
         android:label="@string/settings_tab_title"
         tools:layout="@layout/settings" />
     <fragment
         android:id="@+id/requestDetailFragment"
-        android:name="com.hickar.restly.ui.request.RequestFragment">
+        android:name="com.hickar.restly.view.request.RequestFragment">
         <argument
             android:name="requestId"
             app:argType="long" />
@@ -46,7 +46,7 @@
     </fragment>
     <fragment
         android:id="@+id/requestBodyEditRawFragment"
-        android:name="com.hickar.restly.ui.requestBody.RequestBodyEditRawFragment"
+        android:name="com.hickar.restly.view.requestBody.RequestBodyEditRawFragment"
         android:label="RequestBodyEditRawFragment" >
         <argument
             android:name="textData"

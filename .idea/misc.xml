@@ -5,6 +5,7 @@
       <map>
         <entry key="../../../../layout/custom_preview.xml" value="0.2546875" />
         <entry key="app/src/main/res/drawable/border_bottom.xml" value="0.225" />
+        <entry key="app/src/main/res/drawable/ic_access_time.xml" value="0.2557291666666667" />
         <entry key="app/src/main/res/drawable/recycler_divider.xml" value="0.259375" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.24105668208813794" />
         <entry key="app/src/main/res/layout/fragment_dashboard.xml" value="0.18840579710144928" />
@@ -36,7 +37,7 @@
         <entry key="app/src/main/res/layout/request_tab.xml" value="0.1" />
         <entry key="app/src/main/res/layout/response_body_preview.xml" value="0.17572463768115942" />
         <entry key="app/src/main/res/layout/response_body_raw.xml" value="0.17572463768115942" />
-        <entry key="app/src/main/res/layout/response_tab.xml" value="0.17572463768115942" />
+        <entry key="app/src/main/res/layout/response_tab.xml" value="0.375" />
         <entry key="app/src/main/res/menu/bottom_nav_menu.xml" value="0.23958333333333334" />
         <entry key="app/src/main/res/menu/fullscreen_edit_text_menu.xml" value="0.1" />
         <entry key="app/src/main/res/menu/method_select_popup_menu.xml" value="0.23958333333333334" />

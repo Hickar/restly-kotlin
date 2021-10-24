@@ -229,14 +229,18 @@ class RequestViewModel constructor(
 
     override fun onResponse(call: Call, response: Response) {
         val body = response.body
+        val size = if (body?.contentLength() == -1L) 0L else body?.contentLength()
 
-        val newResponse = Response(
+        val newResponse = com.hickar.restly.models.Response(
             currentRequest.url,
-            listOf(),
+            response.headers,
             body?.contentType().toString(),
             body!!.string(),
-            response.code
+            response.code,
+            response.receivedResponseAtMillis - response.sentRequestAtMillis,
+            size as Long
         )
+
         this.response.postValue(newResponse)
 
         response.close()

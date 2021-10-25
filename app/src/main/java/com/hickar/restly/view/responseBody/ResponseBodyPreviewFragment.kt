@@ -9,6 +9,7 @@ import android.webkit.WebView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.hickar.restly.databinding.ResponseBodyPreviewBinding
+import com.hickar.restly.extensions.show
 import com.hickar.restly.viewModel.RequestViewModel
 
 class ResponseBodyPreviewFragment : Fragment() {
@@ -36,7 +37,19 @@ class ResponseBodyPreviewFragment : Fragment() {
 
     private fun setupObservers() {
         viewModel.response.observe(viewLifecycleOwner) { response ->
-            webView.loadDataWithBaseURL(response.url, response.body.rawData!!, "text/html", "utf-8", response.url)
+            val contentType = response.body.contentType
+
+            when {
+                contentType.contains("html") -> {
+                    webView.show()
+                    webView.loadDataWithBaseURL(response.url, response.body.rawData!!, "text/html", "utf-8", response.url)
+                }
+                contentType.contains("image") -> {
+                    val imageView = binding.responseBodyPreviewImageView
+                    imageView.show()
+                    viewModel.getResponseImageBitmap(imageView)
+                }
+            }
         }
     }
 

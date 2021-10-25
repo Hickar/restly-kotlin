@@ -48,7 +48,9 @@
     <string name="edit_text_menu_done_button">Done</string>
     <string name="request_multipart_type_menu_option_text">Text</string>
     <string name="request_multipart_type_menu_option_file">File</string>
+
     <string name="response_info_general_section_label">General</string>
     <string name="response_info_section_headers_label">Headers</string>
+    <string name="response_body_raw_unsupported_type">Raw data preview of media files is unsupported</string>
     <string name="response_body_empty_placeholder_text">You haven\'t sent request yet</string>
 </resources>

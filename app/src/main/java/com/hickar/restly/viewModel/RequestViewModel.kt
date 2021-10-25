@@ -2,9 +2,13 @@ package com.hickar.restly.viewModel
 
 import android.content.ContentResolver
 import android.database.sqlite.SQLiteException
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
+import android.view.View
 import android.webkit.MimeTypeMap
+import android.widget.ImageView
+import androidx.core.net.toUri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -174,6 +178,14 @@ class RequestViewModel constructor(
         binaryData.value = binaryData.value
     }
 
+    fun getResponseImageBitmap(view: ImageView) {
+        val fileManager = ServiceLocator.getInstance().getFileManager()
+//        val inputStream = fileManager.readTempFile(response.value!!.body.file!!.toURI())
+        val bitmap = BitmapFactory.decodeFile(response.value!!.body.file!!.canonicalPath)
+        view.setImageBitmap(bitmap)
+//        view.setImageURI(response.value!!.body.file!!.toUri())
+    }
+
     fun sendRequest() {
         viewModelScope.launch {
             val client = ServiceLocator.getInstance().getNetworkClient()
@@ -240,7 +252,11 @@ class RequestViewModel constructor(
             var bodyRawData: String? = null
             var bodyFile: File? = null
 
-            if (contentType.contains("text") || contentType.contains("json")) {
+            if (
+                contentType.contains("text") ||
+                contentType.contains("json") ||
+                contentType.contains("html")
+            ) {
                 bodyRawData = response.body!!.string()
             } else {
                 val fileManager = ServiceLocator.getInstance().getFileManager()
@@ -254,17 +270,19 @@ class RequestViewModel constructor(
                 bodyFile
             )
 
-            this.response.postValue(Response(
-                currentRequest.url,
-                response.headers,
-                response.code,
-                Date(response.sentRequestAtMillis),
-                Date(response.receivedResponseAtMillis),
-                response.receivedResponseAtMillis - response.sentRequestAtMillis,
-                response.protocol.toString(),
-                response.isRedirect,
-                body
-            ))
+            this.response.postValue(
+                Response(
+                    currentRequest.url,
+                    response.headers,
+                    response.code,
+                    Date(response.sentRequestAtMillis),
+                    Date(response.receivedResponseAtMillis),
+                    response.receivedResponseAtMillis - response.sentRequestAtMillis,
+                    response.protocol.toString(),
+                    response.isRedirect,
+                    body
+                )
+            )
             response.close()
         }
     }

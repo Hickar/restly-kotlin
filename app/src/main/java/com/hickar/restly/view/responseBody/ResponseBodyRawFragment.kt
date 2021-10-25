@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.hickar.restly.R
 import com.hickar.restly.databinding.ResponseBodyRawBinding
 import com.hickar.restly.viewModel.RequestViewModel
 
@@ -26,7 +27,11 @@ class ResponseBodyRawFragment : Fragment() {
 
     private fun setupObservers() {
         viewModel.response.observe(viewLifecycleOwner) { response ->
-            binding.responseBodyRawData.text = response.body.rawData!!
+            binding.responseBodyRawData.text= if (response.body.isRawViewSupported()) {
+                response.body.rawData ?: ""
+            } else {
+                resources.getString(R.string.response_body_raw_unsupported_type)
+            }
         }
     }
 

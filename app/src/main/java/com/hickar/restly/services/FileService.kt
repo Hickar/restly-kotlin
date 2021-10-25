@@ -1,19 +1,19 @@
 package com.hickar.restly.services
 
-import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
 import android.provider.OpenableColumns
 import android.util.Log
 import android.webkit.MimeTypeMap
-import androidx.core.content.ContextCompat
 import com.hickar.restly.models.RequestFile
 import java.io.*
 import java.net.URI
+import java.nio.charset.Charset
 
 class FileService(
     private val context: Context
 ) {
+
     private val contentResolver = context.contentResolver
 
     fun getRequestFile(uri: Uri): RequestFile? {
@@ -41,18 +41,21 @@ class FileService(
     }
 
     fun createTempFile(inputStream: InputStream): File? {
-        val cacheDir = context.externalCacheDir
+        val cacheDir = context.cacheDir
         val tmpFile = File.createTempFile("response_body", "", cacheDir)
 
         try {
             val buffer = ByteArray(1024 * 8)
             val tmpFileOutputStream = FileOutputStream(tmpFile)
 
-            while (inputStream.read() != -1) {
-                tmpFileOutputStream.write(buffer, 0, inputStream.read())
+            while (true) {
+                val read = inputStream.read()
+                if (read > 0) break
+                tmpFileOutputStream.write(buffer, 0, read)
             }
 
             tmpFileOutputStream.flush()
+            tmpFileOutputStream.close()
         } catch (exception: IOException) {
             Log.d("FileService", "Unable to write to tmp file: ${exception.message}")
             exception.printStackTrace()
@@ -66,6 +69,11 @@ class FileService(
 
     fun readTempFile(uri: URI): InputStream {
         val file = File(uri)
+        if (file.exists()) {
+            Log.d("FileService Read", "File exists")
+        } else {
+            Log.d("FileService Read", "File not exists!")
+        }
         return FileInputStream(file)
     }
 

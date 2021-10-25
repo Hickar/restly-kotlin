@@ -7,4 +7,12 @@ data class ResponseBody(
     val size: Long,
     val rawData: String?,
     val file: File?
-)
+) {
+    fun isRawViewSupported(): Boolean {
+        return rawData != null && (
+                contentType.contains("text") ||
+                contentType.contains("json") ||
+                contentType.contains("html")
+        )
+    }
+}

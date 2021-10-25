@@ -1,6 +1,5 @@
 package com.hickar.restly.view.request
 
-import android.graphics.ColorFilter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +7,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
@@ -34,8 +34,16 @@ class ResponseTabFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        setupEventListeners()
         setupViewPager()
         setupObservers()
+    }
+
+    private fun setupEventListeners() {
+        binding.responseStatusInfo.setOnClickListener {
+            val action = RequestFragmentDirections.actionRequestDetailFragmentToResponseBodyInfoFragment()
+            findNavController().navigate(action)
+        }
     }
 
     private fun setupViewPager() {

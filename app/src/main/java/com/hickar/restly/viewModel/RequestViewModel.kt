@@ -231,18 +231,19 @@ class RequestViewModel constructor(
         val body = response.body
         val size = if (body?.contentLength() == -1L) 0L else body?.contentLength()
 
-        val newResponse = com.hickar.restly.models.Response(
+        val newResponse = Response(
             currentRequest.url,
             response.headers,
             body?.contentType().toString(),
             body!!.string(),
             response.code,
             response.receivedResponseAtMillis - response.sentRequestAtMillis,
-            size as Long
+            size as Long,
+            response.protocol.toString(),
+            response.isRedirect
         )
 
         this.response.postValue(newResponse)
-
         response.close()
     }
 }

@@ -30,6 +30,7 @@
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/request_list_item_name_label"
         style="@style/Restly.Request.NameText"
+        android:layout_marginHorizontal="8dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toEndOf="@+id/request_list_item_method_box"

@@ -48,4 +48,6 @@
     <string name="edit_text_menu_done_button">Done</string>
     <string name="request_multipart_type_menu_option_text">Text</string>
     <string name="request_multipart_type_menu_option_file">File</string>
+    <string name="response_info_general_section_label">General</string>
+    <string name="response_info_section_headers_label">Headers</string>
 </resources>

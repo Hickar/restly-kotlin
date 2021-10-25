@@ -4,49 +4,48 @@ import kotlin.math.pow
 
 fun Long.toDocumentSize(): String {
     var size = 0.0
-    var sizePrefix = ""
+    var sizeUnit = ""
 
     when (this) {
         in 0..2.0.pow(10.0).toLong() * 1024 -> {
             size = this.toDouble() / 2.0.pow(10.0)
-            sizePrefix = "kb"
+            sizeUnit = "kb"
         }
         in 2.0.pow(20.0).toLong()..2.0.pow(20.0).toLong() * 1024 -> {
             size = this.toDouble() / 2.0.pow(20.0)
-            sizePrefix = "mb"
+            sizeUnit = "mb"
         }
         in 2.0.pow(30.0).toLong()..2.0.pow(30.0).toLong() * 1024 -> {
             size = this.toDouble() / 2.0.pow(30.0)
-            sizePrefix = "gb"
+            sizeUnit = "gb"
         }
         in 2.0.pow(40.0).toLong()..2.0.pow(40.0).toLong() * 1024 -> {
             size = this.toDouble() / 2.0.pow(40.0)
-            sizePrefix = ""
-
+            sizeUnit = "tb"
         }
     }
 
-    return "%.2f%s".format(size, sizePrefix)
+    return "%.2f%s".format(size, sizeUnit)
 }
 
 fun Long.toResponseTime(): String {
     var time = 0
-    var timePrefix = ""
+    var timeUnit = ""
 
     when (this) {
         in 0..1000 -> {
             time = this.toInt()
-            timePrefix = "ms"
+            timeUnit = "ms"
         }
         in 1000..1000*60 -> {
             time = this.toInt() / 1000
-            timePrefix = "s"
+            timeUnit = "s"
         }
         in 1000*60..1000*60*60 -> {
             time = this.toInt() / 60000
-            timePrefix = "m"
+            timeUnit = "m"
         }
     }
 
-    return "$time$timePrefix"
+    return "$time$timeUnit"
 }

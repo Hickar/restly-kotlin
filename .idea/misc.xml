@@ -35,6 +35,8 @@
         <entry key="app/src/main/res/layout/request_multipart_item.xml" value="0.375" />
         <entry key="app/src/main/res/layout/request_params_item.xml" value="0.20352597937365538" />
         <entry key="app/src/main/res/layout/request_tab.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/response_body_info.xml" value="0.1838768115942029" />
+        <entry key="app/src/main/res/layout/response_body_info_item.xml" value="0.375" />
         <entry key="app/src/main/res/layout/response_body_preview.xml" value="0.17572463768115942" />
         <entry key="app/src/main/res/layout/response_body_raw.xml" value="0.17572463768115942" />
         <entry key="app/src/main/res/layout/response_tab.xml" value="0.375" />

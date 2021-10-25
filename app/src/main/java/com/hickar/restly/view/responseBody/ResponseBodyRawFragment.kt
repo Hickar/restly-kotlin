@@ -1,4 +1,4 @@
-package com.hickar.restly.view.requestBody.responseBody
+package com.hickar.restly.view.responseBody
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -26,7 +26,7 @@ class ResponseBodyRawFragment : Fragment() {
 
     private fun setupObservers() {
         viewModel.response.observe(viewLifecycleOwner) { response ->
-            binding.responseBodyRawData.text = response.body
+            binding.responseBodyRawData.text = response.body.rawData!!
         }
     }
 

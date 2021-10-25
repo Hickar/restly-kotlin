@@ -8,15 +8,13 @@ import java.util.*
 data class Response(
     val url: String,
     val headers: Headers,
-    val contentType: String,
-    val body: String,
     val code: Int,
     val receivedAt: Date,
     val sentAt: Date,
     val roundTripTime: Long,
-    val size: Long,
     val protocol: String,
-    val isRedirected: Boolean
+    val isRedirected: Boolean,
+    val body: ResponseBody
 ) {
 
     fun getGeneralParams(): List<Pair<String, String>> {
@@ -27,7 +25,7 @@ data class Response(
             Pair("Protocol", protocol),
             Pair("Response Code", code.toString()),
             Pair("Is Redirect", isRedirected.toString()),
-            Pair("Response Content-Type", contentType),
+            Pair("Response Content-Type", body.contentType),
             Pair("Time sent", timeFormat.format(sentAt)),
             Pair("Time received", timeFormat.format(receivedAt)),
             Pair("Round trip time", roundTripTime.toResponseTime())

@@ -29,7 +29,7 @@ class ServiceLocator {
 
     fun getFileManager(): FileService {
         if (!this::fileManager.isInitialized) {
-            fileManager = FileService(application.contentResolver)
+            fileManager = FileService(application.applicationContext)
         }
 
         return fileManager

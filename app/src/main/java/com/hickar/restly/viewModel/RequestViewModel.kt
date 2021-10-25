@@ -1,11 +1,14 @@
 package com.hickar.restly.viewModel
 
+import android.content.ContentResolver
 import android.database.sqlite.SQLiteException
 import android.net.Uri
 import android.util.Log
+import android.webkit.MimeTypeMap
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hickar.restly.consts.MimeTypes
 import com.hickar.restly.consts.RequestMethod
 import com.hickar.restly.models.*
 import com.hickar.restly.repository.room.RequestRepository
@@ -14,6 +17,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import okhttp3.Call
 import okhttp3.Response
+import java.io.File
 import java.io.IOException
 import java.util.*
 
@@ -229,25 +233,40 @@ class RequestViewModel constructor(
     }
 
     override fun onResponse(call: Call, response: Response) {
-        val body = response.body
-        val size = if (body?.contentLength() == -1L) 0L else body?.contentLength()
+        if (response.body != null) {
+            val bodySize = if (response.body!!.contentLength() == -1L) 0L else response.body!!.contentLength()
+            val contentType = response.body!!.contentType().toString()
 
-        val newResponse = Response(
-            currentRequest.url,
-            response.headers,
-            body?.contentType().toString(),
-            body!!.string(),
-            response.code,
-            Date(response.sentRequestAtMillis),
-            Date(response.receivedResponseAtMillis),
-            response.receivedResponseAtMillis - response.sentRequestAtMillis,
-            size as Long,
-            response.protocol.toString(),
-            response.isRedirect
-        )
+            var bodyRawData: String? = null
+            var bodyFile: File? = null
 
-        this.response.postValue(newResponse)
-        response.close()
+            if (contentType.contains("text") || contentType.contains("json")) {
+                bodyRawData = response.body!!.string()
+            } else {
+                val fileManager = ServiceLocator.getInstance().getFileManager()
+                bodyFile = fileManager.createTempFile(response.body!!.byteStream())
+            }
+
+            val body = ResponseBody(
+                response.body!!.contentType().toString(),
+                bodySize,
+                bodyRawData,
+                bodyFile
+            )
+
+            this.response.postValue(Response(
+                currentRequest.url,
+                response.headers,
+                response.code,
+                Date(response.sentRequestAtMillis),
+                Date(response.receivedResponseAtMillis),
+                response.receivedResponseAtMillis - response.sentRequestAtMillis,
+                response.protocol.toString(),
+                response.isRedirect,
+                body
+            ))
+            response.close()
+        }
     }
 }
 

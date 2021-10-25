@@ -1,4 +1,4 @@
-package com.hickar.restly.view.requestBody.responseBody
+package com.hickar.restly.view.responseBody
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -36,7 +36,7 @@ class ResponseBodyPreviewFragment : Fragment() {
 
     private fun setupObservers() {
         viewModel.response.observe(viewLifecycleOwner) { response ->
-            webView.loadDataWithBaseURL(response.url, response.body, "text/html", "utf-8", response.url)
+            webView.loadDataWithBaseURL(response.url, response.body.rawData!!, "text/html", "utf-8", response.url)
         }
     }
 

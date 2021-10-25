@@ -68,7 +68,7 @@ class ResponseTabFragment : Fragment() {
 
             binding.responseStatusCode.text = response.code.toString()
             binding.responseStatusTime.text = response.roundTripTime.toResponseTime()
-            binding.responseStatusSize.text = response.size.toDocumentSize()
+            binding.responseStatusSize.text = response.body.size.toDocumentSize()
 
             val statusIconColorId = if (response.code < 400) R.color.green_700 else R.color.red_700
             val statusIconColor = ContextCompat.getColor(requireContext(), statusIconColorId)

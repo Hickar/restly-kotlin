@@ -11,10 +11,18 @@
         style="@style/Restly.Request.NameText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp" />
+        android:layout_marginBottom="4dp"
+        android:enabled="true"
+        android:focusable="true"
+        android:longClickable="true"
+        android:textIsSelectable="true" />
 
     <TextView
         android:id="@+id/response_body_info_item_text"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:enabled="true"
+        android:focusable="true"
+        android:longClickable="true"
+        android:textIsSelectable="true" />
 </LinearLayout>

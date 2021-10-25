@@ -15,9 +15,6 @@ import kotlinx.coroutines.runBlocking
 import okhttp3.Call
 import okhttp3.Response
 import java.io.IOException
-import java.text.DateFormat
-import java.text.SimpleDateFormat
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 class RequestViewModel constructor(

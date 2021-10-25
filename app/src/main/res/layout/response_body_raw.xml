@@ -8,10 +8,10 @@
         android:id="@+id/response_body_raw_data"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="8dp"
-        android:textIsSelectable="true"
         android:enabled="true"
         android:focusable="true"
-        android:longClickable="true"/>
+        android:longClickable="true"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp"
+        android:textIsSelectable="true" />
 </ScrollView>

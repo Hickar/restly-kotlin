@@ -3,7 +3,6 @@ package com.hickar.restly.models
 import com.hickar.restly.extensions.toResponseTime
 import okhttp3.Headers
 import java.text.SimpleDateFormat
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 data class Response(

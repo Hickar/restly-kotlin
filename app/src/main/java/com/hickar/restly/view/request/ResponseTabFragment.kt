@@ -14,6 +14,8 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.hickar.restly.R
 import com.hickar.restly.databinding.ResponseTabBinding
+import com.hickar.restly.extensions.hide
+import com.hickar.restly.extensions.show
 import com.hickar.restly.extensions.toDocumentSize
 import com.hickar.restly.extensions.toResponseTime
 import com.hickar.restly.view.request.adapters.ResponseBodyViewPagerAdapter
@@ -61,6 +63,9 @@ class ResponseTabFragment : Fragment() {
 
     private fun setupObservers() {
         viewModel.response.observe(viewLifecycleOwner) { response ->
+            binding.responseBodyEmptyPlaceholder.hide()
+            binding.responseBody.show()
+
             binding.responseStatusCode.text = response.code.toString()
             binding.responseStatusTime.text = response.roundTripTime.toResponseTime()
             binding.responseStatusSize.text = response.size.toDocumentSize()

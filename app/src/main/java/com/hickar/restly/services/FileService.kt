@@ -1,14 +1,21 @@
 package com.hickar.restly.services
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.provider.OpenableColumns
 import android.util.Log
 import android.webkit.MimeTypeMap
+import androidx.core.net.toUri
+import com.hickar.restly.extensions.toDocumentSize
 import com.hickar.restly.models.RequestFile
+import okio.BufferedSource
+import okio.Okio
+import okio.buffer
+import okio.sink
 import java.io.*
 import java.net.URI
-import java.nio.charset.Charset
 
 class FileService(
     private val context: Context
@@ -41,21 +48,12 @@ class FileService(
     }
 
     fun createTempFile(inputStream: InputStream): File? {
-        val cacheDir = context.cacheDir
-        val tmpFile = File.createTempFile("response_body", "", cacheDir)
+        val cacheDir = context.externalCacheDir
+        val tmpFile = File.createTempFile("response_body", ".jpg", cacheDir)
 
         try {
-            val buffer = ByteArray(1024 * 8)
-            val tmpFileOutputStream = FileOutputStream(tmpFile)
-
-            while (true) {
-                val read = inputStream.read()
-                if (read > 0) break
-                tmpFileOutputStream.write(buffer, 0, read)
-            }
-
-            tmpFileOutputStream.flush()
-            tmpFileOutputStream.close()
+            val output = FileOutputStream(tmpFile)
+            output.write(inputStream.readBytes())
         } catch (exception: IOException) {
             Log.d("FileService", "Unable to write to tmp file: ${exception.message}")
             exception.printStackTrace()
@@ -65,6 +63,18 @@ class FileService(
         }
 
         return tmpFile
+    }
+
+    fun getBitmapFromFile(file: File): Bitmap? {
+        if (file.exists()) {
+            return BitmapFactory.decodeFile(file.path)
+        }
+
+        return null
+    }
+
+    fun readFile(uri: Uri): InputStream? {
+        return contentResolver.openInputStream(uri)
     }
 
     fun readTempFile(uri: URI): InputStream {
@@ -77,9 +87,9 @@ class FileService(
         return FileInputStream(file)
     }
 
-    fun deleteFile(file: File): Boolean {
+    fun deleteFile(file: File?): Boolean {
         try {
-            if (file.exists()) {
+            if (file?.exists() == true) {
                 file.delete()
             }
         } catch (exception: IOException) {

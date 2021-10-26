@@ -2,6 +2,7 @@ package com.hickar.restly.viewModel
 
 import android.content.ContentResolver
 import android.database.sqlite.SQLiteException
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
@@ -21,13 +22,19 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import okhttp3.Call
 import okhttp3.Response
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileInputStream
 import java.io.IOException
+import java.nio.Buffer
+import java.nio.ByteBuffer
 import java.util.*
 
 class RequestViewModel constructor(
     private val repository: RequestRepository
 ) : ViewModel(), okhttp3.Callback {
+
+    private val fileManager = ServiceLocator.getInstance().getFileManager()
 
     private lateinit var currentRequest: Request
 
@@ -157,7 +164,6 @@ class RequestViewModel constructor(
     }
 
     fun setMultipartFileBody(position: Int, uri: Uri) {
-        val fileManager = ServiceLocator.getInstance().getFileManager()
         multipartData.value!![position].valueFile = fileManager.getRequestFile(uri)!!
         multipartData.value = multipartData.value
     }
@@ -173,17 +179,12 @@ class RequestViewModel constructor(
     }
 
     fun setBinaryBody(uri: Uri) {
-        val fileManager = ServiceLocator.getInstance().getFileManager()
         binaryData.value!!.file = fileManager.getRequestFile(uri)!!
         binaryData.value = binaryData.value
     }
 
-    fun getResponseImageBitmap(view: ImageView) {
-        val fileManager = ServiceLocator.getInstance().getFileManager()
-//        val inputStream = fileManager.readTempFile(response.value!!.body.file!!.toURI())
-        val bitmap = BitmapFactory.decodeFile(response.value!!.body.file!!.canonicalPath)
-        view.setImageBitmap(bitmap)
-//        view.setImageURI(response.value!!.body.file!!.toUri())
+    fun getResponseImageBitmap(): Bitmap? {
+        return fileManager.getBitmapFromFile(response.value!!.body.file!!)
     }
 
     fun sendRequest() {
@@ -237,6 +238,11 @@ class RequestViewModel constructor(
                 exception.printStackTrace()
             }
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        fileManager.deleteFile(response.value?.body?.file)
     }
 
     override fun onFailure(call: Call, e: IOException) {

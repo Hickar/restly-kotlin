@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -8,12 +9,37 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:overScrollMode="never"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
-    <ImageView
-        android:background="@color/gray_400"
-        android:id="@+id/response_body_preview_imageView"
+    <ScrollView
+        android:id="@+id/response_body_preview_imageView_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"/>
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_gravity="center_vertical">
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal">
+
+                <ImageView
+                    android:id="@+id/response_body_preview_imageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:overScrollMode="never"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </HorizontalScrollView>
+
+    </ScrollView>
+
 </FrameLayout>

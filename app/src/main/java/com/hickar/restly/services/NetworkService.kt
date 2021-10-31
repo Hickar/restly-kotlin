@@ -1,12 +1,20 @@
 package com.hickar.restly.services
 
-import com.hickar.restly.models.RequestHeader
-import okhttp3.Callback
-import okhttp3.OkHttpClient
+import android.content.ContentResolver
+import android.net.Uri
+import com.hickar.restly.models.*
+import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Request
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import okio.BufferedSink
+import okio.source
+import java.io.IOException
 
-class NetworkService {
+class NetworkService(
+    private val contentResolver: ContentResolver
+) {
     private var client: OkHttpClient = OkHttpClient.Builder()
         .build()
 
@@ -15,7 +23,7 @@ class NetworkService {
         method: String,
         headers: List<RequestHeader>,
         body: RequestBody?,
-        callback: Callback
+        callbackDelegate: Callback
     ) {
         val builder = Request.Builder()
             .url(url)
@@ -26,34 +34,92 @@ class NetworkService {
         }
 
         val request = builder.build()
-        client.newCall(request).enqueue(callback)
+        client.newCall(request).enqueue(callbackDelegate)
     }
 
-    suspend fun get(url: String, headers: List<RequestHeader>, callback: Callback) {
-        requestRaw(url, "GET", headers, null, callback)
+    suspend fun sendRequest(request: com.hickar.restly.models.Request, callbackDelegate: Callback) {
+        val requestBody = if (request.shouldHaveBody()) {
+            createRequestBody(request.body)
+        } else {
+            null
+        }
+
+        requestRaw(request.url, request.method.value, request.headers, requestBody, callbackDelegate)
     }
 
-    suspend fun post(url: String, headers: List<RequestHeader>, body: RequestBody, callback: Callback) {
-        requestRaw(url, "POST", headers, body, callback)
+    private fun createRequestBody(body: com.hickar.restly.models.RequestBody?): RequestBody? {
+        return when (body?.type) {
+            BodyType.FORMDATA -> createFormDataBody(body.formData)
+            BodyType.MULTIPART -> createMultipartBody(body.multipartData)
+            BodyType.RAW -> createRawBody(body.rawData)
+            BodyType.BINARY -> createFileBody(body.binaryData.file)
+            else -> null
+        }
     }
 
-    suspend fun put(url: String, headers: List<RequestHeader>, body: RequestBody, callback: Callback) {
-        requestRaw(url, "PUT", headers, body, callback)
+    private fun createFormDataBody(body: List<RequestFormData>): RequestBody {
+        val builder = FormBody.Builder()
+        for (item in body) {
+            if (item.enabled) builder.addEncoded(item.key, item.valueText)
+        }
+
+        return builder.build()
     }
 
-    suspend fun patch(url: String, headers: List<RequestHeader>, body: RequestBody, callback: Callback) {
-        requestRaw(url, "PATCH", headers, body, callback)
+    private fun createMultipartBody(body: List<RequestMultipartData>): RequestBody {
+        val builder = MultipartBody.Builder()
+        for (item in body) {
+            if (item.enabled) {
+                when {
+                    item.type == RequestMultipartData.TEXT -> {
+                        builder.addFormDataPart(item.key, item.valueText)
+                    }
+                    item.type == RequestMultipartData.FILE && item.valueFile != null -> {
+                        builder.addFormDataPart("file", item.key, createFileBody(item.valueFile)!!)
+                    }
+                    else -> {
+                    }
+                }
+            }
+        }
+
+        return builder.build()
     }
 
-    suspend fun options(url: String, headers: List<RequestHeader>, body: RequestBody, callback: Callback) {
-        requestRaw(url, "OPTIONS", headers, body, callback)
+    private fun createFileBody(file: RequestFile?): RequestBody? {
+        if (file == null) {
+            return null
+        }
+
+        val uri = Uri.parse(file.uri)
+        val inputStream = contentResolver.openInputStream(uri)
+
+        return object : RequestBody() {
+            override fun contentType(): MediaType {
+                return file.mimeType.toMediaType()
+            }
+
+            override fun writeTo(sink: BufferedSink) {
+                val source = inputStream!!.source()
+
+                try {
+                    sink.writeAll(source)
+                } finally {
+                    source.close()
+                }
+            }
+
+            override fun contentLength(): Long {
+                return try {
+                    inputStream!!.available().toLong()
+                } catch (e: IOException) {
+                    0
+                }
+            }
+        }
     }
 
-    suspend fun head(url: String, headers: List<RequestHeader>, callback: Callback) {
-        requestRaw(url, "HEAD", headers, null, callback)
-    }
-
-    suspend fun delete(url: String, headers: List<RequestHeader>, callback: Callback) {
-        requestRaw(url, "DELETE", headers, null, callback)
+    private fun createRawBody(body: RequestRawData): RequestBody {
+        return body.text.toRequestBody(body.mimeType.toMediaType())
     }
 }

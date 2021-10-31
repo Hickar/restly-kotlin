@@ -10,4 +10,14 @@ data class Request(
     var queryParams: List<RequestQueryParameter> = mutableListOf(),
     var headers: List<RequestHeader> = mutableListOf(),
     var body: RequestBody = RequestBody()
-)
+) {
+    fun shouldHaveBody(): Boolean {
+        return when (method) {
+            RequestMethod.POST,
+            RequestMethod.PUT,
+            RequestMethod.PATCH,
+            RequestMethod.OPTIONS -> true
+            else -> false
+        }
+    }
+}

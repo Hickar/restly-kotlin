@@ -2,7 +2,7 @@ package com.hickar.restly.consts
 
 import com.google.gson.annotations.SerializedName
 
-enum class RequestMethod(val method: String) {
+enum class RequestMethod(val value: String) {
     @SerializedName("get")
     GET("GET"),
     @SerializedName("post")

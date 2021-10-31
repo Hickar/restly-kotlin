@@ -189,34 +189,8 @@ class RequestViewModel constructor(
 
     fun sendRequest() {
         viewModelScope.launch {
-            val client = ServiceLocator.getInstance().getNetworkClient()
-            val builder = ServiceLocator.getInstance().getRequestBodyBuilder()
-            val requestBody = builder.createRequestBody(currentRequest.body)
-
-            when (method.value) {
-                RequestMethod.GET -> {
-                    client.get(url.value!!, headers.value!!, this@RequestViewModel)
-                }
-                RequestMethod.POST -> {
-                    client.post(url.value!!, headers.value!!, requestBody!!, this@RequestViewModel)
-                }
-                RequestMethod.PUT -> {
-                    client.put(url.value!!, headers.value!!, requestBody!!, this@RequestViewModel)
-                }
-                RequestMethod.PATCH -> {
-                    client.patch(url.value!!, headers.value!!, requestBody!!, this@RequestViewModel)
-                }
-                RequestMethod.OPTIONS -> {
-                    client.options(url.value!!, headers.value!!, requestBody!!, this@RequestViewModel)
-                }
-                RequestMethod.HEAD -> {
-                    client.head(url.value!!, headers.value!!, this@RequestViewModel)
-                }
-                RequestMethod.DELETE -> {
-                    client.delete(url.value!!, headers.value!!, this@RequestViewModel)
-                }
-                else -> throw IllegalArgumentException("Non-existent HTTP-method was provided: ${method.value}")
-            }
+            val networkClient = ServiceLocator.getInstance().getNetworkClient()
+            networkClient.sendRequest(currentRequest, this@RequestViewModel)
         }
     }
 

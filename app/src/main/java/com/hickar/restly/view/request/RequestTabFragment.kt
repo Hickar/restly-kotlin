@@ -92,14 +92,14 @@ class RequestTabFragment : Fragment() {
         })
 
         viewModel.method.observe(viewLifecycleOwner, { method ->
-            val cardBackgroundColorId = MethodCardViewUtil.getBackgroundColorId(method.method)
-            val cardTextColorId = MethodCardViewUtil.getTextColorId(method.method)
+            val cardBackgroundColorId = MethodCardViewUtil.getBackgroundColorId(method.value)
+            val cardTextColorId = MethodCardViewUtil.getTextColorId(method.value)
 
             val cardBackgroundColor =
                 ResourcesCompat.getColor(resources, cardBackgroundColorId, null)
             val cardTextColor = ResourcesCompat.getColor(resources, cardTextColorId, null)
 
-            binding.requestTabMethodLabel.text = MethodCardViewUtil.getShortMethodName(method.method)
+            binding.requestTabMethodLabel.text = MethodCardViewUtil.getShortMethodName(method.value)
             binding.requestTabMethodBox.setCardBackgroundColor(cardBackgroundColor)
             binding.requestTabMethodLabel.setTextColor(cardTextColor)
 

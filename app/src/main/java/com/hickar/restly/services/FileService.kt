@@ -7,13 +7,7 @@ import android.net.Uri
 import android.provider.OpenableColumns
 import android.util.Log
 import android.webkit.MimeTypeMap
-import androidx.core.net.toUri
-import com.hickar.restly.extensions.toDocumentSize
 import com.hickar.restly.models.RequestFile
-import okio.BufferedSource
-import okio.Okio
-import okio.buffer
-import okio.sink
 import java.io.*
 import java.net.URI
 

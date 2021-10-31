@@ -1,20 +1,14 @@
 package com.hickar.restly.viewModel
 
-import android.content.ContentResolver
 import android.database.sqlite.SQLiteException
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
-import android.view.View
-import android.webkit.MimeTypeMap
-import android.widget.ImageView
-import androidx.core.net.toUri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hickar.restly.consts.MimeTypes
 import com.hickar.restly.consts.RequestMethod
+import com.hickar.restly.extensions.indexOfDiff
 import com.hickar.restly.models.*
 import com.hickar.restly.repository.room.RequestRepository
 import com.hickar.restly.services.ServiceLocator
@@ -22,12 +16,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import okhttp3.Call
 import okhttp3.Response
-import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.FileInputStream
 import java.io.IOException
-import java.nio.Buffer
-import java.nio.ByteBuffer
 import java.util.*
 
 class RequestViewModel constructor(
@@ -86,13 +76,109 @@ class RequestViewModel constructor(
         this.method.value = method
     }
 
+    fun setUrl(newUrl: String) {
+        if (newUrl != url.value!!) {
+            syncParamsWithUrl(url.value ?: "", newUrl, params.value!!)
+            url.value = newUrl
+        }
+    }
+
+    private fun syncParamsWithUrl(prevUrl: String, nextUrl: String, params: MutableList<RequestQueryParameter>) {
+        val prevUrlParams = parseParams(prevUrl)
+        val nextUrlParams = parseParams(nextUrl)
+
+        val enabledParamsIndices = mutableListOf<Int>()
+        for (i in params.indices) {
+            if (params[i].enabled) enabledParamsIndices.add(i)
+        }
+
+        when {
+            nextUrlParams.size < prevUrlParams.size -> {
+                val paramsStartIndex = nextUrl.indexOf("?")
+                if (paramsStartIndex != -1) {
+                    val diffIndex = nextUrl.indexOfDiff(prevUrl)
+                    val separatorIndices = mutableListOf<Int>()
+
+                    for (c in prevUrl.indices) {
+                        if (prevUrl[c] == '&') separatorIndices.add(c)
+                    }
+
+                    for (i in separatorIndices.indices) {
+                        if (diffIndex == separatorIndices[i]) deleteQueryParameter(i)
+                    }
+                } else {
+                    deleteQueryParameter(0)
+                }
+            }
+            nextUrlParams.size == prevUrlParams.size -> {
+                for (i in nextUrlParams.indices) {
+                    if (prevUrlParams[i] != nextUrlParams[i]) {
+                        setQueryParameterKey(nextUrlParams[i].key, enabledParamsIndices[i])
+                        setQueryParameterValue(nextUrlParams[i].valueText, enabledParamsIndices[i])
+                    }
+                }
+            }
+            nextUrlParams.size > prevUrlParams.size -> {
+                addQueryParameter()
+                setQueryParameterKey(nextUrlParams.last().key, nextUrlParams.size - 1)
+            }
+        }
+    }
+
+    private fun parseParams(url: String): MutableList<RequestQueryParameter> {
+        val params = mutableListOf<RequestQueryParameter>()
+        val paramsStartIndex = url.indexOf("?")
+
+        if (paramsStartIndex != -1) {
+            val paramPairs = url.substring(paramsStartIndex + 1, url.length).split("&")
+
+            for (pair in paramPairs) {
+                val keyValueList = pair.split("=")
+                var key = ""
+                var value = ""
+
+                if (keyValueList.size == 1) {
+                    key = keyValueList[0]
+                }
+
+                if (keyValueList.size == 2) {
+                    key = keyValueList[0]
+                    value = keyValueList[1]
+                }
+
+                params.add(RequestQueryParameter(key, value))
+            }
+        }
+
+        return params
+    }
+
     fun addQueryParameter() {
         params.value!!.add(RequestQueryParameter())
         params.value = params.value
     }
 
+    fun setQueryParameterKey(text: String, position: Int) {
+        if (params.value!![position].key != text) {
+            params.value!![position].key = text
+            params.value = params.value
+        }
+    }
+
+    fun setQueryParameterValue(text: String, position: Int) {
+        if (params.value!![position].valueText != text) {
+            params.value!![position].valueText = text
+            params.value = params.value
+        }
+    }
+
     fun deleteQueryParameter(position: Int) {
         params.value!!.removeAt(position)
+        params.value = params.value
+    }
+
+    fun deleteQueryParameter(parameter: RequestQueryParameter) {
+        params.value!!.remove(parameter)
         params.value = params.value
     }
 

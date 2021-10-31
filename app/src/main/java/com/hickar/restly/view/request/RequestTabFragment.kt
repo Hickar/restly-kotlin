@@ -85,11 +85,14 @@ class RequestTabFragment : Fragment() {
     }
 
     private fun setupObservers() {
-        binding.requestTabUrlInputField.text = viewModel.url.value?.toEditable()
+//        viewModel.url.observe(viewLifecycleOwner) { url ->
+//            binding.requestTabUrlInputField.text = url.toEditable()
+//        }
+        binding.requestTabUrlInputField.text = viewModel.url.value!!.toEditable()
 
-        viewModel.name.observe(viewLifecycleOwner, { name ->
+        viewModel.name.observe(viewLifecycleOwner) { name ->
             binding.requestTabNameLabel.text = name
-        })
+        }
 
         viewModel.method.observe(viewLifecycleOwner, { method ->
             val cardBackgroundColorId = MethodCardViewUtil.getBackgroundColorId(method.value)
@@ -126,11 +129,9 @@ class RequestTabFragment : Fragment() {
     }
 
     private fun setupEventListeners() {
-        binding.requestTabSectionParamsAddButton.setOnClickListener { onAddQueryParameter() }
-        binding.requestTabSectionHeadersAddButton.setOnClickListener { onAddHeader() }
-        binding.requestTabUrlInputField.doAfterTextChanged { text ->
-            viewModel.url.value = text.toString()
-        }
+        binding.requestTabSectionParamsAddButton.setOnClickListener { viewModel.addQueryParameter() }
+        binding.requestTabSectionHeadersAddButton.setOnClickListener { viewModel.addHeader() }
+        binding.requestTabUrlInputField.doAfterTextChanged { url -> viewModel.setUrl(url.toString()) }
 
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
@@ -151,13 +152,9 @@ class RequestTabFragment : Fragment() {
         paramsRecyclerView = binding.requestTabSectionParamsList
         paramsRecyclerView.layoutManager = LinearLayoutManager(context)
         paramsRecyclerView.adapter = RequestParamsListAdapter<RequestQueryParameter>(
-            onParamCheckBoxToggle,
-            { text, position ->
-                viewModel.params.value!![position].key = text
-            },
-            { text, position ->
-                viewModel.params.value!![position].valueText = text
-            }
+            { position -> viewModel.toggleQueryParameter(position) },
+            { text, position -> viewModel.setQueryParameterKey(text, position) },
+            { text, position -> viewModel.setQueryParameterValue(text, position) }
         )
         val paramsTouchHelper = ItemTouchHelper(SwipeDeleteCallback(requireContext()) { position ->
             viewModel.deleteQueryParameter(position)
@@ -168,7 +165,7 @@ class RequestTabFragment : Fragment() {
         headersRecyclerView = binding.requestTabSectionHeadersList
         headersRecyclerView.layoutManager = LinearLayoutManager(context)
         headersRecyclerView.adapter = RequestParamsListAdapter<RequestHeader>(
-            onHeaderCheckBoxToggle,
+            { position -> viewModel.toggleHeader(position) },
             { text, position ->
                 viewModel.headers.value!![position].key = text
             },
@@ -207,22 +204,6 @@ class RequestTabFragment : Fragment() {
         tabLayout.selectTab(currentTab)
         viewPager.setCurrentItem(position, false)
         viewModel.setBodyTypeIndex(position)
-    }
-
-    private val onParamCheckBoxToggle: (Int) -> Unit = { position ->
-        viewModel.toggleQueryParameter(position)
-    }
-
-    private val onHeaderCheckBoxToggle: (Int) -> Unit = { position ->
-        viewModel.toggleHeader(position)
-    }
-
-    private fun onAddQueryParameter() {
-        viewModel.addQueryParameter()
-    }
-
-    private fun onAddHeader() {
-        viewModel.addHeader()
     }
 
     override fun onDetach() {

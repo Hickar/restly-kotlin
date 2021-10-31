@@ -12,4 +12,14 @@ class RequestQueryParameter (
     override fun equals(other: Any?): Boolean {
         return other is RequestQueryParameter && uid == other.uid && key == other.key && valueText == other.valueText
     }
+
+    fun asUrl(): String {
+        val valuePart = if (valueText.isNotBlank()) {
+            "=$valueText"
+        } else {
+            ""
+        }
+
+        return "${key}${valuePart}"
+    }
 }

@@ -125,6 +125,55 @@ class RequestViewModel constructor(
         }
     }
 
+    private fun syncUrlWithParams(
+        url: String,
+        prevParams: MutableList<RequestQueryParameter>,
+        nextParams: MutableList<RequestQueryParameter>,
+        changedParamIndex: Int,
+    ) {
+        val changedParam = nextParams[changedParamIndex]
+        if (changedParam.enabled) {
+            val separatorIndices = mutableListOf<Int>()
+            for (c in url.indices) {
+                if (url[c] == '&') separatorIndices.add(c)
+            }
+
+            when {
+                nextParams.size > prevParams.size -> {
+                    setUrl("$url&")
+                }
+                nextParams.size == prevParams.size -> {
+                    val urlParamStartIndex = separatorIndices[changedParamIndex]
+                    val urlParamEndIndex = if (changedParamIndex != nextParams.size - 1) {
+                        separatorIndices[changedParamIndex + 1]
+                    } else {
+                        url.length
+                    }
+                    val newUrl = url.replaceRange(
+                        urlParamStartIndex,
+                        urlParamEndIndex,
+                        nextParams[changedParamIndex].asUrl()
+                    )
+                    setUrl(newUrl)
+                }
+                nextParams.size < prevParams.size -> {
+                    val urlParamStartIndex = separatorIndices[changedParamIndex]
+                    val urlParamEndIndex = if (changedParamIndex != nextParams.size - 1) {
+                        separatorIndices[changedParamIndex + 1]
+                    } else {
+                        url.length
+                    }
+                    val newUrl = url.replaceRange(
+                        urlParamStartIndex,
+                        urlParamEndIndex,
+                        ""
+                    )
+                    setUrl(newUrl)
+                }
+            }
+        }
+    }
+
     private fun parseParams(url: String): MutableList<RequestQueryParameter> {
         val params = mutableListOf<RequestQueryParameter>()
         val paramsStartIndex = url.indexOf("?")
@@ -154,32 +203,33 @@ class RequestViewModel constructor(
     }
 
     fun addQueryParameter() {
-        params.value!!.add(RequestQueryParameter())
-        params.value = params.value
+        val newParams = (params.value!! + RequestQueryParameter()).toMutableList()
+        syncUrlWithParams(url.value!!, params.value!!, newParams, newParams.size - 1)
+        params.value = newParams
     }
 
     fun setQueryParameterKey(text: String, position: Int) {
         if (params.value!![position].key != text) {
-            params.value!![position].key = text
-            params.value = params.value
+            val newParams = params.value!!.toMutableList()
+            newParams[position].key = text
+            syncUrlWithParams(url.value!!, params.value!!, newParams, position)
+            params.value = newParams
         }
     }
 
     fun setQueryParameterValue(text: String, position: Int) {
         if (params.value!![position].valueText != text) {
-            params.value!![position].valueText = text
-            params.value = params.value
+            val newParams = params.value!!.toMutableList()
+            newParams[position].valueText = text
+            syncUrlWithParams(url.value!!, params.value!!, newParams, position)
+            params.value = newParams
         }
     }
 
     fun deleteQueryParameter(position: Int) {
-        params.value!!.removeAt(position)
-        params.value = params.value
-    }
-
-    fun deleteQueryParameter(parameter: RequestQueryParameter) {
-        params.value!!.remove(parameter)
-        params.value = params.value
+        val newParams = (params.value!!.minus(params.value!![position])).toMutableList()
+        syncUrlWithParams(url.value!!, params.value!!, newParams, position)
+        params.value = newParams
     }
 
     fun toggleQueryParameter(position: Int) {

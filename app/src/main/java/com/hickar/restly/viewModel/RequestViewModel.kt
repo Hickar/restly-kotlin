@@ -8,7 +8,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hickar.restly.consts.RequestMethod
-import com.hickar.restly.extensions.indexOfDiff
 import com.hickar.restly.models.*
 import com.hickar.restly.repository.room.RequestRepository
 import com.hickar.restly.services.ServiceLocator
@@ -29,9 +28,12 @@ class RequestViewModel constructor(
     private lateinit var currentRequest: Request
 
     val name: MutableLiveData<String> = MutableLiveData()
-    val url: MutableLiveData<String> = MutableLiveData()
     val method: MutableLiveData<RequestMethod> = MutableLiveData()
-    val params: MutableLiveData<MutableList<RequestQueryParameter>> = MutableLiveData()
+
+    lateinit var query: RequestQuery
+    val url: MutableLiveData<String> = MutableLiveData()
+    val queryParameters: MutableLiveData<MutableList<RequestQueryParameter>> = MutableLiveData()
+
     val headers: MutableLiveData<MutableList<RequestHeader>> = MutableLiveData()
 
     val formData: MutableLiveData<MutableList<RequestFormData>> = MutableLiveData()
@@ -50,9 +52,10 @@ class RequestViewModel constructor(
 
                 currentRequest.let {
                     name.value = it.name
-                    url.value = it.url
+                    query = it.query
+                    url.value = query.url
                     method.value = it.method
-                    params.value = it.queryParams.toMutableList()
+                    queryParameters.value = query.parameters
                     headers.value = it.headers.toMutableList()
                     formData.value = it.body.formData.toMutableList()
                     multipartData.value = it.body.multipartData.toMutableList()
@@ -77,163 +80,48 @@ class RequestViewModel constructor(
     }
 
     fun setUrl(newUrl: String) {
-        if (newUrl != url.value!!) {
-            syncParamsWithUrl(url.value ?: "", newUrl, params.value!!)
-            url.value = newUrl
+        if (newUrl != query.url) {
+            query.setUrl(newUrl)
+            queryParameters.postValue(query.parameters)
         }
-    }
-
-    private fun syncParamsWithUrl(prevUrl: String, nextUrl: String, params: MutableList<RequestQueryParameter>) {
-        val prevUrlParams = parseParams(prevUrl)
-        val nextUrlParams = parseParams(nextUrl)
-
-        val enabledParamsIndices = mutableListOf<Int>()
-        for (i in params.indices) {
-            if (params[i].enabled) enabledParamsIndices.add(i)
-        }
-
-        when {
-            nextUrlParams.size < prevUrlParams.size -> {
-                val paramsStartIndex = nextUrl.indexOf("?")
-                if (paramsStartIndex != -1) {
-                    val diffIndex = nextUrl.indexOfDiff(prevUrl)
-                    val separatorIndices = mutableListOf<Int>()
-
-                    for (c in prevUrl.indices) {
-                        if (prevUrl[c] == '&') separatorIndices.add(c)
-                    }
-
-                    for (i in separatorIndices.indices) {
-                        if (diffIndex == separatorIndices[i]) deleteQueryParameter(i)
-                    }
-                } else {
-                    deleteQueryParameter(0)
-                }
-            }
-            nextUrlParams.size == prevUrlParams.size -> {
-                for (i in nextUrlParams.indices) {
-                    if (prevUrlParams[i] != nextUrlParams[i]) {
-                        setQueryParameterKey(nextUrlParams[i].key, enabledParamsIndices[i])
-                        setQueryParameterValue(nextUrlParams[i].valueText, enabledParamsIndices[i])
-                    }
-                }
-            }
-            nextUrlParams.size > prevUrlParams.size -> {
-                addQueryParameter()
-                setQueryParameterKey(nextUrlParams.last().key, nextUrlParams.size - 1)
-            }
-        }
-    }
-
-    private fun syncUrlWithParams(
-        url: String,
-        prevParams: MutableList<RequestQueryParameter>,
-        nextParams: MutableList<RequestQueryParameter>,
-        changedParamIndex: Int,
-    ) {
-        val changedParam = nextParams[changedParamIndex]
-        if (changedParam.enabled) {
-            val separatorIndices = mutableListOf<Int>()
-            for (c in url.indices) {
-                if (url[c] == '&') separatorIndices.add(c)
-            }
-
-            when {
-                nextParams.size > prevParams.size -> {
-                    setUrl("$url&")
-                }
-                nextParams.size == prevParams.size -> {
-                    val urlParamStartIndex = separatorIndices[changedParamIndex]
-                    val urlParamEndIndex = if (changedParamIndex != nextParams.size - 1) {
-                        separatorIndices[changedParamIndex + 1]
-                    } else {
-                        url.length
-                    }
-                    val newUrl = url.replaceRange(
-                        urlParamStartIndex,
-                        urlParamEndIndex,
-                        nextParams[changedParamIndex].asUrl()
-                    )
-                    setUrl(newUrl)
-                }
-                nextParams.size < prevParams.size -> {
-                    val urlParamStartIndex = separatorIndices[changedParamIndex]
-                    val urlParamEndIndex = if (changedParamIndex != nextParams.size - 1) {
-                        separatorIndices[changedParamIndex + 1]
-                    } else {
-                        url.length
-                    }
-                    val newUrl = url.replaceRange(
-                        urlParamStartIndex,
-                        urlParamEndIndex,
-                        ""
-                    )
-                    setUrl(newUrl)
-                }
-            }
-        }
-    }
-
-    private fun parseParams(url: String): MutableList<RequestQueryParameter> {
-        val params = mutableListOf<RequestQueryParameter>()
-        val paramsStartIndex = url.indexOf("?")
-
-        if (paramsStartIndex != -1) {
-            val paramPairs = url.substring(paramsStartIndex + 1, url.length).split("&")
-
-            for (pair in paramPairs) {
-                val keyValueList = pair.split("=")
-                var key = ""
-                var value = ""
-
-                if (keyValueList.size == 1) {
-                    key = keyValueList[0]
-                }
-
-                if (keyValueList.size == 2) {
-                    key = keyValueList[0]
-                    value = keyValueList[1]
-                }
-
-                params.add(RequestQueryParameter(key, value))
-            }
-        }
-
-        return params
     }
 
     fun addQueryParameter() {
-        val newParams = (params.value!! + RequestQueryParameter()).toMutableList()
-        syncUrlWithParams(url.value!!, params.value!!, newParams, newParams.size - 1)
-        params.value = newParams
+        query.addParameter()
+        queryParameters.value = query.parameters
+        url.value = query.url
     }
 
     fun setQueryParameterKey(text: String, position: Int) {
-        if (params.value!![position].key != text) {
-            val newParams = params.value!!.toMutableList()
-            newParams[position].key = text
-            syncUrlWithParams(url.value!!, params.value!!, newParams, position)
-            params.value = newParams
+        if (query.parameters[position].key != text) {
+            query.setParameterKey(position, text)
+            url.value = query.url
         }
     }
 
     fun setQueryParameterValue(text: String, position: Int) {
-        if (params.value!![position].valueText != text) {
-            val newParams = params.value!!.toMutableList()
-            newParams[position].valueText = text
-            syncUrlWithParams(url.value!!, params.value!!, newParams, position)
-            params.value = newParams
+        if (query.parameters[position].valueText != text) {
+            query.setParameterValue(position, text)
+            url.value = query.url
         }
     }
 
     fun deleteQueryParameter(position: Int) {
-        val newParams = (params.value!!.minus(params.value!![position])).toMutableList()
-        syncUrlWithParams(url.value!!, params.value!!, newParams, position)
-        params.value = newParams
+        query.deleteParameter(position)
+        queryParameters.value = query.parameters
+        url.value = query.url
     }
 
     fun toggleQueryParameter(position: Int) {
-        params.value!![position].enabled = !params.value?.get(position)!!.enabled
+        query.toggleParameter(position)
+    }
+
+    fun setHeaderKey(position: Int, value: String) {
+        headers.value!![position].key = value
+    }
+
+    fun setHeaderValue(position: Int, value: String) {
+        headers.value!![position].valueText = value
     }
 
     fun addHeader() {
@@ -334,9 +222,8 @@ class RequestViewModel constructor(
         viewModelScope.launch {
             try {
                 currentRequest.name = name.value!!
-                currentRequest.url = url.value!!
+                currentRequest.query = query
                 currentRequest.method = method.value!!
-                currentRequest.queryParams = params.value!!
                 currentRequest.headers = headers.value!!
                 currentRequest.body.formData = formData.value!!
                 currentRequest.body.multipartData = multipartData.value!!
@@ -388,7 +275,7 @@ class RequestViewModel constructor(
 
             this.response.postValue(
                 Response(
-                    currentRequest.url,
+                    currentRequest.query.url,
                     response.headers,
                     response.code,
                     Date(response.sentRequestAtMillis),

@@ -85,10 +85,10 @@ class RequestTabFragment : Fragment() {
     }
 
     private fun setupObservers() {
-//        viewModel.url.observe(viewLifecycleOwner) { url ->
-//            binding.requestTabUrlInputField.text = url.toEditable()
-//        }
-        binding.requestTabUrlInputField.text = viewModel.url.value!!.toEditable()
+        viewModel.url.observe(viewLifecycleOwner) { url ->
+            binding.requestTabUrlInputField.text = url.toEditable()
+        }
+//        binding.requestTabUrlInputField.text = viewModel.url.value!!.toEditable()
 
         viewModel.name.observe(viewLifecycleOwner) { name ->
             binding.requestTabNameLabel.text = name
@@ -119,8 +119,8 @@ class RequestTabFragment : Fragment() {
             }
         })
 
-        viewModel.params.observe(viewLifecycleOwner, { params ->
-            (paramsRecyclerView.adapter as ParamsListAdapter).submitList(params)
+        viewModel.queryParameters.observe(viewLifecycleOwner, { parameters ->
+            (paramsRecyclerView.adapter as ParamsListAdapter).submitList(parameters)
         })
 
         viewModel.headers.observe(viewLifecycleOwner, { headers ->
@@ -166,12 +166,8 @@ class RequestTabFragment : Fragment() {
         headersRecyclerView.layoutManager = LinearLayoutManager(context)
         headersRecyclerView.adapter = RequestParamsListAdapter<RequestHeader>(
             { position -> viewModel.toggleHeader(position) },
-            { text, position ->
-                viewModel.headers.value!![position].key = text
-            },
-            { text, position ->
-                viewModel.headers.value!![position].valueText = text
-            }
+            { text, position -> viewModel.setHeaderKey(position, text) },
+            { text, position -> viewModel.setHeaderValue(position, text) }
         )
         val headersTouchHelper = ItemTouchHelper(SwipeDeleteCallback(requireContext()) { position ->
             viewModel.deleteHeader(position)

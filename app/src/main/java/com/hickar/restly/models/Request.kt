@@ -6,8 +6,7 @@ data class Request(
     var id: Long = 0,
     var method: RequestMethod = RequestMethod.GET,
     var name: String = "New Request",
-    var url: String = "",
-    var queryParams: List<RequestQueryParameter> = mutableListOf(),
+    var query: RequestQuery = RequestQuery(),
     var headers: List<RequestHeader> = mutableListOf(),
     var body: RequestBody = RequestBody()
 ) {

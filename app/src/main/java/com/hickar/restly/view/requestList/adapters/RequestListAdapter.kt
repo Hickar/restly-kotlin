@@ -68,6 +68,6 @@ class RequestItemViewHolder(
         binding.requestListItemMethodLabel.setTextColor(cardTextColor)
         binding.requestListItemMethodLabel.text = MethodCardViewUtil.getShortMethodName(request.method.value)
         binding.requestListItemNameLabel.text = request.name
-        binding.requestListItemUrlLabel.text = request.url
+        binding.requestListItemUrlLabel.text = request.query.url
     }
 }

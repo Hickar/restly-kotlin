@@ -44,7 +44,7 @@ class NetworkService(
             null
         }
 
-        requestRaw(request.url, request.method.value, request.headers, requestBody, callbackDelegate)
+        requestRaw(request.query.url, request.method.value, request.headers, requestBody, callbackDelegate)
     }
 
     private fun createRequestBody(body: com.hickar.restly.models.RequestBody?): RequestBody? {

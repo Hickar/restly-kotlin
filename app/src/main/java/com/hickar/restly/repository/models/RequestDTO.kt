@@ -11,8 +11,7 @@ data class RequestDTO(
     @NonNull @PrimaryKey(autoGenerate = true) val id: Long,
     @NonNull @ColumnInfo(defaultValue = "GET") val method: String,
     @NonNull @ColumnInfo(defaultValue = "New Request") val name: String,
-    val url: String,
-    val queryParams: String,
+    val query: String,
     val headers: String,
     val body: String
 )

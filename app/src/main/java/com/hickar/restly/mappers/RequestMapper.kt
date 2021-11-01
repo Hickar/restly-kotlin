@@ -13,8 +13,7 @@ class RequestMapper(
             request.id,
             gson.toJson(request.method),
             request.name,
-            request.url,
-            gson.toJson(request.queryParams),
+            gson.toJson(request.query),
             gson.toJson(request.headers),
             gson.toJson(request.body)
         )
@@ -30,12 +29,6 @@ class RequestMapper(
     }
 
     override fun toEntity(request: RequestDTO): Request {
-        val queryParams = if (request.queryParams.isNotEmpty()) {
-            gson.fromJson(request.queryParams, Array<RequestQueryParameter>::class.java).toList()
-        } else {
-            listOf()
-        }
-
         val headers = if (request.headers.isNotEmpty()) {
             gson.fromJson(request.headers, Array<RequestHeader>::class.java).toList()
         } else {
@@ -46,8 +39,7 @@ class RequestMapper(
             request.id,
             gson.fromJson(request.method, RequestMethod::class.java),
             request.name,
-            request.url,
-            queryParams,
+            gson.fromJson(request.query, RequestQuery::class.java),
             headers,
             gson.fromJson(request.body, RequestBody::class.java)
         )

@@ -2,7 +2,7 @@ package com.hickar.restly.models
 
 import java.util.*
 
-class RequestQueryParameter (
+data class RequestQueryParameter (
     override var key: String = "",
     override var valueText: String = "",
     override var enabled: Boolean = true
@@ -13,7 +13,7 @@ class RequestQueryParameter (
         return other is RequestQueryParameter && uid == other.uid && key == other.key && valueText == other.valueText
     }
 
-    fun asUrl(): String {
+    override fun toString(): String {
         val valuePart = if (valueText.isNotBlank()) {
             "=$valueText"
         } else {
@@ -21,5 +21,13 @@ class RequestQueryParameter (
         }
 
         return "${key}${valuePart}"
+    }
+
+    override fun hashCode(): Int {
+        var result = key.hashCode()
+        result = 31 * result + valueText.hashCode()
+        result = 31 * result + enabled.hashCode()
+        result = 31 * result + uid.hashCode()
+        return result
     }
 }

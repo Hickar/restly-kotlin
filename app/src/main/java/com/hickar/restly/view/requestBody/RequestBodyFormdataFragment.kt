@@ -45,7 +45,7 @@ class RequestBodyFormdataFragment : Fragment() {
                 viewModel.formData.value!![position].key = text
             },
             { text, position ->
-                viewModel.formData.value!![position].valueText = text
+                viewModel.formData.value!![position].value = text
             }
         )
         val paramsTouchHelper = ItemTouchHelper(SwipeDeleteCallback(requireContext()) { position ->

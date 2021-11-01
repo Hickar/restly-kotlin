@@ -95,7 +95,7 @@ class RequestFragment : Fragment() {
                 true
             }
             R.id.request_menu_send_button -> {
-                if (viewModel.url.value?.isEmpty() == true) {
+                if (viewModel.query.url.isEmpty()) {
                     val warningDialog = WarningDialog(R.string.dialog_warning_title, R.string.dialog_emptyurl_message)
                     warningDialog.show(parentFragmentManager, "Warning")
                 } else {
@@ -103,6 +103,8 @@ class RequestFragment : Fragment() {
                         viewModel.saveRequest()
                         viewModel.sendRequest()
                     }
+                    val responseTab = tabLayout.getTabAt(1)
+                    tabLayout.selectTab(responseTab)
                 }
                 true
             }

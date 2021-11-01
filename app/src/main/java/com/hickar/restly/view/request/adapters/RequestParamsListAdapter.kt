@@ -65,14 +65,14 @@ class RequestDetailParamsViewHolder<T : RequestKeyValueData>(
         binding.apply {
             requestParamsItemCheckbox.isChecked = parameter.enabled
             requestParamsItemKeyInputField.text = parameter.key.toEditable()
-            requestParamsItemValueInputField.text = parameter.valueText.toEditable()
+            requestParamsItemValueInputField.text = parameter.value.toEditable()
         }
     }
 
 }
 
 internal class BaseItemCallback<T : RequestKeyValueData> : DiffUtil.ItemCallback<T>() {
-    override fun areItemsTheSame(oldItem: T, newItem: T) = oldItem.toString() == newItem.toString()
+    override fun areItemsTheSame(oldItem: T, newItem: T) = oldItem.uid == newItem.uid
 
     override fun areContentsTheSame(oldItem: T, newItem: T) = false
 }

@@ -4,8 +4,7 @@
     android:layout_height="match_parent"
     android:minWidth="1000dp"
     android:minHeight="1000dp"
-    android:orientation="vertical"
-    android:paddingBottom="?attr/actionBarSize">
+    android:orientation="vertical">
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"

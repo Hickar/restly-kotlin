@@ -38,7 +38,7 @@ class RequestBodyBinaryFragment : Fragment() {
 
                 contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 viewModel.setBinaryBody(uri)
-            }.launch(arrayOf("audio/*", "image/*", "video/*", "text/*", "application/*"))
+            }.launch(arrayOf("*/*"))
         }
     }
 

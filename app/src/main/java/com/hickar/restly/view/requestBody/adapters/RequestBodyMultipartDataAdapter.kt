@@ -76,7 +76,7 @@ class RequestMultipartDataViewHolder(
             if (parameter.type == RequestMultipartData.TEXT) {
                 requestMultipartSelectFileLabel.hide()
                 requestMultipartItemValueInputLayout.show()
-                requestMultipartItemValueInputField.text = parameter.valueText.toEditable()
+                requestMultipartItemValueInputField.text = parameter.value.toEditable()
             } else {
                 requestMultipartItemValueInputLayout.hide()
                 requestMultipartSelectFileLabel.show()

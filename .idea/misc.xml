@@ -31,7 +31,7 @@
         <entry key="app/src/main/res/layout/request_item.xml" value="0.18840579710144928" />
         <entry key="app/src/main/res/layout/request_item_view.xml" value="0.625" />
         <entry key="app/src/main/res/layout/request_list.xml" value="0.1503623188405797" />
-        <entry key="app/src/main/res/layout/request_list_item.xml" value="0.12291666666666666" />
+        <entry key="app/src/main/res/layout/request_list_item.xml" value="0.25" />
         <entry key="app/src/main/res/layout/request_multipart_item.xml" value="0.375" />
         <entry key="app/src/main/res/layout/request_params_item.xml" value="0.20352597937365538" />
         <entry key="app/src/main/res/layout/request_tab.xml" value="0.1" />

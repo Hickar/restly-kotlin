@@ -30,7 +30,7 @@ class NetworkService(
             .method(method, body)
 
         for (header in headers) {
-            if (header.enabled && !header.isEmpty()) builder.addHeader(header.key, header.valueText)
+            if (header.enabled && !header.isEmpty()) builder.addHeader(header.key, header.value)
         }
 
         val request = builder.build()
@@ -60,7 +60,7 @@ class NetworkService(
     private fun createFormDataBody(body: List<RequestFormData>): RequestBody {
         val builder = FormBody.Builder()
         for (item in body) {
-            if (item.enabled) builder.addEncoded(item.key, item.valueText)
+            if (item.enabled) builder.addEncoded(item.key, item.value)
         }
 
         return builder.build()
@@ -72,7 +72,7 @@ class NetworkService(
             if (item.enabled) {
                 when {
                     item.type == RequestMultipartData.TEXT -> {
-                        builder.addFormDataPart(item.key, item.valueText)
+                        builder.addFormDataPart(item.key, item.value)
                     }
                     item.type == RequestMultipartData.FILE && item.valueFile != null -> {
                         builder.addFormDataPart("file", item.key, createFileBody(item.valueFile)!!)

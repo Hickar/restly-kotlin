@@ -100,7 +100,7 @@ class RequestViewModel constructor(
     }
 
     fun setQueryParameterValue(text: String, position: Int) {
-        if (query.parameters[position].valueText != text) {
+        if (query.parameters[position].value != text) {
             query.setParameterValue(position, text)
             url.value = query.url
         }
@@ -114,6 +114,7 @@ class RequestViewModel constructor(
 
     fun toggleQueryParameter(position: Int) {
         query.toggleParameter(position)
+        url.value = query.url
     }
 
     fun setHeaderKey(position: Int, value: String) {
@@ -121,7 +122,7 @@ class RequestViewModel constructor(
     }
 
     fun setHeaderValue(position: Int, value: String) {
-        headers.value!![position].valueText = value
+        headers.value!![position].value = value
     }
 
     fun addHeader() {

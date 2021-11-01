@@ -25,7 +25,7 @@ data class Response(
             Pair("Protocol", protocol),
             Pair("Response Code", code.toString()),
             Pair("Is Redirect", isRedirected.toString()),
-            Pair("Response Content-Type", body.contentType),
+            Pair("Content-Type", body.contentType),
             Pair("Time sent", timeFormat.format(sentAt)),
             Pair("Time received", timeFormat.format(receivedAt)),
             Pair("Round trip time", roundTripTime.toResponseTime())

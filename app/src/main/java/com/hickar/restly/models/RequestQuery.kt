@@ -67,7 +67,7 @@ class RequestQuery(
                 for (i in newParams.indices) {
                     if (oldParams[i] != newParams[i]) {
                         setParameterKey(enabledParamsIndices[i], newParams[i].key)
-                        setParameterValue(enabledParamsIndices[i], newParams[i].valueText)
+                        setParameterValue(enabledParamsIndices[i], newParams[i].value)
                     }
                 }
             }
@@ -94,7 +94,7 @@ class RequestQuery(
     }
 
     fun setParameterValue(position: Int, value: String) {
-        parameters[position].valueText = value
+        parameters[position].value = value
         if (parameters[position].enabled) {
             url = buildQueryString(domain, parameters)
         }
@@ -142,11 +142,15 @@ class RequestQuery(
     private fun buildQueryString(domain: String, parameters: MutableList<RequestQueryParameter>): String {
         var queryString = ""
 
-        if (parameters.isNotEmpty()) {
+        val enabledParameters = parameters.filter { it.enabled }
+
+        if (enabledParameters.isNotEmpty()) {
             queryString += "?"
-            for (i in parameters.indices) {
-                if (i != 0) queryString += "&"
-                queryString += parameters[i].toString()
+            for (i in enabledParameters.indices) {
+                if (enabledParameters[i].enabled) {
+                    if (i != 0) queryString += "&"
+                    queryString += enabledParameters[i].toString()
+                }
             }
         }
 

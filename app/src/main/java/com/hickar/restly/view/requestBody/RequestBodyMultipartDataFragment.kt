@@ -54,7 +54,7 @@ class RequestDetailBodyFormDataFragment() : Fragment() {
                 viewModel.multipartData.value!![position].key = text
             },
             { text, position ->
-                viewModel.multipartData.value!![position].valueText = text
+                viewModel.multipartData.value!![position].value = text
             },
             { position ->
                 requireActivity().activityResultRegistry.register("key", ActivityResultContracts.OpenDocument()) { uri ->

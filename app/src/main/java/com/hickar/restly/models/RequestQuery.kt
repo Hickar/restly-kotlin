@@ -18,7 +18,7 @@ class RequestQuery(
                 }
                 2 -> {
                     domain = urlParts[0]
-                    parameters = parseParams(urlParts[1])
+                    parameters = parseQueryParameters(urlParts[1])
                 }
                 else -> {
                     domain = url
@@ -33,7 +33,7 @@ class RequestQuery(
         var newUrl = url
 
         val oldParams = parameters
-        val newParams = parseParams(url)
+        val newParams = parseQueryParameters(url)
 
         val enabledParamsIndices = mutableListOf<Int>()
         for (i in parameters.indices) {
@@ -45,8 +45,6 @@ class RequestQuery(
                 when (newParams.size) {
                     0 -> {
                         deleteParameter(0)
-                        newUrl = newUrl.replace("?", "")
-                        domain = newUrl
                     }
                     1 -> {
                         deleteParameter(1)
@@ -79,45 +77,40 @@ class RequestQuery(
             }
         }
 
-        this.url = newUrl
+        domain = parseDomain(newUrl)
+        this.url = buildQueryString(domain, parameters)
     }
 
     fun addParameter() {
-        url += if (parameters.size == 0) "?" else "&"
         parameters.add(RequestQueryParameter())
+        url = buildQueryString(domain, parameters)
     }
 
     fun setParameterKey(position: Int, value: String) {
-        if (parameters[position].enabled) {
-            if (parameters[position].toString().isNotBlank()) {
-                url = url.replace(parameters[position].toString(), parameters[position].copy(key = value).toString())
-            } else {
-
-            }
-        }
         parameters[position].key = value
+        if (parameters[position].enabled) {
+            url = buildQueryString(domain, parameters)
+        }
     }
 
     fun setParameterValue(position: Int, value: String) {
-        if (parameters[position].enabled) {
-            url = url.replace(parameters[position].toString(), parameters[position].copy(valueText = value).toString())
-        }
         parameters[position].valueText = value
+        if (parameters[position].enabled) {
+            url = buildQueryString(domain, parameters)
+        }
     }
 
     fun toggleParameter(position: Int) {
         parameters[position].enabled = !parameters[position].enabled
+        url = buildQueryString(domain, parameters)
     }
 
-    fun deleteParameter(position: Int): RequestQueryParameter {
-        if (parameters[position].enabled) {
-            val separator = if (position == parameters.size - 1) "&" else ""
-            url = url.replace(parameters[position].toString() + separator, "")
-        }
-        return parameters.removeAt(position)
+    fun deleteParameter(position: Int) {
+        parameters.removeAt(position)
+        url = buildQueryString(domain, parameters)
     }
 
-    private fun parseParams(url: String): MutableList<RequestQueryParameter> {
+    private fun parseQueryParameters(url: String): MutableList<RequestQueryParameter> {
         val paramsStartIndex = url.indexOf("?")
         val params = mutableListOf<RequestQueryParameter>()
 
@@ -146,13 +139,26 @@ class RequestQuery(
         return params
     }
 
-    private fun buildUrl(domain: String, parameters: MutableList<RequestQueryParameter>): String {
-        var parameterString = ""
-        for (i in parameters.indices) {
-            if (i != 0) parameterString += "&"
-            parameterString += parameters[i].toString()
+    private fun buildQueryString(domain: String, parameters: MutableList<RequestQueryParameter>): String {
+        var queryString = ""
+
+        if (parameters.isNotEmpty()) {
+            queryString += "?"
+            for (i in parameters.indices) {
+                if (i != 0) queryString += "&"
+                queryString += parameters[i].toString()
+            }
         }
 
-        return "${domain}?${parameterString}"
+        return "${domain}${queryString}"
+    }
+
+    private fun parseDomain(url: String): String {
+        val queryStartIndex = url.indexOf("?")
+        return if (queryStartIndex != -1) {
+            url.substring(0, queryStartIndex)
+        } else {
+            url
+        }
     }
 }

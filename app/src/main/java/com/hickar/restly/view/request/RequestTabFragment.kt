@@ -88,7 +88,6 @@ class RequestTabFragment : Fragment() {
         viewModel.url.observe(viewLifecycleOwner) { url ->
             binding.requestTabUrlInputField.text = url.toEditable()
         }
-//        binding.requestTabUrlInputField.text = viewModel.url.value!!.toEditable()
 
         viewModel.name.observe(viewLifecycleOwner) { name ->
             binding.requestTabNameLabel.text = name

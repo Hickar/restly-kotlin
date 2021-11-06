@@ -12,18 +12,21 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.hickar.restly.R
 import com.hickar.restly.RestlyApplication
-import com.hickar.restly.ViewModelFactory
 import com.hickar.restly.databinding.RequestListBinding
 import com.hickar.restly.utils.SwipeDeleteCallback
 import com.hickar.restly.view.requestList.adapters.RequestListAdapter
 import com.hickar.restly.viewModel.RequestListViewModel
+import com.hickar.restly.viewModel.RequestViewModelFactory
 import kotlinx.coroutines.*
 
 class RequestListFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private val viewModel: RequestListViewModel by viewModels {
-        ViewModelFactory((requireActivity().application as RestlyApplication).requestRepository)
+        RequestViewModelFactory(
+            (requireActivity().application as RestlyApplication).requestRepository,
+            arguments?.getString("collectionId")
+        )
     }
 
     private var _binding: RequestListBinding? = null

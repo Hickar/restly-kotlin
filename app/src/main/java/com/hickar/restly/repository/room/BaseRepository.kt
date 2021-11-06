@@ -1,8 +1,8 @@
 package com.hickar.restly.repository.room
 
 import androidx.annotation.WorkerThread
-import com.hickar.restly.repository.mappers.Mapper
 import com.hickar.restly.repository.dao.BaseDao
+import com.hickar.restly.repository.mappers.Mapper
 
 open class BaseRepository<Entity, EntityDTO, DAO : BaseDao<EntityDTO>>(
     private val dao: DAO,

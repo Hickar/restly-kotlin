@@ -12,7 +12,6 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.hickar.restly.MainActivity
 import com.hickar.restly.R
 import com.hickar.restly.RestlyApplication
-import com.hickar.restly.ViewModelFactory
 import com.hickar.restly.databinding.RequestBinding
 import com.hickar.restly.extensions.hide
 import com.hickar.restly.extensions.show
@@ -21,6 +20,7 @@ import com.hickar.restly.view.dialogs.EditTextDialog
 import com.hickar.restly.view.dialogs.WarningDialog
 import com.hickar.restly.view.request.adapters.RequestViewPagerAdapter
 import com.hickar.restly.viewModel.RequestViewModel
+import com.hickar.restly.viewModel.RequestViewModelFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -32,7 +32,7 @@ class RequestFragment : Fragment() {
 
     private val viewModel: RequestViewModel by activityViewModels {
         val application = requireActivity().application as RestlyApplication
-        ViewModelFactory(application.requestRepository)
+        RequestViewModelFactory(application.requestRepository)
     }
 
     private lateinit var tabLayout: TabLayout

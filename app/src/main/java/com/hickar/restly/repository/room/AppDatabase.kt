@@ -8,7 +8,7 @@ import com.hickar.restly.repository.dao.RequestDao
 import com.hickar.restly.repository.models.RequestDTO
 import kotlinx.coroutines.CoroutineScope
 
-@Database(entities = [RequestDTO::class], version = 4)
+@Database(entities = [RequestDTO::class], version = 5)
 abstract class AppDatabase: RoomDatabase() {
     abstract fun requestDao(database: AppDatabase = this): RequestDao
 

@@ -15,7 +15,8 @@ class RequestMapper(
             request.name,
             gson.toJson(request.query),
             gson.toJson(request.headers),
-            gson.toJson(request.body)
+            gson.toJson(request.body),
+            request.collectionId
         )
     }
 
@@ -41,7 +42,8 @@ class RequestMapper(
             request.name,
             gson.fromJson(request.query, RequestQuery::class.java),
             headers,
-            gson.fromJson(request.body, RequestBody::class.java)
+            gson.fromJson(request.body, RequestBody::class.java),
+            request.collectionId
         )
     }
 

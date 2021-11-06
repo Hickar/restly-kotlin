@@ -8,6 +8,8 @@
         <entry key="app/src/main/res/drawable/ic_access_time.xml" value="0.2557291666666667" />
         <entry key="app/src/main/res/drawable/recycler_divider.xml" value="0.259375" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.24105668208813794" />
+        <entry key="app/src/main/res/layout/collection_list.xml" value="0.15760869565217392" />
+        <entry key="app/src/main/res/layout/collection_list_item.xml" value="0.335" />
         <entry key="app/src/main/res/layout/fragment_dashboard.xml" value="0.18840579710144928" />
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.18840579710144928" />
         <entry key="app/src/main/res/layout/fragment_request_detail.xml" value="0.375" />
@@ -15,6 +17,7 @@
         <entry key="app/src/main/res/layout/fragment_requestlist.xml" value="0.20018115942028986" />
         <entry key="app/src/main/res/layout/fragment_requests.xml" value="0.1203125" />
         <entry key="app/src/main/res/layout/fullscreen_edit_text_dialog.xml" value="0.1802536231884058" />
+        <entry key="app/src/main/res/layout/history.xml" value="0.18568840579710144" />
         <entry key="app/src/main/res/layout/request.xml" value="0.1" />
         <entry key="app/src/main/res/layout/request_body_binary.xml" value="0.45" />
         <entry key="app/src/main/res/layout/request_body_edit_raw.xml" value="0.1" />
@@ -41,11 +44,13 @@
         <entry key="app/src/main/res/layout/response_body_raw.xml" value="0.17572463768115942" />
         <entry key="app/src/main/res/layout/response_tab.xml" value="0.335" />
         <entry key="app/src/main/res/menu/bottom_nav_menu.xml" value="0.23958333333333334" />
+        <entry key="app/src/main/res/menu/collection_list_action_menu.xml" value="0.23958333333333334" />
         <entry key="app/src/main/res/menu/fullscreen_edit_text_menu.xml" value="0.1" />
         <entry key="app/src/main/res/menu/method_select_popup_menu.xml" value="0.23958333333333334" />
         <entry key="app/src/main/res/menu/request_action_menu.xml" value="0.1" />
         <entry key="app/src/main/res/menu/request_content_type_menu.xml" value="0.23958333333333334" />
         <entry key="app/src/main/res/menu/request_detail_action_menu.xml" value="0.24114583333333334" />
+        <entry key="app/src/main/res/menu/request_list_action_menu.xml" value="0.23958333333333334" />
         <entry key="app/src/main/res/menu/request_more_popup_menu.xml" value="0.23958333333333334" />
         <entry key="app/src/main/res/menu/request_multipart_type_menu.xml" value="0.2421875" />
         <entry key="app/src/main/res/menu/top_action_menu.xml" value="0.23958333333333334" />

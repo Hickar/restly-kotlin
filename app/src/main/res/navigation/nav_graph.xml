@@ -20,16 +20,11 @@
     </fragment>
 
     <fragment
-        android:id="@+id/navigation_history"
-        android:name="com.hickar.restly.view.history.HistoryFragment"
-        android:label="@string/history_tab_title"
-        tools:layout="@layout/history" />
+        android:id="@+id/navigation_collections"
+        android:name="com.hickar.restly.view.collectionList.CollectionListFragment"
+        android:label="@string/collection_tab_title"
+        tools:layout="@layout/collection_list" />
 
-    <fragment
-        android:id="@+id/navigation_settings"
-        android:name="com.hickar.restly.view.settings.SettingsFragment"
-        android:label="@string/settings_tab_title"
-        tools:layout="@layout/settings" />
     <fragment
         android:id="@+id/requestDetailFragment"
         android:name="com.hickar.restly.view.request.RequestFragment">
@@ -64,4 +59,10 @@
         android:id="@+id/responseBodyInfoFragment"
         android:name="com.hickar.restly.view.responseBody.ResponseBodyInfoFragment"
         android:label="Response Info" />
+
+    <fragment
+        android:id="@+id/navigation_settings"
+        android:name="com.hickar.restly.view.settings.SettingsFragment"
+        android:label="@string/settings_tab_title"
+        tools:layout="@layout/settings" />
 </navigation>

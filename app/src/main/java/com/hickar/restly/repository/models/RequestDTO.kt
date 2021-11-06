@@ -13,5 +13,6 @@ data class RequestDTO(
     @NonNull @ColumnInfo(defaultValue = "New Request") val name: String,
     val query: String,
     val headers: String,
-    val body: String
+    val body: String,
+    val collectionId: String
 )

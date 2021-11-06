@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/request_list_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="8dp">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/collection_list_item_name_label"
+            style="@style/Restly.Request.NameText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="textStart"
+            android:text="This is a sample collection Title"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/collection_list_item_description"
+            style="@style/Restly.Request.UrlText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="textStart"
+            android:text="This is a test desciption"/>
+
+
+</LinearLayout>

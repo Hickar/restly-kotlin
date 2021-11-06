@@ -7,9 +7,9 @@
         android:title="@string/requests_tab_title" />
 
     <item
-        android:id="@+id/navigation_history"
-        android:icon="@drawable/ic_history_tab"
-        android:title="@string/history_tab_title" />
+        android:id="@+id/navigation_collections"
+        android:icon="@drawable/ic_collections_tab"
+        android:title="@string/collection_tab_title" />
 
     <item
         android:id="@+id/navigation_settings"

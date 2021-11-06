@@ -1,4 +1,4 @@
-package com.hickar.restly.mappers
+package com.hickar.restly.repository.mappers
 
 interface Mapper<Entity, DTO> {
     fun toDTO(entity: Entity): DTO

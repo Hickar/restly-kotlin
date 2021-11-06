@@ -7,7 +7,7 @@ import com.hickar.restly.viewModel.RequestListViewModel
 import com.hickar.restly.viewModel.RequestViewModel
 
 class ViewModelFactory(
-    private val requestRepository: RequestRepository
+    private val requestRepository: RequestRepository,
 ) : ViewModelProvider.NewInstanceFactory() {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return when {
@@ -26,7 +26,7 @@ class ViewModelFactory(
                 synchronized(ViewModelFactory::class.java) {
                     if (INSTANCE == null) {
                         INSTANCE = ViewModelFactory(
-                            application.repository,
+                            application.requestRepository,
                         )
                     }
                 }

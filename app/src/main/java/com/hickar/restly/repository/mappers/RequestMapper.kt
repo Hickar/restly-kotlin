@@ -1,4 +1,4 @@
-package com.hickar.restly.mappers
+package com.hickar.restly.repository.mappers
 
 import com.google.gson.Gson
 import com.hickar.restly.consts.RequestMethod

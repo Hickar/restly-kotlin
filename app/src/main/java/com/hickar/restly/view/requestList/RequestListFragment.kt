@@ -23,7 +23,7 @@ class RequestListFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private val viewModel: RequestListViewModel by viewModels {
-        ViewModelFactory((requireActivity().application as RestlyApplication).repository)
+        ViewModelFactory((requireActivity().application as RestlyApplication).requestRepository)
     }
 
     private var _binding: RequestListBinding? = null

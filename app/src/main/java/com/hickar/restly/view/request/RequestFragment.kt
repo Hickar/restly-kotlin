@@ -32,7 +32,7 @@ class RequestFragment : Fragment() {
 
     private val viewModel: RequestViewModel by activityViewModels {
         val application = requireActivity().application as RestlyApplication
-        ViewModelFactory(application.repository)
+        ViewModelFactory(application.requestRepository)
     }
 
     private lateinit var tabLayout: TabLayout

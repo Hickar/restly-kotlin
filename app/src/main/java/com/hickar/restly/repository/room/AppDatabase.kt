@@ -4,13 +4,16 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.hickar.restly.repository.dao.CollectionDao
 import com.hickar.restly.repository.dao.RequestDao
+import com.hickar.restly.repository.models.CollectionDTO
 import com.hickar.restly.repository.models.RequestDTO
 import kotlinx.coroutines.CoroutineScope
 
-@Database(entities = [RequestDTO::class], version = 5)
+@Database(entities = [RequestDTO::class, CollectionDTO::class], version = 6)
 abstract class AppDatabase: RoomDatabase() {
     abstract fun requestDao(database: AppDatabase = this): RequestDao
+    abstract fun collectionDao(database: AppDatabase = this): CollectionDao
 
     companion object {
         @Volatile

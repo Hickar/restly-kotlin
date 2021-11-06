@@ -3,12 +3,14 @@ package com.hickar.restly.viewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hickar.restly.models.Collection
 import com.hickar.restly.models.Request
 import com.hickar.restly.repository.room.RequestRepository
 import kotlinx.coroutines.launch
 
 class RequestListViewModel(
     private val repository: RequestRepository,
+    private var collectionId: String?
 ) : ViewModel() {
 
     val requests: MutableLiveData<MutableList<Request>> = MutableLiveData()
@@ -26,8 +28,12 @@ class RequestListViewModel(
     }
 
     fun refreshRequests() {
+        if (collectionId == null) {
+            collectionId = Collection.DEFAULT
+        }
+
         viewModelScope.launch {
-            requests.value = repository.getAll().toMutableList()
+            requests.value = repository.getByCollectionId(collectionId!!).toMutableList()
         }
     }
 

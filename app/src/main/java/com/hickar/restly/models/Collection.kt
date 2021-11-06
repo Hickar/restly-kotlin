@@ -9,4 +9,7 @@ data class Collection(
     var description: String = "",
     var owner: String = ""
 ) {
+    companion object {
+        const val DEFAULT = "0000-00000000-00000000-0000-000000-000000"
+    }
 }

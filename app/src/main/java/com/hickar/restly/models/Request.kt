@@ -1,7 +1,6 @@
 package com.hickar.restly.models
 
 import com.hickar.restly.consts.RequestMethod
-import java.util.*
 
 data class Request(
     var id: Long = 0,
@@ -10,7 +9,7 @@ data class Request(
     var query: RequestQuery = RequestQuery(),
     var headers: List<RequestHeader> = mutableListOf(),
     var body: RequestBody = RequestBody(),
-    var collectionId: String = UUID.randomUUID().toString()
+    var collectionId: String = Collection.DEFAULT
 ) {
     fun shouldHaveBody(): Boolean {
         return when (method) {

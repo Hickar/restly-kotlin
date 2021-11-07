@@ -1,5 +1,6 @@
 package com.hickar.restly.view.collectionList
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.*
 import androidx.core.content.ContextCompat
@@ -15,6 +16,7 @@ import com.hickar.restly.databinding.CollectionListBinding
 import com.hickar.restly.utils.SwipeDeleteCallback
 import com.hickar.restly.view.collectionList.adapters.CollectionListAdapter
 import com.hickar.restly.view.dialogs.ConfirmationDialog
+import com.hickar.restly.view.dialogs.ConfirmationDialogDelegate
 import com.hickar.restly.viewModel.CollectionListViewModel
 import com.hickar.restly.viewModel.CollectionViewModelFactory
 import kotlinx.coroutines.runBlocking
@@ -24,6 +26,8 @@ class CollectionListFragment : Fragment() {
         CollectionViewModelFactory(requireActivity().application as RestlyApplication)
     }
     private lateinit var recyclerView: RecyclerView
+
+    private lateinit var itemTouchHelper: ItemTouchHelper
 
     private var _binding: CollectionListBinding? = null
     private val binding get() = _binding!!
@@ -54,18 +58,24 @@ class CollectionListFragment : Fragment() {
         recyclerView = binding.collectionList
         recyclerView.adapter = adapter
 
-        val touchHelper = ItemTouchHelper(SwipeDeleteCallback(requireContext()) { position ->
+        itemTouchHelper = ItemTouchHelper(SwipeDeleteCallback(requireContext()) { position ->
             val dialog = ConfirmationDialog(
                 R.string.dialog_delete_collection_title,
                 R.string.dialog_delete_collection_message,
-                R.string.dialog_ok_confirm_delete_option
-            ) {
-                viewModel.deleteCollection(position)
-            }
+                R.string.dialog_ok_confirm_delete_option,
+                { dialog, _ ->
+                    dialog.cancel()
+// Hack from the official documentation
+// https://developer.android.com/reference/android/support/v7/widget/helper/ItemTouchHelper.html#attachToRecyclerView(android.support.v7.widget.RecyclerView)
+                    itemTouchHelper.attachToRecyclerView(null)
+                    itemTouchHelper.attachToRecyclerView(recyclerView)
+                },
+                { _, _ -> viewModel.deleteCollection(position) }
+            )
 
             dialog.show(parentFragmentManager, "Confirmation")
         })
-        touchHelper.attachToRecyclerView(recyclerView)
+        itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 
     private fun setupObservers() {

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.hickar.restly.R
 import com.hickar.restly.RestlyApplication
@@ -38,8 +39,10 @@ class CollectionListFragment : Fragment() {
 
     private fun setupAdapters() {
         val adapter = CollectionListAdapter {
-//            val action = CollectionListFragmentDirections.actionNavigationCollectionsToNavigationRequests(it.id)
-//            findNavController().navigate(action)
+            val bundle = Bundle()
+            bundle.putString("collectionId", it.id)
+            bundle.putString("collectionName", it.name)
+            findNavController().navigate(R.id.navigate_fromCollectionTab_toRequestList, bundle)
         }
 
         recyclerView = binding.collectionList

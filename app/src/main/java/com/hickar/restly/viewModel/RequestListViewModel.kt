@@ -16,11 +16,15 @@ class RequestListViewModel(
     val requests: MutableLiveData<MutableList<Request>> = MutableLiveData()
 
     init {
+        if (collectionId == null) {
+            collectionId = Collection.DEFAULT
+        }
+
         refreshRequests()
     }
 
     suspend fun createNewDefaultRequest(): Long {
-        val newRequest = Request()
+        val newRequest = Request(collectionId = collectionId!!)
         val newRequestId = repository.insert(newRequest)
 
         refreshRequests()
@@ -28,10 +32,6 @@ class RequestListViewModel(
     }
 
     fun refreshRequests() {
-        if (collectionId == null) {
-            collectionId = Collection.DEFAULT
-        }
-
         viewModelScope.launch {
             requests.value = repository.getByCollectionId(collectionId!!).toMutableList()
         }

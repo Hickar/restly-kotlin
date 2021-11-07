@@ -1,5 +1,6 @@
 package com.hickar.restly.view.requestList
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.*
 import androidx.core.content.ContextCompat
@@ -10,6 +11,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.hickar.restly.MainActivity
 import com.hickar.restly.R
 import com.hickar.restly.RestlyApplication
 import com.hickar.restly.databinding.RequestListBinding
@@ -32,12 +34,15 @@ class RequestListFragment : Fragment() {
     private var _binding: RequestListBinding? = null
     private val binding get() = _binding!!
 
+    @SuppressLint("RestrictedApi")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         setHasOptionsMenu(true)
+
+        (requireActivity() as MainActivity).supportActionBar?.title = arguments?.getString("collectionName")
 
         _binding = RequestListBinding.inflate(inflater, container, false)
         return binding.root
@@ -51,8 +56,12 @@ class RequestListFragment : Fragment() {
         setupObservers()
     }
 
+    @SuppressLint("RestrictedApi")
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.request_list_action_menu, menu)
+
+        val homeButtonEnabled = arguments?.getString("collectionId") != null
+        (requireActivity() as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(homeButtonEnabled)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -61,7 +70,7 @@ class RequestListFragment : Fragment() {
                 runBlocking coroutineScope@{
                     val newRequestId = viewModel.createNewDefaultRequest()
                     val action =
-                        RequestListFragmentDirections.actionNavigationRequestsToRequestFragment(
+                        RequestListFragmentDirections.actionRequestListFragmentToRequestDetailFragment(
                             newRequestId
                         )
                     findNavController().navigate(action)
@@ -85,7 +94,7 @@ class RequestListFragment : Fragment() {
 
     private fun setupAdapters() {
         val adapter = RequestListAdapter {
-            val action = RequestListFragmentDirections.actionNavigationRequestsToRequestFragment(it.id)
+            val action = RequestListFragmentDirections.actionRequestListFragmentToRequestDetailFragment(it.id)
             this.findNavController().navigate(action)
         }
 

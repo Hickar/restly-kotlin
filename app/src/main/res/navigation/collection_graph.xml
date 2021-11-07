@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/collection_graph.xml"
+    app:startDestination="@id/requestListFragment">
+
+    <fragment
+        android:id="@+id/requestListFragment"
+        android:name="com.hickar.restly.view.requestList.RequestListFragment"
+        android:label="@string/requests_tab_title"
+        tools:layout="@layout/request_list">
+        <argument
+            android:name="collectionId"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="collectionName"
+            android:defaultValue="Requests"
+            app:argType="string"/>
+        <action
+            android:id="@+id/action_requestListFragment_to_requestDetailFragment"
+            app:destination="@id/requestDetailFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/requestBodyEditRawFragment"
+        android:name="com.hickar.restly.view.requestBody.RequestBodyEditRawFragment"
+        android:label="RequestBodyEditRawFragment">
+        <argument
+            android:name="textData"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/responseBodyInfoFragment"
+        android:name="com.hickar.restly.view.responseBody.ResponseBodyInfoFragment"
+        android:label="Response Info" />
+
+    <fragment
+        android:id="@+id/requestDetailFragment"
+        android:name="com.hickar.restly.view.request.RequestFragment">
+        <argument
+            android:name="requestId"
+            app:argType="long" />
+        <action
+            android:id="@+id/action_requestDetailFragment_to_requestBodyEditRawFragment"
+            app:destination="@id/requestBodyEditRawFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_requestDetailFragment_to_responseBodyInfoFragment"
+            app:destination="@id/responseBodyInfoFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+</navigation>

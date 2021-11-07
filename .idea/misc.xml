@@ -8,6 +8,7 @@
         <entry key="app/src/main/res/drawable/ic_access_time.xml" value="0.2557291666666667" />
         <entry key="app/src/main/res/drawable/recycler_divider.xml" value="0.259375" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.24105668208813794" />
+        <entry key="app/src/main/res/layout/activity_request_list.xml" value="0.18568840579710144" />
         <entry key="app/src/main/res/layout/collection_list.xml" value="0.15760869565217392" />
         <entry key="app/src/main/res/layout/collection_list_item.xml" value="0.335" />
         <entry key="app/src/main/res/layout/fragment_dashboard.xml" value="0.18840579710144928" />

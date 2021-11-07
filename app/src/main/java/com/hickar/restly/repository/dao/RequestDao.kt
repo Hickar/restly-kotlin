@@ -8,4 +8,7 @@ import com.hickar.restly.repository.models.RequestDTO
 abstract class RequestDao : BaseDao<RequestDTO>("requests") {
     @Query("SELECT * FROM requests WHERE collectionId = :collectionId")
     abstract suspend fun getByCollectionId(collectionId: String): List<RequestDTO>
+
+    @Query("DELETE FROM requests WHERE collectionId = :collectionId")
+    abstract suspend fun deleteByCollectionId(collectionId: String)
 }

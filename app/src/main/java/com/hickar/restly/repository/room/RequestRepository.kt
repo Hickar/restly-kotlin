@@ -16,4 +16,8 @@ class RequestRepository(
     suspend fun getByCollectionId(collectionId: String): List<Request> {
         return mapper.toEntityList(requestDao.getByCollectionId(collectionId))
     }
+
+    suspend fun deleteByCollectionId(collectionId: String) {
+        requestDao.deleteByCollectionId(collectionId)
+    }
 }

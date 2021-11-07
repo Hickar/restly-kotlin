@@ -40,11 +40,16 @@
 
     <string name="dialog_cancel_option">Cancel</string>
     <string name="dialog_ok_option">OK</string>
+    <string name="dialog_ok_confirm_delete_option">Delete</string>
+    <string name="dialog_delete_collection_title">Delete collection</string>
+    <string name="dialog_delete_collection_message">Are you sure you want to delete the collection? All children requests will be deleted too.</string>
     <string name="dialog_warning_title">Warning</string>
     <string name="dialog_emptyurl_message">Invalid URL was provided</string>
     <string name="dialog_rename_title">Rename</string>
 
     <string name="edit_text_dialog_title">Body Data</string>
+
+
     <string name="edit_text_menu_done_button">Done</string>
     <string name="request_multipart_type_menu_option_text">Text</string>
     <string name="request_multipart_type_menu_option_file">File</string>

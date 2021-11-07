@@ -25,6 +25,13 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_requestListFragment_to_collectionEditFragment"
+            app:destination="@id/collectionEditFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
 
     <fragment
@@ -63,4 +70,8 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
     </fragment>
+    <fragment
+        android:id="@+id/collectionEditFragment"
+        android:name="com.hickar.restly.view.collectionList.CollectionEditFragment"
+        android:label="@string/collection_list_edit_fragment_label" />
 </navigation>

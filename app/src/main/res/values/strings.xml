@@ -58,4 +58,8 @@
     <string name="response_info_section_headers_label">Headers</string>
     <string name="response_body_raw_unsupported_type">Raw data preview of media files is unsupported</string>
     <string name="response_body_empty_placeholder_text">You haven\'t sent request yet</string>
+
+    <string name="collection_list_edit_fragment_label">Edit Collection</string>
+    <string name="collection_list_edit_name_input_hint">Collection name</string>
+    <string name="collection_list_edit_description_input_hint">Description of your collection...</string>
 </resources>

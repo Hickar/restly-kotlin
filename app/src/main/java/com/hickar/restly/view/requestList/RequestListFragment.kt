@@ -58,7 +58,11 @@ class RequestListFragment : Fragment() {
 
     @SuppressLint("RestrictedApi")
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.request_list_action_menu, menu)
+        if (arguments?.getString("collectionId") == null) {
+            inflater.inflate(R.menu.request_list_action_menu, menu)
+        } else {
+            inflater.inflate(R.menu.request_list_collection_action_menu, menu)
+        }
 
         val homeButtonEnabled = arguments?.getString("collectionId") != null
         (requireActivity() as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(homeButtonEnabled)
@@ -77,6 +81,11 @@ class RequestListFragment : Fragment() {
 
                     return@coroutineScope true
                 }
+            }
+            R.id.request_list_collection_menu_edit_button -> {
+                val action = RequestListFragmentDirections.actionRequestListFragmentToCollectionEditFragment()
+                findNavController().navigate(action)
+                true
             }
             else -> super.onOptionsItemSelected(item)
         }

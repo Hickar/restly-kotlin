@@ -3,7 +3,6 @@ package com.hickar.restly.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.hickar.restly.RestlyApplication
-import com.hickar.restly.repository.room.CollectionRepository
 
 class CollectionViewModelFactory(
     private val application: RestlyApplication,

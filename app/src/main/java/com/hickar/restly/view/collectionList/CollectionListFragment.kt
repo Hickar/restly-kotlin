@@ -1,6 +1,5 @@
 package com.hickar.restly.view.collectionList
 
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.*
 import androidx.core.content.ContextCompat
@@ -16,7 +15,6 @@ import com.hickar.restly.databinding.CollectionListBinding
 import com.hickar.restly.utils.SwipeDeleteCallback
 import com.hickar.restly.view.collectionList.adapters.CollectionListAdapter
 import com.hickar.restly.view.dialogs.ConfirmationDialog
-import com.hickar.restly.view.dialogs.ConfirmationDialogDelegate
 import com.hickar.restly.viewModel.CollectionListViewModel
 import com.hickar.restly.viewModel.CollectionViewModelFactory
 import kotlinx.coroutines.runBlocking

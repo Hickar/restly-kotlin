@@ -7,6 +7,7 @@ import com.hickar.restly.models.Collection
 import com.hickar.restly.repository.room.CollectionRepository
 import com.hickar.restly.repository.room.RequestRepository
 import kotlinx.coroutines.launch
+import java.util.*
 
 class CollectionListViewModel(
     private val collectionRepository: CollectionRepository,
@@ -19,7 +20,7 @@ class CollectionListViewModel(
     }
 
     suspend fun createNewCollection(): String {
-        val newCollection = Collection()
+        val newCollection = Collection(UUID.randomUUID().toString(), UUID.randomUUID().toString())
         collectionRepository.insert(newCollection)
 
         refreshCollections()

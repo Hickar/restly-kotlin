@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -20,7 +20,7 @@ import com.hickar.restly.viewModel.CollectionViewModelFactory
 import kotlinx.coroutines.runBlocking
 
 class CollectionListFragment : Fragment() {
-    private val viewModel: CollectionListViewModel by viewModels {
+    private val viewModel: CollectionListViewModel by activityViewModels {
         CollectionViewModelFactory(requireActivity().application as RestlyApplication)
     }
     private lateinit var recyclerView: RecyclerView
@@ -68,7 +68,9 @@ class CollectionListFragment : Fragment() {
                     itemTouchHelper.attachToRecyclerView(null)
                     itemTouchHelper.attachToRecyclerView(recyclerView)
                 },
-                { _, _ -> viewModel.deleteCollection(position) }
+                { _, _ ->
+                    viewModel.deleteCollection(position)
+                }
             )
 
             dialog.show(parentFragmentManager, "Confirmation")
@@ -110,5 +112,14 @@ class CollectionListFragment : Fragment() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.refreshCollections()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
     }
 }

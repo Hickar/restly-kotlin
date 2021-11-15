@@ -7,10 +7,13 @@ import com.hickar.restly.repository.mappers.CollectionMapper
 import com.hickar.restly.repository.models.CollectionDTO
 
 class CollectionRepository(
-    collectionDao: CollectionDao,
-    mapper: CollectionMapper
+    private val collectionDao: CollectionDao,
+    private val mapper: CollectionMapper
 ) : BaseRepository<Collection, CollectionDTO, BaseDao<CollectionDTO>>(
     collectionDao,
     mapper
 ) {
+    suspend fun getById(id: String): Collection {
+        return mapper.toEntity(collectionDao.getById(id))
+    }
 }

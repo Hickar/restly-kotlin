@@ -9,7 +9,9 @@ class CollectionViewModelFactory(
 ) : ViewModelProvider.NewInstanceFactory() {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return when {
-//            modelClass.isAssignableFrom(CollectionViewModel::class.java) -> RequestViewModel(requestRepository) as T
+            modelClass.isAssignableFrom(CollectionViewModel::class.java) -> {
+                CollectionViewModel(application.collectionRepository) as T
+            }
             modelClass.isAssignableFrom(CollectionListViewModel::class.java) -> {
                 CollectionListViewModel(application.collectionRepository, application.requestRepository) as T
             }

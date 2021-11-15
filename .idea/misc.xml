@@ -38,14 +38,15 @@
         <entry key="app/src/main/res/layout/request_list.xml" value="0.1503623188405797" />
         <entry key="app/src/main/res/layout/request_list_item.xml" value="0.25" />
         <entry key="app/src/main/res/layout/request_multipart_item.xml" value="0.375" />
-        <entry key="app/src/main/res/layout/request_params_item.xml" value="0.20352597937365538" />
-        <entry key="app/src/main/res/layout/request_tab.xml" value="0.55" />
+        <entry key="app/src/main/res/layout/request_params_item.xml" value="0.42469470827679784" />
+        <entry key="app/src/main/res/layout/request_tab.xml" value="0.4088888888888889" />
         <entry key="app/src/main/res/layout/response_body_info.xml" value="0.1838768115942029" />
         <entry key="app/src/main/res/layout/response_body_info_item.xml" value="0.375" />
         <entry key="app/src/main/res/layout/response_body_preview.xml" value="0.17572463768115942" />
         <entry key="app/src/main/res/layout/response_body_raw.xml" value="0.17572463768115942" />
         <entry key="app/src/main/res/layout/response_tab.xml" value="0.335" />
         <entry key="app/src/main/res/menu/bottom_nav_menu.xml" value="0.23958333333333334" />
+        <entry key="app/src/main/res/menu/collection_edit_menu.xml" value="0.23958333333333334" />
         <entry key="app/src/main/res/menu/collection_list_action_menu.xml" value="0.23958333333333334" />
         <entry key="app/src/main/res/menu/fullscreen_edit_text_menu.xml" value="0.1" />
         <entry key="app/src/main/res/menu/method_select_popup_menu.xml" value="0.23958333333333334" />

@@ -2,7 +2,9 @@ package com.hickar.restly.view.requestList
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.*
+import androidx.appcompat.view.SupportMenuInflater
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -17,6 +19,8 @@ import com.hickar.restly.RestlyApplication
 import com.hickar.restly.databinding.RequestListBinding
 import com.hickar.restly.utils.SwipeDeleteCallback
 import com.hickar.restly.view.requestList.adapters.RequestListAdapter
+import com.hickar.restly.viewModel.CollectionViewModel
+import com.hickar.restly.viewModel.CollectionViewModelFactory
 import com.hickar.restly.viewModel.RequestListViewModel
 import com.hickar.restly.viewModel.RequestViewModelFactory
 import kotlinx.coroutines.*
@@ -24,7 +28,13 @@ import kotlinx.coroutines.*
 class RequestListFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
-    private val viewModel: RequestListViewModel by viewModels {
+
+    private val collectionViewModel: CollectionViewModel by viewModels {
+        CollectionViewModelFactory(
+            (requireActivity().application as RestlyApplication)
+        )
+    }
+    private val requestListViewModel: RequestListViewModel by viewModels {
         RequestViewModelFactory(
             (requireActivity().application as RestlyApplication).requestRepository,
             arguments?.getString("collectionId")
@@ -34,16 +44,17 @@ class RequestListFragment : Fragment() {
     private var _binding: RequestListBinding? = null
     private val binding get() = _binding!!
 
-    @SuppressLint("RestrictedApi")
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        collectionViewModel.loadCollection(arguments?.getString("collectionId"))
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         setHasOptionsMenu(true)
-
-        (requireActivity() as MainActivity).supportActionBar?.title = arguments?.getString("collectionName")
-
         _binding = RequestListBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -57,48 +68,22 @@ class RequestListFragment : Fragment() {
     }
 
     @SuppressLint("RestrictedApi")
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        if (arguments?.getString("collectionId") == null) {
-            inflater.inflate(R.menu.request_list_action_menu, menu)
+    private fun updateOptionsMenu(menu: Menu) {
+        menu.clear()
+
+        var menuId: Int
+        var backButtonEnabled: Boolean
+        if (collectionViewModel.collection.isDefault()) {
+            menuId = R.menu.request_list_default_collection_menu
+            backButtonEnabled = false
         } else {
-            inflater.inflate(R.menu.request_list_collection_action_menu, menu)
+            menuId = R.menu.request_list_custom_collection_menu
+            backButtonEnabled = true
         }
 
-        val homeButtonEnabled = arguments?.getString("collectionId") != null
-        (requireActivity() as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(homeButtonEnabled)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.request_list_menu_add_button -> {
-                runBlocking coroutineScope@{
-                    val newRequestId = viewModel.createNewDefaultRequest()
-                    val action =
-                        RequestListFragmentDirections.actionRequestListFragmentToRequestDetailFragment(
-                            newRequestId
-                        )
-                    findNavController().navigate(action)
-
-                    return@coroutineScope true
-                }
-            }
-            R.id.request_list_collection_menu_edit_button -> {
-                val action = RequestListFragmentDirections.actionRequestListFragmentToCollectionEditFragment()
-                findNavController().navigate(action)
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.refreshRequests()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+        val inflater = SupportMenuInflater(requireContext())
+        inflater.inflate(menuId, menu)
+        (requireActivity() as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(backButtonEnabled)
     }
 
     private fun setupAdapters() {
@@ -112,7 +97,7 @@ class RequestListFragment : Fragment() {
         recyclerView.adapter = adapter
 
         val touchHelper = ItemTouchHelper(SwipeDeleteCallback(requireContext()) { position ->
-            viewModel.deleteRequest(position)
+            requestListViewModel.deleteRequest(position)
         })
         touchHelper.attachToRecyclerView(recyclerView)
     }
@@ -126,8 +111,62 @@ class RequestListFragment : Fragment() {
     }
 
     private fun setupObservers() {
-        viewModel.requests.observe(viewLifecycleOwner, { requests ->
+        requestListViewModel.requests.observe(viewLifecycleOwner, { requests ->
             (recyclerView.adapter as RequestListAdapter).submitList(requests)
         })
+
+        collectionViewModel.name.observe(viewLifecycleOwner) { name ->
+            requireActivity().invalidateOptionsMenu()
+            (requireActivity() as MainActivity).supportActionBar?.title = if (collectionViewModel.collection.isDefault()) {
+                "Requests"
+            } else {
+                name
+            }
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        updateOptionsMenu(menu)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        updateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        Log.d("RequestList.onOptionItemSelected", "Collection Name: ${collectionViewModel.collection.name}")
+        Log.d("RequestList.collectionViewModel", collectionViewModel.toString())
+        return when (item.itemId) {
+            R.id.request_list_menu_add_button -> {
+                runBlocking coroutineScope@{
+                    val newRequestId = requestListViewModel.createNewDefaultRequest()
+                    val action =
+                        RequestListFragmentDirections.actionRequestListFragmentToRequestDetailFragment(
+                            newRequestId
+                        )
+                    findNavController().navigate(action)
+
+                    return@coroutineScope true
+                }
+            }
+            R.id.request_list_collection_menu_edit_button -> {
+                val action = RequestListFragmentDirections.actionRequestListFragmentToCollectionEditFragment(
+                    collectionViewModel.collection.id
+                )
+                findNavController().navigate(action)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        requestListViewModel.refreshRequests()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

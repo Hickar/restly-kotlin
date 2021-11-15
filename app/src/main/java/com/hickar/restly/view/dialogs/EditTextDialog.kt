@@ -4,12 +4,13 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
 import android.widget.EditText
+import androidx.annotation.StringRes
 import androidx.fragment.app.DialogFragment
 import com.hickar.restly.R
 import com.hickar.restly.extensions.toEditable
 
 class EditTextDialog(
-    private val titleId: Int,
+    @StringRes private val titleId: Int,
     private val textInputValue: String,
     private val onSubmitCallback: (String) -> Unit
 ) : DialogFragment() {

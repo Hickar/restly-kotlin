@@ -73,5 +73,10 @@
     <fragment
         android:id="@+id/collectionEditFragment"
         android:name="com.hickar.restly.view.collectionList.CollectionEditFragment"
-        android:label="@string/collection_list_edit_fragment_label" />
+        android:label="@string/collection_list_edit_fragment_label" >
+        <argument
+            android:name="collectionId"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
 </navigation>

@@ -104,8 +104,7 @@ class RequestListFragment : Fragment() {
 
     private fun setupDecoration() {
         val dividerDecoration = DividerItemDecoration(context, RecyclerView.VERTICAL)
-        val dividerDrawable =
-            ContextCompat.getDrawable(requireContext(), R.drawable.item_divider)
+        val dividerDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.item_divider)
         dividerDecoration.setDrawable(dividerDrawable!!)
         recyclerView.addItemDecoration(dividerDecoration)
     }
@@ -117,11 +116,12 @@ class RequestListFragment : Fragment() {
 
         collectionViewModel.name.observe(viewLifecycleOwner) { name ->
             requireActivity().invalidateOptionsMenu()
-            (requireActivity() as MainActivity).supportActionBar?.title = if (collectionViewModel.collection.isDefault()) {
-                "Requests"
-            } else {
-                name
-            }
+            (requireActivity() as MainActivity).supportActionBar?.title =
+                if (collectionViewModel.collection.isDefault()) {
+                    "Requests"
+                } else {
+                    name
+                }
         }
     }
 

@@ -7,21 +7,21 @@
     android:paddingHorizontal="16dp"
     android:paddingVertical="8dp">
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/collection_list_item_name_label"
-            style="@style/Restly.Request.NameText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAlignment="textStart"
-            android:text="This is a sample collection Title"/>
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/collection_list_item_name_label"
+        style="@style/Restly.Request.NameText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:textAlignment="textStart" />
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/collection_list_item_description"
-            style="@style/Restly.Request.UrlText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAlignment="textStart"
-            android:text="This is a test desciption"/>
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/collection_list_item_description"
+        style="@style/Restly.Request.UrlText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="3"
+        android:textAlignment="textStart" />
 
 
 </LinearLayout>

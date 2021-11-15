@@ -8,6 +8,7 @@ class ServiceLocator {
     private lateinit var networkService: NetworkService
     private lateinit var gson: Gson
     private lateinit var fileManager: FileService
+    private lateinit var sharedPreferencesHelper: SharedPreferencesHelper
 
     fun getNetworkClient(): NetworkService {
         if (!this::networkService.isInitialized) {
@@ -20,6 +21,7 @@ class ServiceLocator {
     fun getGson(): Gson {
         if (!this::networkService.isInitialized) {
             gson = GsonBuilder()
+                .serializeNulls()
                 .create()
         }
 
@@ -32,6 +34,14 @@ class ServiceLocator {
         }
 
         return fileManager
+    }
+
+    fun getSharedPreferences(): SharedPreferencesHelper {
+        if (!this::sharedPreferencesHelper.isInitialized) {
+            sharedPreferencesHelper = SharedPreferencesHelper(application.applicationContext, gson)
+        }
+
+        return sharedPreferencesHelper
     }
 
     companion object {

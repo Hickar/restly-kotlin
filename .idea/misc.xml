@@ -6,6 +6,9 @@
         <entry key="../../../../layout/custom_preview.xml" value="0.2546875" />
         <entry key="app/src/main/res/drawable/border_bottom.xml" value="0.225" />
         <entry key="app/src/main/res/drawable/ic_access_time.xml" value="0.2557291666666667" />
+        <entry key="app/src/main/res/drawable/ic_collections_tab.xml" value="0.2557291666666667" />
+        <entry key="app/src/main/res/drawable/ic_default_user.xml" value="0.2557291666666667" />
+        <entry key="app/src/main/res/drawable/item_divider.xml" value="0.2557291666666667" />
         <entry key="app/src/main/res/drawable/recycler_divider.xml" value="0.259375" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.24105668208813794" />
         <entry key="app/src/main/res/layout/activity_request_list.xml" value="0.18568840579710144" />
@@ -45,6 +48,7 @@
         <entry key="app/src/main/res/layout/response_body_preview.xml" value="0.17572463768115942" />
         <entry key="app/src/main/res/layout/response_body_raw.xml" value="0.17572463768115942" />
         <entry key="app/src/main/res/layout/response_tab.xml" value="0.335" />
+        <entry key="app/src/main/res/layout/settings.xml" value="0.2644576473313267" />
         <entry key="app/src/main/res/menu/bottom_nav_menu.xml" value="0.23958333333333334" />
         <entry key="app/src/main/res/menu/collection_edit_menu.xml" value="0.23958333333333334" />
         <entry key="app/src/main/res/menu/collection_list_action_menu.xml" value="0.23958333333333334" />

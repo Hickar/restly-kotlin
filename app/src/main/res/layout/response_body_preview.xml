@@ -7,7 +7,7 @@
     <WebView
         android:id="@+id/response_body_preview_webView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:overScrollMode="never"
         android:visibility="gone" />
 

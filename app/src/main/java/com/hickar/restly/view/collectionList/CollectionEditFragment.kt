@@ -18,7 +18,7 @@ class CollectionEditFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: CollectionViewModel by viewModels(
-        factoryProducer = {CollectionViewModelFactory((requireActivity().application) as RestlyApplication)}
+        factoryProducer = { CollectionViewModelFactory((requireActivity().application) as RestlyApplication) }
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,7 +65,7 @@ class CollectionEditFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId) {
+        return when (item.itemId) {
             R.id.collection_edit_menu_save_option -> {
                 viewModel.saveCollection()
                 requireActivity().onBackPressed()

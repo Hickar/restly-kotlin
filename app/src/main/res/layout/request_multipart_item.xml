@@ -34,7 +34,7 @@
             android:padding="0dp"
             android:hint="@string/request_detail_key_text"
             android:inputType="text"
-            android:singleLine="true"/>
+            android:singleLine="true" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -54,7 +54,7 @@
             android:padding="0dp"
             android:hint="@string/request_detail_value_text"
             android:inputType="text"
-            android:singleLine="true"/>
+            android:singleLine="true" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -69,6 +69,6 @@
         android:layout_marginStart="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:singleLine="true"/>
+        android:singleLine="true" />
 
 </LinearLayout>

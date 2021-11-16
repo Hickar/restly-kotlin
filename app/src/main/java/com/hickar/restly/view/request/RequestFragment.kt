@@ -15,6 +15,7 @@ import com.hickar.restly.RestlyApplication
 import com.hickar.restly.databinding.RequestBinding
 import com.hickar.restly.extensions.hide
 import com.hickar.restly.extensions.show
+import com.hickar.restly.models.ErrorEvent
 import com.hickar.restly.utils.KeyboardUtil
 import com.hickar.restly.view.dialogs.EditTextDialog
 import com.hickar.restly.view.dialogs.WarningDialog
@@ -40,7 +41,7 @@ class RequestFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.loadRequest(arguments?.get("requestId") as Long)
+        viewModel.loadRequest(arguments?.get(REQUEST_ID_KEY) as Long)
         applicationScope = (requireActivity().application as RestlyApplication).applicationScope
     }
 
@@ -78,6 +79,10 @@ class RequestFragment : Fragment() {
         viewModel.name.observe(viewLifecycleOwner) { name ->
             (requireActivity() as AppCompatActivity).supportActionBar?.title = name
         }
+
+        viewModel.error.observe(viewLifecycleOwner) { error ->
+            WarningDialog(error.title, error.message).show(parentFragmentManager, "RequestError")
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -87,17 +92,15 @@ class RequestFragment : Fragment() {
                 return true
             }
             R.id.request_menu_rename_button -> {
-                val nameEditDialog =
-                    EditTextDialog(R.string.dialog_rename_title, viewModel.name.value!!) { newName ->
-                        viewModel.setName(newName)
-                    }
-                nameEditDialog.show(parentFragmentManager, "Rename")
+                EditTextDialog(R.string.dialog_rename_title, viewModel.name.value!!) { newName ->
+                    viewModel.setName(newName)
+                }.show(parentFragmentManager, "Rename")
                 true
             }
             R.id.request_menu_send_button -> {
                 if (viewModel.query.url.isEmpty()) {
-                    val warningDialog = WarningDialog(R.string.dialog_warning_title, R.string.dialog_emptyurl_message)
-                    warningDialog.show(parentFragmentManager, "Warning")
+                    WarningDialog(ErrorEvent.EmptyUrl.title, ErrorEvent.EmptyUrl.message)
+                        .show(parentFragmentManager, "Warning")
                 } else {
                     applicationScope.launch {
                         viewModel.saveRequest()
@@ -121,5 +124,9 @@ class RequestFragment : Fragment() {
         requireActivity().viewModelStore.clear()
         _binding = null
         super.onDestroy()
+    }
+
+    companion object {
+        const val REQUEST_ID_KEY = "requestId"
     }
 }

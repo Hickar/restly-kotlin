@@ -5,16 +5,22 @@ import com.google.gson.annotations.SerializedName
 enum class RequestMethod(val value: String) {
     @SerializedName("get")
     GET("GET"),
+
     @SerializedName("post")
     POST("POST"),
+
     @SerializedName("put")
     PUT("PUT"),
+
     @SerializedName("path")
     PATCH("PATCH"),
+
     @SerializedName("head")
     HEAD("HEAD"),
+
     @SerializedName("options")
     OPTIONS("OPTIONS"),
+
     @SerializedName("delete")
     DELETE("DELETE")
 }

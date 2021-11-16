@@ -1,18 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/method_popup_menu">
-    <item android:id="@+id/method_popup_option_get"
-        android:title="@string/method_popup_menu_option_get_text"/>
-    <item android:id="@+id/method_popup_option_post"
-        android:title="@string/method_popup_menu_option_post_text"/>
-    <item android:id="@+id/method_popup_option_put"
-        android:title="@string/method_popup_menu_option_put_text"/>
-    <item android:id="@+id/method_popup_option_patch"
-        android:title="@string/method_popup_menu_option_patch_text"/>
-    <item android:id="@+id/method_popup_option_head"
-        android:title="@string/method_popup_menu_option_head_text"/>
-    <item android:id="@+id/method_popup_option_options"
-        android:title="@string/method_popup_menu_option_options_text"/>
-    <item android:id="@+id/method_popup_option_delete"
-        android:title="@string/method_popup_option_delete"/>
+    <item
+        android:id="@+id/method_popup_option_get"
+        android:title="@string/method_popup_menu_option_get_text" />
+    <item
+        android:id="@+id/method_popup_option_post"
+        android:title="@string/method_popup_menu_option_post_text" />
+    <item
+        android:id="@+id/method_popup_option_put"
+        android:title="@string/method_popup_menu_option_put_text" />
+    <item
+        android:id="@+id/method_popup_option_patch"
+        android:title="@string/method_popup_menu_option_patch_text" />
+    <item
+        android:id="@+id/method_popup_option_head"
+        android:title="@string/method_popup_menu_option_head_text" />
+    <item
+        android:id="@+id/method_popup_option_options"
+        android:title="@string/method_popup_menu_option_options_text" />
+    <item
+        android:id="@+id/method_popup_option_delete"
+        android:title="@string/method_popup_option_delete" />
 </menu>

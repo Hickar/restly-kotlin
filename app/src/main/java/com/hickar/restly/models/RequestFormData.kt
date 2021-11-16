@@ -2,7 +2,7 @@ package com.hickar.restly.models
 
 import java.util.*
 
-data class RequestFormData (
+data class RequestFormData(
     override var key: String = "",
     override var value: String = "",
     override var enabled: Boolean = true,

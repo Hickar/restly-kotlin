@@ -57,7 +57,10 @@ class RequestDetailBodyFormDataFragment() : Fragment() {
                 viewModel.multipartData.value!![position].value = text
             },
             { position ->
-                requireActivity().activityResultRegistry.register("key", ActivityResultContracts.OpenDocument()) { uri ->
+                requireActivity().activityResultRegistry.register(
+                    "key",
+                    ActivityResultContracts.OpenDocument()
+                ) { uri ->
                     if (uri == null) return@register
 
                     contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)

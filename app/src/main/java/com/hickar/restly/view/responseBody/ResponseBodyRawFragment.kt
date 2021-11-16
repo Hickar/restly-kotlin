@@ -27,7 +27,7 @@ class ResponseBodyRawFragment : Fragment() {
 
     private fun setupObservers() {
         viewModel.response.observe(viewLifecycleOwner) { response ->
-            binding.responseBodyRawData.text= if (response.body.isRawViewSupported()) {
+            binding.responseBodyRawData.text = if (response.body.isRawViewSupported()) {
                 response.body.rawData ?: ""
             } else {
                 resources.getString(R.string.response_body_raw_unsupported_type)

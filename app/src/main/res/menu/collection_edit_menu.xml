@@ -5,5 +5,5 @@
         android:id="@+id/collection_edit_menu_save_option"
         android:title="@string/collection_edit_menu_save_option_text"
         android:icon="@drawable/ic_done"
-        app:showAsAction="always"/>
+        app:showAsAction="always" />
 </menu>

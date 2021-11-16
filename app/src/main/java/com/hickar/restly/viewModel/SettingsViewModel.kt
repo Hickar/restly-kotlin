@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hickar.restly.consts.RequestMethod
+import com.hickar.restly.models.ErrorEvent
 import com.hickar.restly.models.PostmanGetMeInfo
 import com.hickar.restly.models.PostmanUserInfo
 import com.hickar.restly.models.RequestHeader
@@ -19,6 +20,8 @@ class SettingsViewModel : ViewModel(), okhttp3.Callback {
 
     val isLoggedIn: MutableLiveData<Boolean> = MutableLiveData(false)
     val userInfo: MutableLiveData<PostmanUserInfo> = MutableLiveData()
+
+    val error: MutableLiveData<ErrorEvent> = MutableLiveData()
 
     private var apiKeyGuess: String = ""
 
@@ -52,7 +55,7 @@ class SettingsViewModel : ViewModel(), okhttp3.Callback {
             prefs.setApiKey(apiKeyGuess)
             prefs.setUserInfo(info.user)
         } else {
-            TODO("Error handling is not implemented yet")
+            error.postValue(ErrorEvent.AuthenticationError)
         }
     }
 }

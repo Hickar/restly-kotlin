@@ -7,18 +7,19 @@
         android:icon="@drawable/ic_more"
         app:showAsAction="ifRoom">
         <menu>
-            <item android:id="@+id/request_menu_rename_button"
-                android:title="@string/request_more_menu_option_rename_text"/>
+            <item
+                android:id="@+id/request_menu_rename_button"
+                android:title="@string/request_more_menu_option_rename_text" />
         </menu>
     </item>
     <item
         android:id="@+id/request_menu_save_button"
         android:title="@string/request_menu_save_button_text"
         android:icon="@drawable/ic_save_request"
-        app:showAsAction="always"/>
+        app:showAsAction="always" />
     <item
         android:id="@+id/request_menu_send_button"
         android:title="@string/request_menu_add_button_text"
         android:icon="@drawable/ic_send_request"
-        app:showAsAction="always"/>
+        app:showAsAction="always" />
 </menu>

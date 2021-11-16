@@ -11,7 +11,10 @@ class RequestViewModelFactory(
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return when {
             modelClass.isAssignableFrom(RequestViewModel::class.java) -> RequestViewModel(requestRepository) as T
-            modelClass.isAssignableFrom(RequestListViewModel::class.java) -> RequestListViewModel(requestRepository, collectionId) as T
+            modelClass.isAssignableFrom(RequestListViewModel::class.java) -> RequestListViewModel(
+                requestRepository,
+                collectionId
+            ) as T
             else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         }
     }

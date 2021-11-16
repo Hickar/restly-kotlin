@@ -15,6 +15,7 @@ import com.hickar.restly.databinding.CollectionListBinding
 import com.hickar.restly.utils.SwipeDeleteCallback
 import com.hickar.restly.view.collectionList.adapters.CollectionListAdapter
 import com.hickar.restly.view.dialogs.ConfirmationDialog
+import com.hickar.restly.view.requestList.RequestListFragment
 import com.hickar.restly.viewModel.CollectionListViewModel
 import com.hickar.restly.viewModel.CollectionViewModelFactory
 import kotlinx.coroutines.runBlocking
@@ -48,8 +49,8 @@ class CollectionListFragment : Fragment() {
     private fun setupAdapters() {
         val adapter = CollectionListAdapter {
             val bundle = Bundle()
-            bundle.putString("collectionId", it.id)
-            bundle.putString("collectionName", it.name)
+            bundle.putString(RequestListFragment.COLLECTION_ID_KEY, it.id)
+            bundle.putString(RequestListFragment.COLLECTION_NAME_KEY, it.name)
             findNavController().navigate(R.id.navigate_fromCollectionTab_toRequestList, bundle)
         }
 
@@ -103,8 +104,8 @@ class CollectionListFragment : Fragment() {
                     val newCollectionId = viewModel.createNewCollection()
                     val bundle = Bundle()
 
-                    bundle.putString("collectionId", newCollectionId)
-                    bundle.putString("collectionName", "New Collection")
+                    bundle.putString(RequestListFragment.COLLECTION_ID_KEY, newCollectionId)
+                    bundle.putString(RequestListFragment.COLLECTION_NAME_KEY, "New Collection")
                     findNavController().navigate(R.id.navigate_fromCollectionTab_toRequestList, bundle)
 
                     return@coroutineScope true
@@ -117,9 +118,5 @@ class CollectionListFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         viewModel.refreshCollections()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
     }
 }

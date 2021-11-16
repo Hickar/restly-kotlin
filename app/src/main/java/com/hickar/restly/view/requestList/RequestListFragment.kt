@@ -2,7 +2,6 @@ package com.hickar.restly.view.requestList
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.appcompat.view.SupportMenuInflater
 import androidx.core.content.ContextCompat
@@ -37,7 +36,7 @@ class RequestListFragment : Fragment() {
     private val requestListViewModel: RequestListViewModel by viewModels {
         RequestViewModelFactory(
             (requireActivity().application as RestlyApplication).requestRepository,
-            arguments?.getString("collectionId")
+            arguments?.getString(COLLECTION_ID_KEY)
         )
     }
 
@@ -46,7 +45,7 @@ class RequestListFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        collectionViewModel.loadCollection(arguments?.getString("collectionId"))
+        collectionViewModel.loadCollection(arguments?.getString(COLLECTION_ID_KEY))
     }
 
     override fun onCreateView(
@@ -134,8 +133,6 @@ class RequestListFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        Log.d("RequestList.onOptionItemSelected", "Collection Name: ${collectionViewModel.collection.name}")
-        Log.d("RequestList.collectionViewModel", collectionViewModel.toString())
         return when (item.itemId) {
             R.id.request_list_menu_add_button -> {
                 runBlocking coroutineScope@{
@@ -168,5 +165,10 @@ class RequestListFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        const val COLLECTION_ID_KEY = "collectionId"
+        const val COLLECTION_NAME_KEY = "collectionName"
     }
 }

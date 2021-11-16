@@ -43,8 +43,6 @@
     <string name="dialog_ok_confirm_delete_option">Delete</string>
     <string name="dialog_delete_collection_title">Delete collection</string>
     <string name="dialog_delete_collection_message">Are you sure you want to delete the collection? All children requests will be deleted too.</string>
-    <string name="dialog_warning_title">Warning</string>
-    <string name="dialog_emptyurl_message">Invalid URL was provided</string>
     <string name="dialog_rename_title">Rename</string>
 
     <string name="edit_text_dialog_title">Body Data</string>
@@ -71,4 +69,22 @@
     <string name="settings_login_notlogged_description">Sign In to Postman with API key to synchronize all your collections</string>
     <string name="settings_login_button_label">Enter API Key</string>
     <string name="settings_login_postman_dialog_title">Enter Postman API Key</string>
+
+    <!-- Errors -->
+    <string name="auth_error_name">Authentication Failed</string>
+    <string name="auth_error_description">Provided API key is invalid or expired.</string>
+    <string name="conn_refused_error_name">Connection Refused</string>
+    <string name="conn_refused_error_description">Connection was refused by host.</string>
+    <string name="conn_timeout_error_name">Connection Timed Out</string>
+    <string name="conn_timeout_error_description">Connection Timed Out.</string>
+    <string name="unknown_host_error_name">Unknown Host</string>
+    <string name="unknown_host_error_description">Unable to resolve host.</string>
+    <string name="conn_unexpected_error_name">Unexpected error</string>
+    <string name="conn_unexpected_error_description">Unable to send request due to unexpected error.</string>
+    <string name="not_found_error_name">Host not found</string>
+    <string name="not_found_error_description">No host found with specified address.</string>
+    <string name="unexpected_url_scheme_error_name">Invalid URL Scheme</string>
+    <string name="unexpected_url_scheme_error_description">Expected URL scheme \'http\' or \'https\' but no colon was found.</string>
+    <string name="empty_url_error_name">Invalid URL</string>
+    <string name="empty_url_error_description">No URL was provided.</string>
 </resources>

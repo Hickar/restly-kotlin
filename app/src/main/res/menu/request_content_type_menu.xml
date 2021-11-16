@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/content_type_option_textplain"
-        android:title="@string/content_type_option_textplain_text"/>
-    <item android:id="@+id/content_type_option_applicationjson"
-        android:title="@string/content_type_option_applicationjson_text"/>
-    <item android:id="@+id/content_type_option_applicationxml"
-        android:title="@string/content_type_option_applicationxml_text"/>
+    <item
+        android:id="@+id/content_type_option_textplain"
+        android:title="@string/content_type_option_textplain_text" />
+    <item
+        android:id="@+id/content_type_option_applicationjson"
+        android:title="@string/content_type_option_applicationjson_text" />
+    <item
+        android:id="@+id/content_type_option_applicationxml"
+        android:title="@string/content_type_option_applicationxml_text" />
 </menu>

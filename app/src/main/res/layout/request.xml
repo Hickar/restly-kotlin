@@ -12,7 +12,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:tabMode="fixed"
-        android:overScrollMode="never"/>
+        android:overScrollMode="never" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/request_body_view"

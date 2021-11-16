@@ -42,7 +42,13 @@ class ResponseBodyPreviewFragment : Fragment() {
             when {
                 contentType.contains("html") -> {
                     webView.show()
-                    webView.loadDataWithBaseURL(response.url, response.body.rawData!!, "text/html", "utf-8", response.url)
+                    webView.loadDataWithBaseURL(
+                        response.url,
+                        response.body.rawData!!,
+                        "text/html",
+                        "utf-8",
+                        response.url
+                    )
                 }
                 contentType.contains("image") -> {
                     val imageViewContainer = binding.responseBodyPreviewImageViewContainer

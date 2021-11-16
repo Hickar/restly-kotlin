@@ -11,8 +11,8 @@ data class ResponseBody(
     fun isRawViewSupported(): Boolean {
         return rawData != null && (
                 contentType.contains("text") ||
-                contentType.contains("json") ||
-                contentType.contains("html")
-        )
+                        contentType.contains("json") ||
+                        contentType.contains("html")
+                )
     }
 }

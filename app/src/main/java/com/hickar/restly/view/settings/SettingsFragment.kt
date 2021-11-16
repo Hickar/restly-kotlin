@@ -12,6 +12,7 @@ import com.hickar.restly.extensions.hide
 import com.hickar.restly.extensions.show
 import com.hickar.restly.extensions.toEditable
 import com.hickar.restly.view.dialogs.EditTextDialog
+import com.hickar.restly.view.dialogs.WarningDialog
 import com.hickar.restly.viewModel.SettingsViewModel
 
 class SettingsFragment : Fragment() {
@@ -60,6 +61,11 @@ class SettingsFragment : Fragment() {
         viewModel.userInfo.observe(viewLifecycleOwner) { userInfo ->
             binding.settingsLoginFullnameLabel.text = userInfo.fullName.toEditable()
             binding.settingsLoginEmailLabel.text = userInfo.email.toEditable()
+        }
+
+        viewModel.error.observe(viewLifecycleOwner) { error ->
+            val dialog = WarningDialog(error.title, error.message)
+            dialog.show(parentFragmentManager, "AuthError")
         }
     }
 

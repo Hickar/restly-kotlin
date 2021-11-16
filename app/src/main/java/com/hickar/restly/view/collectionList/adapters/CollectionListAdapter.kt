@@ -34,7 +34,7 @@ class CollectionListAdapter(
     }
 
     override fun submitList(list: MutableList<Collection>?) {
-        super.submitList(list?.let{ ArrayList(list) })
+        super.submitList(list?.let { ArrayList(list) })
     }
 
     companion object {

@@ -91,7 +91,8 @@ class RequestMultipartDataViewHolder(
 }
 
 internal class BaseItemCallback : DiffUtil.ItemCallback<RequestMultipartData>() {
-    override fun areItemsTheSame(oldItem: RequestMultipartData, newItem: RequestMultipartData) = oldItem.toString() == newItem.toString()
+    override fun areItemsTheSame(oldItem: RequestMultipartData, newItem: RequestMultipartData) =
+        oldItem.toString() == newItem.toString()
 
     override fun areContentsTheSame(oldItem: RequestMultipartData, newItem: RequestMultipartData) = false
 }

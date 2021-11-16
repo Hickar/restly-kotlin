@@ -26,10 +26,9 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@drawable/border_bottom"/>
+        android:background="@drawable/border_bottom" />
 
-    <TableRow
-        android:id="@+id/request_body_raw_select_type_button">
+    <TableRow android:id="@+id/request_body_raw_select_type_button">
 
         <TextView
             style="@style/Restly.Request.BodyTextLabel"

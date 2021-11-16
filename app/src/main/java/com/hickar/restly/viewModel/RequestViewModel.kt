@@ -17,6 +17,9 @@ import okhttp3.Call
 import okhttp3.Response
 import java.io.File
 import java.io.IOException
+import java.net.ConnectException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import java.util.*
 
 class RequestViewModel constructor(
@@ -44,6 +47,8 @@ class RequestViewModel constructor(
     val bodyType: MutableLiveData<BodyType> = MutableLiveData()
 
     val response: MutableLiveData<com.hickar.restly.models.Response> = MutableLiveData()
+
+    val error: MutableLiveData<ErrorEvent> = MutableLiveData()
 
     fun loadRequest(requestId: Long) {
         runBlocking {
@@ -214,8 +219,12 @@ class RequestViewModel constructor(
 
     fun sendRequest() {
         viewModelScope.launch {
-            val networkClient = ServiceLocator.getInstance().getNetworkClient()
-            networkClient.sendRequest(currentRequest, this@RequestViewModel)
+            try {
+                val networkClient = ServiceLocator.getInstance().getNetworkClient()
+                networkClient.sendRequest(currentRequest, this@RequestViewModel)
+            } catch (e: IllegalArgumentException) {
+                error.postValue(ErrorEvent.UnexpectedUrlScheme)
+            }
         }
     }
 
@@ -244,8 +253,13 @@ class RequestViewModel constructor(
     }
 
     override fun onFailure(call: Call, e: IOException) {
-        Log.e("RequestViewModel", e.message.toString(), e.cause)
-        e.printStackTrace()
+        val newError = when (e) {
+            is SocketTimeoutException -> ErrorEvent.ConnectionTimeout
+            is ConnectException -> ErrorEvent.ConnectionRefused
+            is UnknownHostException -> ErrorEvent.UnknownHostError
+            else -> ErrorEvent.ConnectionUnexpected
+        }
+        error.postValue(newError)
     }
 
     override fun onResponse(call: Call, response: Response) {

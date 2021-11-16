@@ -37,11 +37,11 @@ fun Long.toResponseTime(): String {
             time = this.toInt()
             timeUnit = "ms"
         }
-        in 1000..1000*60 -> {
+        in 1000..1000 * 60 -> {
             time = this.toInt() / 1000
             timeUnit = "s"
         }
-        in 1000*60..1000*60*60 -> {
+        in 1000 * 60..1000 * 60 * 60 -> {
             time = this.toInt() / 60000
             timeUnit = "m"
         }

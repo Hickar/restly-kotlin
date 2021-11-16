@@ -5,5 +5,5 @@
         android:id="@+id/collection_list_menu_add_button"
         android:title="@string/request_menu_add_button_text"
         android:icon="@drawable/ic_request_add"
-        app:showAsAction="always"/>
+        app:showAsAction="always" />
 </menu>

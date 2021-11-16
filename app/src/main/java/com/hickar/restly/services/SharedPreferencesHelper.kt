@@ -10,13 +10,18 @@ class SharedPreferencesHelper(
 ) {
     private val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
-    fun getUserInfo(): PostmanUserInfo {
-        val json = prefs.getString(USER, "")
-        return gson.fromJson(json, PostmanUserInfo::class.java)
+    fun getUserInfo(): PostmanUserInfo? {
+        val json = prefs.getString(USER, null)
+
+        return if (json == null) {
+            json
+        } else {
+            gson.fromJson(json, PostmanUserInfo::class.java)
+        }
     }
 
     fun setUserInfo(userInfo: PostmanUserInfo) {
-        val json = gson.toJson(PostmanUserInfo::class.java)
+        val json = gson.toJson(userInfo, PostmanUserInfo::class.java)
         prefs.edit().putString(USER, json).apply()
     }
 

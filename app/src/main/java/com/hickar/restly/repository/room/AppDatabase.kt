@@ -11,7 +11,7 @@ import com.hickar.restly.repository.models.RequestDTO
 import kotlinx.coroutines.CoroutineScope
 
 @Database(entities = [RequestDTO::class, CollectionDTO::class], version = 7)
-abstract class AppDatabase: RoomDatabase() {
+abstract class AppDatabase : RoomDatabase() {
     abstract fun requestDao(database: AppDatabase = this): RequestDao
     abstract fun collectionDao(database: AppDatabase = this): CollectionDao
 
@@ -27,7 +27,8 @@ abstract class AppDatabase: RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context,
                     AppDatabase::class.java,
-                    "restly")
+                    "restly"
+                )
                     .fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance

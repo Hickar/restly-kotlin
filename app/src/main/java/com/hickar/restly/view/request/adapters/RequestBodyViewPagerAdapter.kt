@@ -12,7 +12,7 @@ class RequestBodyViewPagerAdapter(fragment: RequestTabFragment) : FragmentStateA
     override fun getItemCount(): Int = 4
 
     override fun createFragment(position: Int): Fragment {
-        return when(position) {
+        return when (position) {
             0 -> {
                 RequestBodyFormdataFragment()
             }

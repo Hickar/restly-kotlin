@@ -2,7 +2,7 @@ package com.hickar.restly.models
 
 import java.util.*
 
-data class RequestQueryParameter (
+data class RequestQueryParameter(
     override var key: String = "",
     override var value: String = "",
     override var enabled: Boolean = true,

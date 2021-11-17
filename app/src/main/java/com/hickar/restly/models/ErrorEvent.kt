@@ -12,6 +12,7 @@ enum class ErrorEvent(
     ConnectionUnexpected(R.string.conn_unexpected_error_name, R.string.conn_unexpected_error_description),
     AuthenticationError(R.string.auth_error_name, R.string.auth_error_description),
     UnknownHostError(R.string.unknown_host_error_name, R.string.unknown_host_error_description),
+    NoInternetConnectionError(R.string.no_internet_conn_error_name, R.string.no_internet_conn_error_description),
     UnexpectedUrlScheme(R.string.unexpected_url_scheme_error_name, R.string.unexpected_url_scheme_error_description),
     EmptyUrl(R.string.empty_url_error_name, R.string.empty_url_error_description),
 }

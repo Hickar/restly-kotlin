@@ -256,7 +256,13 @@ class RequestViewModel constructor(
         val newError = when (e) {
             is SocketTimeoutException -> ErrorEvent.ConnectionTimeout
             is ConnectException -> ErrorEvent.ConnectionRefused
-            is UnknownHostException -> ErrorEvent.UnknownHostError
+            is UnknownHostException -> {
+                if (ServiceLocator.getInstance().getNetworkClient().isNetworkAvailable()) {
+                    ErrorEvent.UnknownHostError
+                } else {
+                    ErrorEvent.NoInternetConnectionError
+                }
+            }
             else -> ErrorEvent.ConnectionUnexpected
         }
         error.postValue(newError)

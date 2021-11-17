@@ -1,7 +1,10 @@
 package com.hickar.restly.services
 
-import android.content.ContentResolver
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.net.Uri
+import android.os.Build
 import com.hickar.restly.models.*
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
@@ -13,9 +16,10 @@ import okio.source
 import java.io.IOException
 
 class NetworkService(
-    private val contentResolver: ContentResolver
+    private val context: Context,
 ) {
-    private var client: OkHttpClient = OkHttpClient.Builder()
+    private val contentResolver = context.contentResolver
+    private val client: OkHttpClient = OkHttpClient.Builder()
         .build()
 
     suspend fun requestRaw(
@@ -121,5 +125,29 @@ class NetworkService(
 
     private fun createRawBody(body: RequestRawData): RequestBody {
         return body.text.toRequestBody(body.mimeType.toMediaType())
+    }
+
+    fun isNetworkAvailable(): Boolean {
+        var hasWifiConnected = false
+        var hasCellularConnected = false
+        var hasVpnConnected = false
+
+        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val capabilities = cm.getNetworkCapabilities(cm.activeNetwork)
+            if (capabilities != null) {
+                hasWifiConnected = capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+                hasCellularConnected = capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
+                hasVpnConnected = capabilities.hasTransport(NetworkCapabilities.TRANSPORT_VPN)
+            }
+        } else {
+            val networkInfo = cm.activeNetworkInfo
+            hasWifiConnected = networkInfo?.type == ConnectivityManager.TYPE_WIFI
+            hasCellularConnected = networkInfo?.type == ConnectivityManager.TYPE_MOBILE
+            hasVpnConnected = networkInfo?.type == ConnectivityManager.TYPE_VPN
+        }
+
+        return hasWifiConnected || hasCellularConnected || hasVpnConnected
     }
 }

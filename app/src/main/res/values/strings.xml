@@ -87,4 +87,6 @@
     <string name="unexpected_url_scheme_error_description">Expected URL scheme \'http\' or \'https\' but no colon was found.</string>
     <string name="empty_url_error_name">Invalid URL</string>
     <string name="empty_url_error_description">No URL was provided.</string>
+    <string name="no_internet_conn_error_name">No Internet Connection</string>
+    <string name="no_internet_conn_error_description">Check your mobile or WIFI internet connection settings.</string>
 </resources>

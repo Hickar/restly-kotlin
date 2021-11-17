@@ -45,22 +45,28 @@ class SettingsFragment : Fragment() {
             }
             dialog.show(parentFragmentManager, "Postman Login")
         }
+
+        binding.settingsLogoutButton.setOnClickListener {
+            viewModel.logoutFromPostman()
+        }
     }
 
     private fun setupObservers() {
         viewModel.isLoggedIn.observe(viewLifecycleOwner) { isLoggedIn ->
             if (isLoggedIn) {
-                binding.settingsLogginLoggedinContainer.show()
+                binding.settingsLoginLoggedinContainer.show()
                 binding.settingsLoginNotloggedinContainer.hide()
             } else {
-                binding.settingsLogginLoggedinContainer.hide()
+                binding.settingsLoginLoggedinContainer.hide()
                 binding.settingsLoginNotloggedinContainer.show()
             }
         }
 
         viewModel.userInfo.observe(viewLifecycleOwner) { userInfo ->
-            binding.settingsLoginFullnameLabel.text = userInfo.fullName.toEditable()
-            binding.settingsLoginEmailLabel.text = userInfo.email.toEditable()
+            if (userInfo != null)  {
+                binding.settingsLoginFullnameLabel.text = userInfo.fullName.toEditable()
+                binding.settingsLoginEmailLabel.text = userInfo.email.toEditable()
+            }
         }
 
         viewModel.error.observe(viewLifecycleOwner) { error ->

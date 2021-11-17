@@ -69,6 +69,7 @@
     <string name="settings_login_notlogged_description">Sign In to Postman with API key to synchronize all your collections</string>
     <string name="settings_login_button_label">Enter API Key</string>
     <string name="settings_login_postman_dialog_title">Enter Postman API Key</string>
+    <string name="settings_logout_button_label">Logout</string>
 
     <!-- Errors -->
     <string name="auth_error_name">Authentication Failed</string>

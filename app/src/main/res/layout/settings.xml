@@ -16,67 +16,84 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/border_bottom"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:paddingBottom="16dp">
 
             <LinearLayout
-                android:id="@+id/settings_loggin_loggedin_container"
+                android:id="@+id/settings_login_loggedin_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone">
-
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="64dp"
-                    android:layout_height="64dp"
-                    android:layout_gravity="center"
-                    android:layout_marginEnd="8dp"
-                    app:cardCornerRadius="40dp"
-                    app:strokeColor="@color/gray_400"
-                    app:strokeWidth="1dp">
-
-                    <ImageView
-                        android:id="@+id/settings_login_avatar_image"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@color/gray_400"
-                        android:contentDescription="@string/settings_login_avatar_description"
-                        android:scaleType="center"
-                        android:src="@drawable/ic_default_user" />
-                </com.google.android.material.card.MaterialCardView>
+                android:orientation="vertical">
 
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:orientation="horizontal"
+                    android:visibility="visible">
 
-                    <TextView
-                        android:id="@+id/settings_login_fullname_label"
-                        android:layout_width="match_parent"
-                        android:layout_height="24dp"
-                        android:layout_marginBottom="4dp"
-                        android:gravity="center_vertical"
-                        android:text="Hickar"
-                        android:textColor="@color/black"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:layout_gravity="center"
+                        android:layout_marginEnd="8dp"
+                        app:cardCornerRadius="40dp"
+                        app:strokeColor="@color/gray_400"
+                        app:strokeWidth="1dp">
 
-                    <TextView
-                        android:id="@+id/settings_login_email_label"
-                        android:layout_width="match_parent"
-                        android:layout_height="24dp"
-                        android:gravity="center_vertical"
-                        android:text="persigor@inbox.ru"
-                        android:textSize="16sp" />
+                        <ImageView
+                            android:id="@+id/settings_login_avatar_image"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@color/gray_400"
+                            android:contentDescription="@string/settings_login_avatar_description"
+                            android:scaleType="center"
+                            android:src="@drawable/ic_default_user" />
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/settings_login_fullname_label"
+                            android:layout_width="match_parent"
+                            android:layout_height="24dp"
+                            android:layout_marginBottom="4dp"
+                            android:gravity="center_vertical"
+                            android:textColor="@color/black"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/settings_login_email_label"
+                            android:layout_width="match_parent"
+                            android:layout_height="24dp"
+                            android:gravity="center_vertical"
+                            android:textSize="16sp" />
+                    </LinearLayout>
                 </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/settings_logout_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:textColor="@color/red_500"
+                    app:strokeColor="@color/red_200"
+                    app:rippleColor="@color/red_200"
+                    android:text="@string/settings_logout_button_label"/>
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/settings_login_notloggedin_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="match_parent"

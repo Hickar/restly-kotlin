@@ -20,9 +20,13 @@ class SharedPreferencesHelper(
         }
     }
 
-    fun setUserInfo(userInfo: PostmanUserInfo) {
-        val json = gson.toJson(userInfo, PostmanUserInfo::class.java)
-        prefs.edit().putString(USER, json).apply()
+    fun setUserInfo(userInfo: PostmanUserInfo?) {
+        if (userInfo != null) {
+            val json = gson.toJson(userInfo, PostmanUserInfo::class.java)
+            prefs.edit().putString(USER, json).apply()
+        } else {
+            prefs.edit().remove(USER).apply()
+        }
     }
 
     fun getApiKey(): String? = prefs.getString(POSTMAN_KEY, null)

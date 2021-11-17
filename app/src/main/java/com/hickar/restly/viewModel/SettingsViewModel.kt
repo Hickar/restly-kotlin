@@ -13,6 +13,8 @@ import kotlinx.coroutines.launch
 import okhttp3.Call
 import okhttp3.Response
 import java.io.IOException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
 class SettingsViewModel : ViewModel(), okhttp3.Callback {
     private val prefs = ServiceLocator.getInstance().getSharedPreferences()
@@ -24,6 +26,14 @@ class SettingsViewModel : ViewModel(), okhttp3.Callback {
     val error: MutableLiveData<ErrorEvent> = MutableLiveData()
 
     private var apiKeyGuess: String = ""
+
+    init {
+        val savedUserInfo = prefs.getUserInfo()
+        if (savedUserInfo != null) {
+            userInfo.value = savedUserInfo
+            isLoggedIn.value = true
+        }
+    }
 
     fun loginToPostman(apiKey: String) {
         apiKeyGuess = apiKey
@@ -39,8 +49,25 @@ class SettingsViewModel : ViewModel(), okhttp3.Callback {
         }
     }
 
+    fun logoutFromPostman() {
+        prefs.setUserInfo(null)
+        isLoggedIn.value = false
+        userInfo.value = null
+    }
+
     override fun onFailure(call: Call, e: IOException) {
-        TODO("Not implemented yet")
+        val newError = when (e) {
+            is SocketTimeoutException -> ErrorEvent.ConnectionTimeout
+            is UnknownHostException -> {
+                if (networkService.isNetworkAvailable()) {
+                    ErrorEvent.UnknownHostError
+                } else {
+                    ErrorEvent.NoInternetConnectionError
+                }
+            }
+            else -> ErrorEvent.ConnectionUnexpected
+        }
+        error.postValue(newError)
     }
 
     override fun onResponse(call: Call, response: Response) {

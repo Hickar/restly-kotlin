@@ -19,3 +19,15 @@ fun String.indexOfDiff(other: String): Int {
         -1
     }
 }
+
+fun String.toLongSafely(): Long {
+    return try {
+        this.toLong()
+    } catch (e: NumberFormatException) {
+        if (this < Long.MIN_VALUE.toString()) {
+            Long.MIN_VALUE
+        } else {
+            Long.MAX_VALUE
+        }
+    }
+}

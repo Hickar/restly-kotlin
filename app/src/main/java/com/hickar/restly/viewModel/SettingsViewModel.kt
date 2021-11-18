@@ -1,6 +1,5 @@
 package com.hickar.restly.viewModel
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -59,17 +58,17 @@ class SettingsViewModel : ViewModel(), okhttp3.Callback {
 
     fun setRequestSslVerificationEnabled(enabled: Boolean) {
         requestPrefs.value?.sslVerificationEnabled = enabled
-        Log.d("SettingsViewModel", "enabled: $enabled")
+        prefs.setRequestPrefs(requestPrefs.value!!)
     }
 
     fun setRequestMaxSize(maxSize: Long) {
         requestPrefs.value?.maxSize = maxSize
-        Log.d("SettingsViewModel", "maxSize: $maxSize")
+        prefs.setRequestPrefs(requestPrefs.value!!)
     }
 
     fun setRequestTimeout(timeout: Long) {
         requestPrefs.value?.timeout = timeout
-        Log.d("SettingsViewModel", "timeout: $timeout")
+        prefs.setRequestPrefs(requestPrefs.value!!)
     }
 
     override fun onFailure(call: Call, e: IOException) {
@@ -101,10 +100,5 @@ class SettingsViewModel : ViewModel(), okhttp3.Callback {
         } else {
             error.postValue(ErrorEvent.AuthenticationError)
         }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        prefs.setRequestPrefs(requestPrefs.value!!)
     }
 }

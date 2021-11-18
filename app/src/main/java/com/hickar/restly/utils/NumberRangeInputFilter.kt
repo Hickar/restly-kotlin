@@ -2,7 +2,6 @@ package com.hickar.restly.utils
 
 import android.text.InputFilter
 import android.text.Spanned
-import android.util.Log
 
 class NumberRangeInputFilter(
     private val min: Long,
@@ -26,8 +25,6 @@ class NumberRangeInputFilter(
             } else if (inputString > Long.MAX_VALUE.toString()) {
                 return Long.MAX_VALUE.toString()
             }
-            Log.e("MinMaxInputFilter.filter", "Out of range number")
-            e.printStackTrace()
         }
 
         return ""

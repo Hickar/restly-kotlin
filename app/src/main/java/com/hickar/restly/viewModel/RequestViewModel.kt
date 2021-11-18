@@ -239,7 +239,7 @@ class RequestViewModel constructor(
                 currentRequest.body.multipartData = multipartData.value!!
                 currentRequest.body.binaryData = binaryData.value!!
                 currentRequest.body.type = bodyType.value!!
-                repository.insert(currentRequest)
+                repository.update(currentRequest)
             } catch (exception: SQLiteException) {
                 Log.e("Unable to save request", exception.toString())
                 exception.printStackTrace()

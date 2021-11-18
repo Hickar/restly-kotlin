@@ -13,7 +13,7 @@
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/request_tab_method_box"
-            style="@style/Restly.RequestDetail.MethodBox"
+            style="@style/MethodBox"
             android:layout_width="64dp"
             android:layout_height="32dp"
             app:layout_constraintStart_toStartOf="parent"
@@ -64,7 +64,7 @@
 
         <TextView
             android:id="@+id/request_tab_section_params_title"
-            style="@style/Restly.RequestDetail.SectionHeaderText"
+            style="@style/SectionHeaderText.Underline"
             android:layout_marginTop="16dp"
             android:text="@string/request_detail_params_header_text"
             app:layout_constraintStart_toStartOf="parent"
@@ -91,7 +91,7 @@
 
         <TextView
             android:id="@+id/request_tab_section_headers_title"
-            style="@style/Restly.RequestDetail.SectionHeaderText"
+            style="@style/SectionHeaderText.Underline"
             android:layout_marginTop="16dp"
             android:text="@string/request_detail_headers_header_text"
             app:layout_constraintStart_toStartOf="parent"
@@ -124,7 +124,7 @@
 
             <TextView
                 android:id="@+id/request_tab_body_header"
-                style="@style/Restly.RequestDetail.SectionHeaderText"
+                style="@style/SectionHeaderText.Underline"
                 android:layout_marginTop="16dp"
                 android:text="@string/request_detail_body_header_text"
                 app:layout_constraintStart_toStartOf="parent"

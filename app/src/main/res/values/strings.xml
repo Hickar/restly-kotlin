@@ -90,4 +90,9 @@
     <string name="empty_url_error_description">No URL was provided.</string>
     <string name="no_internet_conn_error_name">No Internet Connection</string>
     <string name="no_internet_conn_error_description">Check your mobile or WIFI internet connection settings.</string>
+
+    <string name="settings_section_request_title">Request</string>
+    <string name="settings_request_timeout_label">Timeout</string>
+    <string name="settings_request_maxsize_label">Max response size (MB)</string>
+    <string name="settings_request_sslverification_label">SSL certificate verification</string>
 </resources>

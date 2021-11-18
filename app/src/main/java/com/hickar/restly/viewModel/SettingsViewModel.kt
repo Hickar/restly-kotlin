@@ -1,13 +1,11 @@
 package com.hickar.restly.viewModel
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hickar.restly.consts.RequestMethod
-import com.hickar.restly.models.ErrorEvent
-import com.hickar.restly.models.PostmanGetMeInfo
-import com.hickar.restly.models.PostmanUserInfo
-import com.hickar.restly.models.RequestHeader
+import com.hickar.restly.models.*
 import com.hickar.restly.services.ServiceLocator
 import kotlinx.coroutines.launch
 import okhttp3.Call
@@ -23,6 +21,8 @@ class SettingsViewModel : ViewModel(), okhttp3.Callback {
     val isLoggedIn: MutableLiveData<Boolean> = MutableLiveData(false)
     val userInfo: MutableLiveData<PostmanUserInfo> = MutableLiveData()
 
+    val requestPrefs: MutableLiveData<RequestPrefs> = MutableLiveData(prefs.getRequestPrefs())
+
     val error: MutableLiveData<ErrorEvent> = MutableLiveData()
 
     private var apiKeyGuess: String = ""
@@ -33,6 +33,8 @@ class SettingsViewModel : ViewModel(), okhttp3.Callback {
             userInfo.value = savedUserInfo
             isLoggedIn.value = true
         }
+
+        requestPrefs.value = prefs.getRequestPrefs()
     }
 
     fun loginToPostman(apiKey: String) {
@@ -50,9 +52,24 @@ class SettingsViewModel : ViewModel(), okhttp3.Callback {
     }
 
     fun logoutFromPostman() {
-        prefs.setUserInfo(null)
+        prefs.deleteUserInfo()
         isLoggedIn.value = false
         userInfo.value = null
+    }
+
+    fun setRequestSslVerificationEnabled(enabled: Boolean) {
+        requestPrefs.value?.sslVerificationEnabled = enabled
+        Log.d("SettingsViewModel", "enabled: $enabled")
+    }
+
+    fun setRequestMaxSize(maxSize: Long) {
+        requestPrefs.value?.maxSize = maxSize
+        Log.d("SettingsViewModel", "maxSize: $maxSize")
+    }
+
+    fun setRequestTimeout(timeout: Long) {
+        requestPrefs.value?.timeout = timeout
+        Log.d("SettingsViewModel", "timeout: $timeout")
     }
 
     override fun onFailure(call: Call, e: IOException) {
@@ -84,5 +101,10 @@ class SettingsViewModel : ViewModel(), okhttp3.Callback {
         } else {
             error.postValue(ErrorEvent.AuthenticationError)
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        prefs.setRequestPrefs(requestPrefs.value!!)
     }
 }

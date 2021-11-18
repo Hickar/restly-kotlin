@@ -78,14 +78,14 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/settings_logout_button"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:text="@string/settings_logout_button_label"
                     android:textColor="@color/red_500"
-                    app:strokeColor="@color/red_200"
                     app:rippleColor="@color/red_200"
-                    android:text="@string/settings_logout_button_label"/>
+                    app:strokeColor="@color/red_200" />
             </LinearLayout>
 
             <LinearLayout
@@ -117,6 +117,95 @@
                     android:layout_height="wrap_content"
                     android:text="@string/settings_login_button_label" />
             </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            style="@style/SectionHeaderText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/settings_section_request_title" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="38dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/settings_request_sslverification_label"
+                android:textSize="16sp" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/settings_request_sslverification_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginBottom="8dp"
+                android:layout_weight="1"
+                android:text="@string/settings_request_timeout_label"
+                android:textSize="16sp" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="38dp"
+                android:maxWidth="60dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/settings_request_timeout_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="0dp"
+                    android:textSize="16sp"
+                    android:inputType="number"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:orientation="vertical"
+            android:layout_marginTop="8dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginBottom="8dp"
+                android:layout_weight="1"
+                android:text="@string/settings_request_maxsize_label"
+                android:textSize="16sp" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="38dp"
+                android:maxWidth="60dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/settings_request_maxsize_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="0dp"
+                    android:textSize="16sp"
+                    android:inputType="number" />
+            </com.google.android.material.textfield.TextInputLayout>
+
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

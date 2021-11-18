@@ -3,6 +3,7 @@ package com.hickar.restly.services
 import android.content.Context
 import com.google.gson.Gson
 import com.hickar.restly.models.PostmanUserInfo
+import com.hickar.restly.models.RequestPrefs
 
 class SharedPreferencesHelper(
     context: Context,
@@ -21,21 +22,37 @@ class SharedPreferencesHelper(
     }
 
     fun setUserInfo(userInfo: PostmanUserInfo?) {
-        if (userInfo != null) {
-            val json = gson.toJson(userInfo, PostmanUserInfo::class.java)
-            prefs.edit().putString(USER, json).apply()
-        } else {
-            prefs.edit().remove(USER).apply()
-        }
+        val json = gson.toJson(userInfo, PostmanUserInfo::class.java)
+        prefs.edit().putString(USER, json).apply()
+    }
+
+    fun deleteUserInfo() {
+        prefs.edit().remove(USER).apply()
     }
 
     fun getApiKey(): String? = prefs.getString(POSTMAN_KEY, null)
 
     fun setApiKey(key: String) = prefs.edit().putString(POSTMAN_KEY, key).apply()
 
+    fun getRequestPrefs(): RequestPrefs? {
+        val json = prefs.getString(REQUEST, null)
+
+        return if (json == null) {
+            RequestPrefs()
+        } else {
+            gson.fromJson(json, RequestPrefs::class.java)
+        }
+    }
+
+    fun setRequestPrefs(requestPrefs: RequestPrefs) {
+        val json = gson.toJson(requestPrefs, RequestPrefs::class.java)
+        prefs.edit().putString(REQUEST, json).apply()
+    }
+
     companion object {
         private const val PREFS_NAME = "com.restly.hickar.preferences"
         private const val USER = "postman_user"
         private const val POSTMAN_KEY = "postman_api_key"
+        private const val REQUEST = "request"
     }
 }

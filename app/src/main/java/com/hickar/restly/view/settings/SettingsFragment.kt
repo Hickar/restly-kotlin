@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.hickar.restly.R
@@ -11,6 +12,7 @@ import com.hickar.restly.databinding.SettingsBinding
 import com.hickar.restly.extensions.hide
 import com.hickar.restly.extensions.show
 import com.hickar.restly.extensions.toEditable
+import com.hickar.restly.utils.NumberRangeInputFilter
 import com.hickar.restly.view.dialogs.EditTextDialog
 import com.hickar.restly.view.dialogs.WarningDialog
 import com.hickar.restly.viewModel.SettingsViewModel
@@ -49,6 +51,24 @@ class SettingsFragment : Fragment() {
         binding.settingsLogoutButton.setOnClickListener {
             viewModel.logoutFromPostman()
         }
+
+        binding.settingsRequestTimeoutInput.filters = arrayOf(NumberRangeInputFilter(Long.MIN_VALUE, Long.MAX_VALUE))
+        binding.settingsRequestSslverificationSwitch.setOnClickListener {
+            viewModel.setRequestSslVerificationEnabled(it.isEnabled)
+        }
+
+        binding.settingsRequestMaxsizeInput.filters = arrayOf(NumberRangeInputFilter(Long.MIN_VALUE, Long.MAX_VALUE))
+        binding.settingsRequestMaxsizeInput.doAfterTextChanged { text ->
+            if (text.toString().isNotBlank()) {
+                viewModel.setRequestMaxSize(text.toString().toLong())
+            }
+        }
+
+        binding.settingsRequestTimeoutInput.doAfterTextChanged { text ->
+            if (text.toString().isNotBlank()) {
+                viewModel.setRequestTimeout(text.toString().toLong())
+            }
+        }
     }
 
     private fun setupObservers() {
@@ -67,6 +87,12 @@ class SettingsFragment : Fragment() {
                 binding.settingsLoginFullnameLabel.text = userInfo.fullName.toEditable()
                 binding.settingsLoginEmailLabel.text = userInfo.email.toEditable()
             }
+        }
+
+        viewModel.requestPrefs.observe(viewLifecycleOwner) { requestPrefs ->
+            binding.settingsRequestSslverificationSwitch.isEnabled = requestPrefs.sslVerificationEnabled
+            binding.settingsRequestMaxsizeInput.text = requestPrefs.maxSize.toString().toEditable()
+            binding.settingsRequestTimeoutInput.text = requestPrefs.timeout.toString().toEditable()
         }
 
         viewModel.error.observe(viewLifecycleOwner) { error ->

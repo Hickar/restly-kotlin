@@ -29,7 +29,7 @@
         <item name="android:textSize">14sp</item>
     </style>
     <!--  Request Detail fragment styles  -->
-    <style name="Restly.RequestDetail.MethodBox" parent="Widget.MaterialComponents.CardView">
+    <style name="MethodBox" parent="Widget.MaterialComponents.CardView">
         <item name="cardCornerRadius">4dp</item>
         <item name="cardBackgroundColor">@color/light_blue_200</item>
         <item name="android:gravity">center</item>
@@ -54,13 +54,16 @@
         <item name="android:textColor">@color/black</item>
     </style>
 
-    <style name="Restly.RequestDetail.SectionHeaderText" parent="Widget.MaterialComponents.TextView">
+    <style name="SectionHeaderText" parent="Widget.MaterialComponents.TextView">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">36sp</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:textSize">20sp</item>
         <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="SectionHeaderText.Underline">
         <item name="android:background">@drawable/border_bottom</item>
     </style>
 

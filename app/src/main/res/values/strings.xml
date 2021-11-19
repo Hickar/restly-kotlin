@@ -96,7 +96,10 @@
     <string name="request_call_timeout_error_description">Request call timeout exceeded maximum limit. You can change this in \"Settings\" tab.</string>
 
     <string name="settings_section_request_title">Request</string>
-    <string name="settings_request_timeout_label">Timeout</string>
+    <string name="settings_request_timeout_label">Timeout (Milliseconds)</string>
     <string name="settings_request_maxsize_label">Max response size (MB)</string>
     <string name="settings_request_sslverification_label">SSL certificate verification</string>
+    <string name="settings_section_webview_title">WebView</string>
+    <string name="settings_webview_javascriptenabled_label">Javascript enabled</string>
+    <string name="settings_webview_textsize_label">Font size</string>
 </resources>

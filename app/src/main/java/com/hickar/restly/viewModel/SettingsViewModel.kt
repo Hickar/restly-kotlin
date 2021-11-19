@@ -21,6 +21,7 @@ class SettingsViewModel : ViewModel(), okhttp3.Callback {
     val userInfo: MutableLiveData<PostmanUserInfo> = MutableLiveData()
 
     val requestPrefs: MutableLiveData<RequestPrefs> = MutableLiveData(prefs.getRequestPrefs())
+    val webViewPrefs: MutableLiveData<WebViewPrefs> = MutableLiveData(prefs.getWebViewPrefs())
 
     val error: MutableLiveData<ErrorEvent> = MutableLiveData()
 
@@ -69,6 +70,16 @@ class SettingsViewModel : ViewModel(), okhttp3.Callback {
     fun setRequestTimeout(timeout: Long) {
         requestPrefs.value?.timeout = timeout
         prefs.setRequestPrefs(requestPrefs.value!!)
+    }
+
+    fun setWebViewJavascriptEnabled(enabled: Boolean) {
+        webViewPrefs.value?.javascriptEnabled = enabled
+        prefs.setWebViewPrefs(webViewPrefs.value!!)
+    }
+
+    fun setWebViewTextSize(textSize: Int) {
+        webViewPrefs.value?.textSize = textSize
+        prefs.setWebViewPrefs(webViewPrefs.value!!)
     }
 
     override fun onFailure(call: Call, e: IOException) {

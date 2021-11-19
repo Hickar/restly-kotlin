@@ -8,6 +8,7 @@ import androidx.appcompat.widget.SwitchCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.google.android.material.slider.Slider
 import com.hickar.restly.R
 import com.hickar.restly.databinding.SettingsBinding
 import com.hickar.restly.extensions.hide
@@ -70,6 +71,16 @@ class SettingsFragment : Fragment() {
                 viewModel.setRequestTimeout(text.toString().toLongSafely())
             }
         }
+
+        binding.settingsWebviewJavascriptenabledSwitch.setOnClickListener {
+            viewModel.setWebViewJavascriptEnabled((it as SwitchCompat).isChecked)
+        }
+
+        binding.settingsWebviewTextsizeSlider.addOnChangeListener(object : Slider.OnChangeListener {
+            override fun onValueChange(slider: Slider, value: Float, fromUser: Boolean) {
+                viewModel.setWebViewTextSize(value.toInt())
+            }
+        })
     }
 
     private fun setupObservers() {
@@ -94,6 +105,11 @@ class SettingsFragment : Fragment() {
             binding.settingsRequestSslverificationSwitch.isChecked = requestPrefs.sslVerificationEnabled
             binding.settingsRequestMaxsizeInput.text = requestPrefs.maxSize.toString().toEditable()
             binding.settingsRequestTimeoutInput.text = requestPrefs.timeout.toString().toEditable()
+        }
+
+        viewModel.webViewPrefs.observe(viewLifecycleOwner) { webViewPrefs ->
+            binding.settingsWebviewJavascriptenabledSwitch.isChecked = webViewPrefs.javascriptEnabled
+            binding.settingsWebviewTextsizeSlider.value = webViewPrefs.textSize.toFloat()
         }
 
         viewModel.error.observe(viewLifecycleOwner) { error ->

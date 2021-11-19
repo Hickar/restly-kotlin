@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.hickar.restly.databinding.ResponseBodyPreviewBinding
 import com.hickar.restly.extensions.show
+import com.hickar.restly.services.ServiceLocator
 import com.hickar.restly.viewModel.RequestViewModel
 
 class ResponseBodyPreviewFragment : Fragment() {
@@ -31,8 +32,10 @@ class ResponseBodyPreviewFragment : Fragment() {
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun setupWebView() {
+        val webViewPrefs = ServiceLocator.getInstance().getSharedPreferences().getWebViewPrefs()
         webView = binding.responseBodyPreviewWebView
-        webView.settings.javaScriptEnabled = true
+        webView.settings.javaScriptEnabled = webViewPrefs.javascriptEnabled
+        webView.settings.minimumFontSize = webViewPrefs.textSize
     }
 
     private fun setupObservers() {

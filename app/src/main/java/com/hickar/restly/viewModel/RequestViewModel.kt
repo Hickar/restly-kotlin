@@ -16,7 +16,9 @@ import kotlinx.coroutines.runBlocking
 import okhttp3.Call
 import okhttp3.Response
 import java.io.File
+import java.io.FileNotFoundException
 import java.io.IOException
+import java.io.InterruptedIOException
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -263,6 +265,8 @@ class RequestViewModel constructor(
                     ErrorEvent.NoInternetConnectionError
                 }
             }
+            is InterruptedIOException -> ErrorEvent.RequestCallTimeout
+            is FileNotFoundException -> ErrorEvent.SizeExceedsLimit
             else -> ErrorEvent.ConnectionUnexpected
         }
         error.postValue(newError)

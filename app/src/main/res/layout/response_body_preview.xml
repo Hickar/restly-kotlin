@@ -16,7 +16,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        android:layout_gravity="center_vertical">
+        android:layout_gravity="center_vertical"
+        android:overScrollMode="never">
 
         <HorizontalScrollView
             android:layout_width="match_parent"

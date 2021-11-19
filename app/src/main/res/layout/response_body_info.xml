@@ -11,7 +11,7 @@
         android:padding="16dp">
 
         <TextView
-            style="@style/SectionHeaderText"
+            style="@style/SectionHeaderText.Underline"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/response_info_general_section_label" />
@@ -23,7 +23,7 @@
             android:overScrollMode="never" />
 
         <TextView
-            style="@style/SectionHeaderText"
+            style="@style/SectionHeaderText.Underline"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"

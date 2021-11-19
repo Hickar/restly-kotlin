@@ -15,4 +15,6 @@ enum class ErrorEvent(
     NoInternetConnectionError(R.string.no_internet_conn_error_name, R.string.no_internet_conn_error_description),
     UnexpectedUrlScheme(R.string.unexpected_url_scheme_error_name, R.string.unexpected_url_scheme_error_description),
     EmptyUrl(R.string.empty_url_error_name, R.string.empty_url_error_description),
+    SizeExceedsLimit(R.string.size_exceeds_limit_error_name, R.string.size_exceeds_limit_error_description),
+    RequestCallTimeout(R.string.request_call_timeout_error_name, R.string.request_call_timeout_error_description)
 }

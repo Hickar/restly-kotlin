@@ -34,7 +34,7 @@ class SharedPreferencesHelper(
 
     fun setApiKey(key: String) = prefs.edit().putString(POSTMAN_KEY, key).apply()
 
-    fun getRequestPrefs(): RequestPrefs? {
+    fun getRequestPrefs(): RequestPrefs {
         val json = prefs.getString(REQUEST, null)
 
         return if (json == null) {

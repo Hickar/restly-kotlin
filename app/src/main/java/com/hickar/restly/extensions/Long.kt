@@ -49,3 +49,7 @@ fun Long.toResponseTime(): String {
 
     return "$time$timeUnit"
 }
+
+fun Long.toMb(): Long {
+    return this / 1024 / 1024
+}

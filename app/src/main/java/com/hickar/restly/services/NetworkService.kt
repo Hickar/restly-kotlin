@@ -1,26 +1,34 @@
 package com.hickar.restly.services
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Build
+import com.hickar.restly.extensions.toMb
 import com.hickar.restly.models.*
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
 import okio.BufferedSink
 import okio.source
 import java.io.IOException
+import java.security.SecureRandom
+import java.security.cert.X509Certificate
+import java.util.concurrent.TimeUnit
+import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManager
+import javax.net.ssl.X509TrustManager
 
 class NetworkService(
     private val context: Context,
+    private val prefs: SharedPreferencesHelper
 ) {
     private val contentResolver = context.contentResolver
-    private val client: OkHttpClient = OkHttpClient.Builder()
-        .build()
 
     suspend fun requestRaw(
         url: String,
@@ -38,7 +46,29 @@ class NetworkService(
         }
 
         val request = builder.build()
-        client.newCall(request).enqueue(callbackDelegate)
+        val client = if (prefs.getRequestPrefs().sslVerificationEnabled) {
+            OkHttpClient.Builder()
+                .callTimeout(prefs.getRequestPrefs().timeout, TimeUnit.MILLISECONDS)
+                .build()
+        } else {
+            getUnsafeHttpClient()
+        }
+
+        getRemoteFileSize(url, object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                callbackDelegate.onFailure(call, e)
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val fileSize = response.body?.contentLength()!!.toMb()
+                response.close()
+                if (fileSize < prefs.getRequestPrefs().maxSize || prefs.getRequestPrefs().maxSize == 0L) {
+                    client.newCall(request).enqueue(callbackDelegate)
+                } else {
+                    callbackDelegate.onFailure(call, java.io.FileNotFoundException("File size exceeds maximum limit"))
+                }
+            }
+        })
     }
 
     suspend fun sendRequest(request: com.hickar.restly.models.Request, callbackDelegate: Callback) {
@@ -149,5 +179,46 @@ class NetworkService(
         }
 
         return hasWifiConnected || hasCellularConnected || hasVpnConnected
+    }
+
+    //    https://stackoverflow.com/a/25992879
+    private fun getUnsafeHttpClient(): OkHttpClient {
+        val trustAllCerts = arrayOf<TrustManager>(
+            @SuppressLint("CustomX509TrustManager")
+            object : X509TrustManager {
+                @SuppressLint("TrustAllX509TrustManager")
+                override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?) {
+                }
+
+                @SuppressLint("TrustAllX509TrustManager")
+                override fun checkServerTrusted(chain: Array<out X509Certificate>?, authType: String?) {
+                }
+
+                override fun getAcceptedIssuers(): Array<X509Certificate> {
+                    return arrayOf()
+                }
+            }
+        )
+
+        val sslContext = SSLContext.getInstance("SSL")
+        sslContext.init(null, trustAllCerts, SecureRandom())
+
+        return OkHttpClient.Builder()
+            .sslSocketFactory(sslContext.socketFactory, trustAllCerts[0] as X509TrustManager)
+            .hostnameVerifier { _, _ -> true }
+            .callTimeout(prefs.getRequestPrefs().timeout, TimeUnit.MILLISECONDS)
+            .build()
+    }
+
+    private fun getRemoteFileSize(url: String, callback: Callback) {
+        val request = Request.Builder().url(url).method("HEAD", null).build()
+        val client = if (prefs.getRequestPrefs().sslVerificationEnabled) {
+            OkHttpClient.Builder()
+                .callTimeout(prefs.getRequestPrefs().timeout, TimeUnit.MILLISECONDS)
+                .build()
+        } else {
+            getUnsafeHttpClient()
+        }
+        client.newCall(request).enqueue(callback)
     }
 }

@@ -36,6 +36,7 @@
         <entry key="app/src/main/res/layout/request_detail_body_urlencoded.xml" value="0.13360507246376813" />
         <entry key="app/src/main/res/layout/request_detail_params_item.xml" value="0.3870967741935484" />
         <entry key="app/src/main/res/layout/request_detail_recycler_view.xml" value="0.11510416666666666" />
+        <entry key="app/src/main/res/layout/request_group_item.xml" value="0.1234375" />
         <entry key="app/src/main/res/layout/request_item.xml" value="0.18840579710144928" />
         <entry key="app/src/main/res/layout/request_item_view.xml" value="0.625" />
         <entry key="app/src/main/res/layout/request_list.xml" value="0.1503623188405797" />
@@ -59,6 +60,7 @@
         <entry key="app/src/main/res/menu/request_detail_action_menu.xml" value="0.24114583333333334" />
         <entry key="app/src/main/res/menu/request_list_action_menu.xml" value="0.23958333333333334" />
         <entry key="app/src/main/res/menu/request_list_collection_action_menu.xml" value="0.23958333333333334" />
+        <entry key="app/src/main/res/menu/request_list_custom_collection_menu.xml" value="0.1234375" />
         <entry key="app/src/main/res/menu/request_more_popup_menu.xml" value="0.23958333333333334" />
         <entry key="app/src/main/res/menu/request_multipart_type_menu.xml" value="0.2421875" />
         <entry key="app/src/main/res/menu/top_action_menu.xml" value="0.23958333333333334" />

@@ -8,6 +8,9 @@ import android.net.Uri
 import android.os.Build
 import com.hickar.restly.extensions.toMb
 import com.hickar.restly.models.*
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Request
@@ -20,12 +23,14 @@ import java.io.IOException
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
 
-class NetworkService(
-    private val context: Context,
+@InstallIn(SingletonComponent::class)
+class NetworkService @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val prefs: SharedPreferencesHelper
 ) {
     private val contentResolver = context.contentResolver

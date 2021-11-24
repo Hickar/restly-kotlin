@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.requestList.RequestListFragment">
+    tools:context=".view.requestGroup.RequestListFragment">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/request_list"
+        android:id="@+id/request_group"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"

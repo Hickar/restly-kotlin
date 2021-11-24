@@ -1,4 +1,4 @@
-package com.hickar.restly.view.requestList.adapters
+package com.hickar.restly.view.requestGroup.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -7,16 +7,16 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.hickar.restly.databinding.RequestListItemBinding
+import com.hickar.restly.databinding.RequestGroupItemBinding
 import com.hickar.restly.models.Request
 import com.hickar.restly.utils.MethodCardViewUtil
 
-class RequestListAdapter(
+class RequestGroupAdapter(
     private val onItemClicked: (Request) -> Unit
 ) : ListAdapter<Request, RequestItemViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RequestItemViewHolder {
-        val adapterLayout = RequestListItemBinding.inflate(
+        val adapterLayout = RequestGroupItemBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
@@ -53,7 +53,7 @@ class RequestListAdapter(
 }
 
 class RequestItemViewHolder(
-    private var binding: RequestListItemBinding,
+    private var binding: RequestGroupItemBinding,
     private val context: Context
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(request: Request) {
@@ -64,10 +64,10 @@ class RequestItemViewHolder(
             ResourcesCompat.getColor(context.resources, cardBackgroundColorId, null)
         val cardTextColor = ResourcesCompat.getColor(context.resources, cardTextColorId, null)
 
-        binding.requestListItemMethodBox.setCardBackgroundColor(cardBackgroundColor)
-        binding.requestListItemMethodLabel.setTextColor(cardTextColor)
-        binding.requestListItemMethodLabel.text = MethodCardViewUtil.getShortMethodName(request.method.value)
-        binding.requestListItemNameLabel.text = request.name
-        binding.requestListItemUrlLabel.text = request.query.url
+        binding.requestGroupItemMethodBox.setCardBackgroundColor(cardBackgroundColor)
+        binding.requestGroupItemMethodLabel.setTextColor(cardTextColor)
+        binding.requestGroupItemMethodLabel.text = MethodCardViewUtil.getShortMethodName(request.method.value)
+        binding.requestGroupItemNameLabel.text = request.name
+        binding.requestGroupItemUrlLabel.text = request.query.url
     }
 }

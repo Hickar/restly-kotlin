@@ -6,20 +6,16 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.hickar.restly.R
-import com.hickar.restly.RestlyApplication
 import com.hickar.restly.databinding.CollectionListEditBinding
 import com.hickar.restly.extensions.observeOnce
 import com.hickar.restly.extensions.toEditable
 import com.hickar.restly.viewModel.CollectionViewModel
-import com.hickar.restly.viewModel.CollectionViewModelFactory
 
 class CollectionEditFragment : Fragment() {
     private var _binding: CollectionListEditBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: CollectionViewModel by viewModels(
-        factoryProducer = { CollectionViewModelFactory((requireActivity().application) as RestlyApplication) }
-    )
+    private val viewModel: CollectionViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

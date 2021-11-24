@@ -7,10 +7,10 @@
 
     <fragment
         android:id="@+id/navigation_requests"
-        android:name="com.hickar.restly.view.requestList.TransitionToDefaultRequestList"
+        android:name="com.hickar.restly.view.requestGroup.TransitionToDefaultRequestGroup"
         android:label="@string/requests_tab_title">
         <action
-            android:id="@+id/navigate_fromRequestTab_toRequestList"
+            android:id="@+id/navigate_fromRequestTab_toRequestGroup"
             app:destination="@id/collection_graph.xml"
             app:launchSingleTop="false"
             app:popUpTo="@id/navigation_requests"
@@ -32,7 +32,7 @@
         android:label="@string/collection_tab_title"
         tools:layout="@layout/collection_list">
         <action
-            android:id="@+id/navigate_fromCollectionTab_toRequestList"
+            android:id="@+id/navigate_fromCollectionTab_toRequestGroup"
             app:destination="@id/collection_graph.xml"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"

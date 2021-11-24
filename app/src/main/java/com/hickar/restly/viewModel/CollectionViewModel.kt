@@ -5,10 +5,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hickar.restly.models.Collection
 import com.hickar.restly.repository.room.CollectionRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import javax.inject.Inject
 
-class CollectionViewModel(
+@HiltViewModel
+class CollectionViewModel @Inject constructor(
     private val collectionRepository: CollectionRepository,
 ) : ViewModel() {
 
@@ -21,7 +24,7 @@ class CollectionViewModel(
         runBlocking {
             if (collectionId != Collection.DEFAULT && collectionId != null) {
                 viewModelScope.launch {
-                    collection = collectionRepository.getById(collectionId)
+                    collection = collectionRepository.getCollectionById(collectionId)
                     collection.let {
                         name.value = collection.name
                         description.value = collection.description
@@ -43,7 +46,7 @@ class CollectionViewModel(
         viewModelScope.launch {
             collection.name = name.value!!
             collection.description = description.value!!
-            collectionRepository.insert(collection)
+            collectionRepository.insertCollection(collection)
         }
     }
 }

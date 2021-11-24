@@ -1,5 +1,6 @@
 package com.hickar.restly.services
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -8,15 +9,18 @@ import android.provider.OpenableColumns
 import android.util.Log
 import android.webkit.MimeTypeMap
 import com.hickar.restly.models.RequestFile
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.*
 import java.net.URI
+import javax.inject.Inject
 
-class FileService(
-    private val context: Context
+class FileService @Inject constructor(
+    @ApplicationContext private val context: Context
 ) {
 
     private val contentResolver = context.contentResolver
 
+    @SuppressLint("Range")
     fun getRequestFile(uri: Uri): RequestFile? {
         val cursor = contentResolver.query(uri, null, null, null, null)
 

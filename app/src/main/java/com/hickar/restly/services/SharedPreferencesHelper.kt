@@ -5,9 +5,14 @@ import com.google.gson.Gson
 import com.hickar.restly.models.PostmanUserInfo
 import com.hickar.restly.models.RequestPrefs
 import com.hickar.restly.models.WebViewPrefs
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
-class SharedPreferencesHelper(
-    context: Context,
+@InstallIn(ViewModelComponent::class)
+class SharedPreferencesHelper @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val gson: Gson
 ) {
     private val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)

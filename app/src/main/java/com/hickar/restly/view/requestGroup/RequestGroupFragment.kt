@@ -1,4 +1,4 @@
-package com.hickar.restly.view.requestList
+package com.hickar.restly.view.requestGroup
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -14,37 +14,28 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.hickar.restly.MainActivity
 import com.hickar.restly.R
-import com.hickar.restly.RestlyApplication
-import com.hickar.restly.databinding.RequestListBinding
+import com.hickar.restly.databinding.RequestGroupBinding
 import com.hickar.restly.utils.SwipeDeleteCallback
-import com.hickar.restly.view.requestList.adapters.RequestListAdapter
+import com.hickar.restly.view.requestGroup.adapters.RequestGroupAdapter
 import com.hickar.restly.viewModel.CollectionViewModel
-import com.hickar.restly.viewModel.CollectionViewModelFactory
-import com.hickar.restly.viewModel.RequestListViewModel
-import com.hickar.restly.viewModel.RequestViewModelFactory
+import com.hickar.restly.viewModel.RequestGroupViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 
-class RequestListFragment : Fragment() {
+@AndroidEntryPoint
+class RequestGroupFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
 
-    private val collectionViewModel: CollectionViewModel by viewModels {
-        CollectionViewModelFactory(
-            (requireActivity().application as RestlyApplication)
-        )
-    }
-    private val requestListViewModel: RequestListViewModel by viewModels {
-        RequestViewModelFactory(
-            (requireActivity().application as RestlyApplication).requestRepository,
-            arguments?.getString(COLLECTION_ID_KEY)
-        )
-    }
+    private val collectionViewModel: CollectionViewModel by viewModels()
+    private val requestGroupViewModel: RequestGroupViewModel by viewModels()
 
-    private var _binding: RequestListBinding? = null
+    private var _binding: RequestGroupBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requestGroupViewModel.loadRequests(arguments?.getString(COLLECTION_ID_KEY))
         collectionViewModel.loadCollection(arguments?.getString(COLLECTION_ID_KEY))
     }
 
@@ -54,7 +45,7 @@ class RequestListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         setHasOptionsMenu(true)
-        _binding = RequestListBinding.inflate(inflater, container, false)
+        _binding = RequestGroupBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -73,10 +64,10 @@ class RequestListFragment : Fragment() {
         var menuId: Int
         var backButtonEnabled: Boolean
         if (collectionViewModel.collection.isDefault()) {
-            menuId = R.menu.request_list_default_collection_menu
+            menuId = R.menu.request_group_default_collection_menu
             backButtonEnabled = false
         } else {
-            menuId = R.menu.request_list_custom_collection_menu
+            menuId = R.menu.request_group_custom_collection_menu
             backButtonEnabled = true
         }
 
@@ -86,17 +77,17 @@ class RequestListFragment : Fragment() {
     }
 
     private fun setupAdapters() {
-        val adapter = RequestListAdapter {
-            val action = RequestListFragmentDirections.actionRequestListFragmentToRequestDetailFragment(it.id)
+        val adapter = RequestGroupAdapter {
+            val action = RequestGroupFragmentDirections.actionRequestGroupFragmentToRequestFragment(it.id)
             this.findNavController().navigate(action)
         }
 
-        recyclerView = binding.requestList
+        recyclerView = binding.requestGroup
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = adapter
 
         val touchHelper = ItemTouchHelper(SwipeDeleteCallback(requireContext()) { position ->
-            requestListViewModel.deleteRequest(position)
+            requestGroupViewModel.deleteRequest(position)
         })
         touchHelper.attachToRecyclerView(recyclerView)
     }
@@ -109,8 +100,8 @@ class RequestListFragment : Fragment() {
     }
 
     private fun setupObservers() {
-        requestListViewModel.requests.observe(viewLifecycleOwner, { requests ->
-            (recyclerView.adapter as RequestListAdapter).submitList(requests)
+        requestGroupViewModel.requests.observe(viewLifecycleOwner, { requests ->
+            (recyclerView.adapter as RequestGroupAdapter).submitList(requests)
         })
 
         collectionViewModel.name.observe(viewLifecycleOwner) { name ->
@@ -134,11 +125,11 @@ class RequestListFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.request_list_menu_add_button -> {
+            R.id.request_group_menu_add_button -> {
                 runBlocking coroutineScope@{
-                    val newRequestId = requestListViewModel.createNewDefaultRequest()
+                    val newRequestId = requestGroupViewModel.createNewDefaultRequest()
                     val action =
-                        RequestListFragmentDirections.actionRequestListFragmentToRequestDetailFragment(
+                        RequestGroupFragmentDirections.actionRequestGroupFragmentToRequestFragment(
                             newRequestId
                         )
                     findNavController().navigate(action)
@@ -146,8 +137,8 @@ class RequestListFragment : Fragment() {
                     return@coroutineScope true
                 }
             }
-            R.id.request_list_collection_menu_edit_button -> {
-                val action = RequestListFragmentDirections.actionRequestListFragmentToCollectionEditFragment(
+            R.id.request_group_collection_menu_edit_button -> {
+                val action = RequestGroupFragmentDirections.actionRequestGroupFragmentToCollectionEditFragment(
                     collectionViewModel.collection.id
                 )
                 findNavController().navigate(action)
@@ -159,7 +150,7 @@ class RequestListFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        requestListViewModel.refreshRequests()
+        requestGroupViewModel.refreshRequests()
     }
 
     override fun onDestroyView() {

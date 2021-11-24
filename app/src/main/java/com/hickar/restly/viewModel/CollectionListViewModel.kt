@@ -5,13 +5,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hickar.restly.models.Collection
 import com.hickar.restly.repository.room.CollectionRepository
-import com.hickar.restly.repository.room.RequestRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.util.*
+import javax.inject.Inject
 
-class CollectionListViewModel(
+@HiltViewModel
+class CollectionListViewModel @Inject constructor(
     private val collectionRepository: CollectionRepository,
-    private val requestRepository: RequestRepository
 ) : ViewModel() {
     val collections: MutableLiveData<MutableList<Collection>> = MutableLiveData()
 
@@ -21,7 +22,7 @@ class CollectionListViewModel(
 
     suspend fun createNewCollection(): String {
         val newCollection = Collection(UUID.randomUUID().toString(), UUID.randomUUID().toString())
-        collectionRepository.insert(newCollection)
+        collectionRepository.insertCollection(newCollection)
 
         refreshCollections()
         return newCollection.id
@@ -29,8 +30,8 @@ class CollectionListViewModel(
 
     fun deleteCollection(position: Int) {
         viewModelScope.launch {
-            collectionRepository.delete(collections.value!![position])
-            requestRepository.deleteByCollectionId(collections.value!![position].id)
+            collectionRepository.deleteCollection(collections.value!![position])
+            collectionRepository.deleteRequestsByCollectionId(collections.value!![position].id)
             collections.value!!.removeAt(position)
             collections.value = collections.value
         }
@@ -38,7 +39,7 @@ class CollectionListViewModel(
 
     fun refreshCollections() {
         viewModelScope.launch {
-            collections.value = collectionRepository.getAll().toMutableList()
+            collections.value = collectionRepository.getAllCollections().toMutableList()
         }
     }
 }

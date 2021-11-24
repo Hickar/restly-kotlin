@@ -9,8 +9,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hickar.restly.consts.RequestMethod
 import com.hickar.restly.models.*
-import com.hickar.restly.repository.room.RequestRepository
-import com.hickar.restly.services.ServiceLocator
+import com.hickar.restly.repository.room.CollectionRepository
+import com.hickar.restly.services.FileService
+import com.hickar.restly.services.NetworkService
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import okhttp3.Call
@@ -23,12 +25,15 @@ import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.util.*
+import javax.inject.Inject
 
-class RequestViewModel constructor(
-    private val repository: RequestRepository
+@HiltViewModel
+class RequestViewModel @Inject constructor(
+    private val repository: CollectionRepository
 ) : ViewModel(), okhttp3.Callback {
 
-    private val fileManager = ServiceLocator.getInstance().getFileManager()
+    @Inject lateinit var fileManager: FileService
+    @Inject lateinit var networkService: NetworkService
 
     private lateinit var currentRequest: Request
 
@@ -52,10 +57,10 @@ class RequestViewModel constructor(
 
     val error: MutableLiveData<ErrorEvent> = MutableLiveData()
 
-    fun loadRequest(requestId: Long) {
+    fun loadRequest(requestId: String) {
         runBlocking {
             try {
-                currentRequest = repository.getById(requestId)
+                currentRequest = repository.getRequestById(requestId)
 
                 currentRequest.let {
                     name.value = it.name
@@ -222,8 +227,7 @@ class RequestViewModel constructor(
     fun sendRequest() {
         viewModelScope.launch {
             try {
-                val networkClient = ServiceLocator.getInstance().getNetworkClient()
-                networkClient.sendRequest(currentRequest, this@RequestViewModel)
+                networkService.sendRequest(currentRequest, this@RequestViewModel)
             } catch (e: IllegalArgumentException) {
                 error.postValue(ErrorEvent.UnexpectedUrlScheme)
             }
@@ -241,7 +245,7 @@ class RequestViewModel constructor(
                 currentRequest.body.multipartData = multipartData.value!!
                 currentRequest.body.binaryData = binaryData.value!!
                 currentRequest.body.type = bodyType.value!!
-                repository.update(currentRequest)
+                repository.updateRequest(currentRequest)
             } catch (exception: SQLiteException) {
                 Log.e("Unable to save request", exception.toString())
                 exception.printStackTrace()
@@ -259,7 +263,7 @@ class RequestViewModel constructor(
             is SocketTimeoutException -> ErrorEvent.ConnectionTimeout
             is ConnectException -> ErrorEvent.ConnectionRefused
             is UnknownHostException -> {
-                if (ServiceLocator.getInstance().getNetworkClient().isNetworkAvailable()) {
+                if (networkService.isNetworkAvailable()) {
                     ErrorEvent.UnknownHostError
                 } else {
                     ErrorEvent.NoInternetConnectionError
@@ -287,7 +291,6 @@ class RequestViewModel constructor(
             ) {
                 bodyRawData = response.body!!.string()
             } else {
-                val fileManager = ServiceLocator.getInstance().getFileManager()
                 bodyFile = fileManager.createTempFile(response.body!!.byteStream())
             }
 

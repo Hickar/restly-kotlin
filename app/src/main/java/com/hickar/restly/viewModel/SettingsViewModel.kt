@@ -3,22 +3,29 @@ package com.hickar.restly.viewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import com.hickar.restly.consts.RequestMethod
 import com.hickar.restly.models.*
-import com.hickar.restly.services.ServiceLocator
+import com.hickar.restly.services.NetworkService
+import com.hickar.restly.services.SharedPreferencesHelper
 import kotlinx.coroutines.launch
 import okhttp3.Call
 import okhttp3.Response
 import java.io.IOException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
+import javax.inject.Inject
 
 class SettingsViewModel : ViewModel(), okhttp3.Callback {
-    private val prefs = ServiceLocator.getInstance().getSharedPreferences()
-    private val networkService = ServiceLocator.getInstance().getNetworkClient()
+    @Inject
+    lateinit var prefs: SharedPreferencesHelper
+    @Inject
+    lateinit var networkService: NetworkService
+    @Inject
+    lateinit var gson: Gson
 
     val isLoggedIn: MutableLiveData<Boolean> = MutableLiveData(false)
-    val userInfo: MutableLiveData<PostmanUserInfo> = MutableLiveData()
+    val userInfo: MutableLiveData<PostmanUserInfo?> = MutableLiveData()
 
     val requestPrefs: MutableLiveData<RequestPrefs> = MutableLiveData(prefs.getRequestPrefs())
     val webViewPrefs: MutableLiveData<WebViewPrefs> = MutableLiveData(prefs.getWebViewPrefs())
@@ -99,7 +106,6 @@ class SettingsViewModel : ViewModel(), okhttp3.Callback {
 
     override fun onResponse(call: Call, response: Response) {
         val responseBody = response.body?.string()
-        val gson = ServiceLocator.getInstance().getGson()
 
         if (response.code == 200) {
             val info = gson.fromJson(responseBody, PostmanGetMeInfo::class.java)

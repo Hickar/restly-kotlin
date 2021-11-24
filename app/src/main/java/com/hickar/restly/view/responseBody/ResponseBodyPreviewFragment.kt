@@ -10,8 +10,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.hickar.restly.databinding.ResponseBodyPreviewBinding
 import com.hickar.restly.extensions.show
-import com.hickar.restly.services.ServiceLocator
+import com.hickar.restly.services.SharedPreferencesHelper
 import com.hickar.restly.viewModel.RequestViewModel
+import javax.inject.Inject
 
 class ResponseBodyPreviewFragment : Fragment() {
     private var _binding: ResponseBodyPreviewBinding? = null
@@ -19,6 +20,9 @@ class ResponseBodyPreviewFragment : Fragment() {
 
     private lateinit var webView: WebView
     private val viewModel: RequestViewModel by activityViewModels()
+
+    @Inject
+    lateinit var prefs: SharedPreferencesHelper
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = ResponseBodyPreviewBinding.inflate(inflater, container, false)
@@ -32,7 +36,7 @@ class ResponseBodyPreviewFragment : Fragment() {
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun setupWebView() {
-        val webViewPrefs = ServiceLocator.getInstance().getSharedPreferences().getWebViewPrefs()
+        val webViewPrefs = prefs.getWebViewPrefs()
         webView = binding.responseBodyPreviewWebView
         webView.settings.javaScriptEnabled = webViewPrefs.javascriptEnabled
         webView.settings.minimumFontSize = webViewPrefs.textSize

@@ -16,12 +16,20 @@ import com.hickar.restly.view.collectionList.adapters.CollectionListAdapter
 import com.hickar.restly.view.dialogs.ConfirmationDialog
 import com.hickar.restly.view.requestGroup.RequestGroupFragment
 import com.hickar.restly.viewModel.CollectionListViewModel
+import com.hickar.restly.viewModel.LambdaFactory
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.runBlocking
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class CollectionListFragment : Fragment() {
-    private val viewModel: CollectionListViewModel by activityViewModels()
+    @Inject lateinit var factory: CollectionListViewModel.Factory
+    private val viewModel: CollectionListViewModel by activityViewModels {
+        LambdaFactory(this) { stateHandle ->
+            factory.build(stateHandle)
+        }
+    }
+
     private lateinit var recyclerView: RecyclerView
 
     private lateinit var itemTouchHelper: ItemTouchHelper

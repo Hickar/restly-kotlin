@@ -8,9 +8,7 @@ import android.net.Uri
 import android.os.Build
 import com.hickar.restly.extensions.toMb
 import com.hickar.restly.models.*
-import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Request
@@ -28,7 +26,6 @@ import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
 
-@InstallIn(SingletonComponent::class)
 class NetworkService @Inject constructor(
     @ApplicationContext private val context: Context,
     private val prefs: SharedPreferencesHelper

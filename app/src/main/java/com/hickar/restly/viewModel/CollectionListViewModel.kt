@@ -1,17 +1,19 @@
 package com.hickar.restly.viewModel
 
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hickar.restly.models.Collection
 import com.hickar.restly.repository.room.CollectionRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch
 import java.util.*
-import javax.inject.Inject
 
-@HiltViewModel
-class CollectionListViewModel @Inject constructor(
+class CollectionListViewModel @AssistedInject constructor(
+    @Assisted private val handle: SavedStateHandle,
     private val collectionRepository: CollectionRepository,
 ) : ViewModel() {
     val collections: MutableLiveData<MutableList<Collection>> = MutableLiveData()
@@ -41,5 +43,10 @@ class CollectionListViewModel @Inject constructor(
         viewModelScope.launch {
             collections.value = collectionRepository.getAllCollections().toMutableList()
         }
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun build(stateHandle: SavedStateHandle): CollectionListViewModel
     }
 }

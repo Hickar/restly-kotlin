@@ -10,12 +10,21 @@ import com.hickar.restly.databinding.CollectionListEditBinding
 import com.hickar.restly.extensions.observeOnce
 import com.hickar.restly.extensions.toEditable
 import com.hickar.restly.viewModel.CollectionViewModel
+import com.hickar.restly.viewModel.LambdaFactory
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class CollectionEditFragment : Fragment() {
     private var _binding: CollectionListEditBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: CollectionViewModel by viewModels()
+    @Inject lateinit var factory: CollectionViewModel.Factory
+    private val viewModel: CollectionViewModel by viewModels {
+        LambdaFactory(this) { stateHandle ->
+            factory.build(stateHandle)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

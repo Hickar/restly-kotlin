@@ -18,17 +18,30 @@ import com.hickar.restly.databinding.RequestGroupBinding
 import com.hickar.restly.utils.SwipeDeleteCallback
 import com.hickar.restly.view.requestGroup.adapters.RequestGroupAdapter
 import com.hickar.restly.viewModel.CollectionViewModel
+import com.hickar.restly.viewModel.LambdaFactory
 import com.hickar.restly.viewModel.RequestGroupViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class RequestGroupFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
 
-    private val collectionViewModel: CollectionViewModel by viewModels()
-    private val requestGroupViewModel: RequestGroupViewModel by viewModels()
+    @Inject lateinit var collectionFactory: CollectionViewModel.Factory
+    private val requestGroupViewModel: RequestGroupViewModel by viewModels {
+        LambdaFactory(this) { stateHandle ->
+            requestGroupFactory.build(stateHandle)
+        }
+    }
+
+    @Inject lateinit var requestGroupFactory: RequestGroupViewModel.Factory
+    private val collectionViewModel: CollectionViewModel by viewModels {
+        LambdaFactory(this) { stateHandle ->
+            collectionFactory.build(stateHandle)
+        }
+    }
 
     private var _binding: RequestGroupBinding? = null
     private val binding get() = _binding!!
@@ -61,8 +74,8 @@ class RequestGroupFragment : Fragment() {
     private fun updateOptionsMenu(menu: Menu) {
         menu.clear()
 
-        var menuId: Int
-        var backButtonEnabled: Boolean
+        val menuId: Int
+        val backButtonEnabled: Boolean
         if (collectionViewModel.collection.isDefault()) {
             menuId = R.menu.request_group_default_collection_menu
             backButtonEnabled = false

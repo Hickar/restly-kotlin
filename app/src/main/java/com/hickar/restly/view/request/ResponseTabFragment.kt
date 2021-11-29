@@ -28,7 +28,7 @@ class ResponseTabFragment : Fragment() {
     private lateinit var tabLayout: TabLayout
     private lateinit var viewPager: ViewPager2
 
-    private val viewModel: RequestViewModel by activityViewModels()
+    val viewModel: RequestViewModel by activityViewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = ResponseTabBinding.inflate(inflater, container, false)

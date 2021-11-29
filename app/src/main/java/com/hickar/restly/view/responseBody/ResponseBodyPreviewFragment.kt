@@ -12,8 +12,10 @@ import com.hickar.restly.databinding.ResponseBodyPreviewBinding
 import com.hickar.restly.extensions.show
 import com.hickar.restly.services.SharedPreferencesHelper
 import com.hickar.restly.viewModel.RequestViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class ResponseBodyPreviewFragment : Fragment() {
     private var _binding: ResponseBodyPreviewBinding? = null
     private val binding get() = _binding!!
@@ -21,8 +23,7 @@ class ResponseBodyPreviewFragment : Fragment() {
     private lateinit var webView: WebView
     private val viewModel: RequestViewModel by activityViewModels()
 
-    @Inject
-    lateinit var prefs: SharedPreferencesHelper
+    @Inject lateinit var prefs: SharedPreferencesHelper
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = ResponseBodyPreviewBinding.inflate(inflater, container, false)

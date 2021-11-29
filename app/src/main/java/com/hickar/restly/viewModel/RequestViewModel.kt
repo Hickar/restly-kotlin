@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hickar.restly.consts.RequestMethod
@@ -12,7 +13,9 @@ import com.hickar.restly.models.*
 import com.hickar.restly.repository.room.CollectionRepository
 import com.hickar.restly.services.FileService
 import com.hickar.restly.services.NetworkService
-import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import okhttp3.Call
@@ -27,8 +30,9 @@ import java.net.UnknownHostException
 import java.util.*
 import javax.inject.Inject
 
-@HiltViewModel
-class RequestViewModel @Inject constructor(
+//@HiltViewModel
+class RequestViewModel @AssistedInject constructor(
+    @Assisted private val handle: SavedStateHandle,
     private val repository: CollectionRepository
 ) : ViewModel(), okhttp3.Callback {
 
@@ -40,7 +44,7 @@ class RequestViewModel @Inject constructor(
     val name: MutableLiveData<String> = MutableLiveData()
     val method: MutableLiveData<RequestMethod> = MutableLiveData()
 
-    lateinit var query: RequestQuery
+    var query: RequestQuery = RequestQuery()
     val url: MutableLiveData<String> = MutableLiveData()
     val queryParameters: MutableLiveData<MutableList<RequestQueryParameter>> = MutableLiveData()
 
@@ -316,6 +320,11 @@ class RequestViewModel @Inject constructor(
             )
             response.close()
         }
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun build(stateHandle: SavedStateHandle): RequestViewModel
     }
 }
 

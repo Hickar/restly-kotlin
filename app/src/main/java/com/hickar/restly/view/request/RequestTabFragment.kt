@@ -40,7 +40,7 @@ class RequestTabFragment : Fragment() {
     private var _binding: RequestTabBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: RequestViewModel by activityViewModels()
+    val viewModel: RequestViewModel by activityViewModels()
 
     private lateinit var paramsRecyclerView: RecyclerView
     private lateinit var headersRecyclerView: RecyclerView

@@ -18,11 +18,20 @@ import com.hickar.restly.extensions.toLongSafely
 import com.hickar.restly.utils.NumberRangeInputFilter
 import com.hickar.restly.view.dialogs.EditTextDialog
 import com.hickar.restly.view.dialogs.WarningDialog
+import com.hickar.restly.viewModel.LambdaFactory
 import com.hickar.restly.viewModel.SettingsViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class SettingsFragment : Fragment() {
 
-    private val viewModel: SettingsViewModel by viewModels()
+    @Inject lateinit var factory: SettingsViewModel.Factory
+    private val viewModel: SettingsViewModel by viewModels {
+        LambdaFactory(this) { stateHandle ->
+            factory.build(stateHandle)
+        }
+    }
 
     private var _binding: SettingsBinding? = null
     private val binding get() = _binding!!

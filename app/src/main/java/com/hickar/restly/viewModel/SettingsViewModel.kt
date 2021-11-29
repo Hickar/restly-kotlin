@@ -1,6 +1,7 @@
 package com.hickar.restly.viewModel
 
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
@@ -8,6 +9,9 @@ import com.hickar.restly.consts.RequestMethod
 import com.hickar.restly.models.*
 import com.hickar.restly.services.NetworkService
 import com.hickar.restly.services.SharedPreferencesHelper
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch
 import okhttp3.Call
 import okhttp3.Response
@@ -16,13 +20,12 @@ import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import javax.inject.Inject
 
-class SettingsViewModel : ViewModel(), okhttp3.Callback {
-    @Inject
-    lateinit var prefs: SharedPreferencesHelper
-    @Inject
-    lateinit var networkService: NetworkService
-    @Inject
-    lateinit var gson: Gson
+class SettingsViewModel @AssistedInject constructor(
+    @Assisted private val handle: SavedStateHandle,
+    private val prefs: SharedPreferencesHelper
+) : ViewModel(), okhttp3.Callback {
+    @Inject lateinit var networkService: NetworkService
+    @Inject lateinit var gson: Gson
 
     val isLoggedIn: MutableLiveData<Boolean> = MutableLiveData(false)
     val userInfo: MutableLiveData<PostmanUserInfo?> = MutableLiveData()
@@ -117,5 +120,10 @@ class SettingsViewModel : ViewModel(), okhttp3.Callback {
         } else {
             error.postValue(ErrorEvent.AuthenticationError)
         }
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun build(handle: SavedStateHandle): SettingsViewModel
     }
 }

@@ -5,6 +5,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.hickar.restly.repository.dao.CollectionDao
 import com.hickar.restly.repository.dao.RequestDao
+import com.hickar.restly.repository.dao.RequestGroupDao
 import com.hickar.restly.repository.room.AppDatabase
 import dagger.Module
 import dagger.Provides
@@ -31,6 +32,11 @@ class DatabaseModule {
     @Provides
     fun provideCollectionDao(database: AppDatabase): CollectionDao {
         return database.collectionDao()
+    }
+
+    @Provides
+    fun provideRequestGroupDao(database: AppDatabase): RequestGroupDao {
+        return database.requestGroupDao()
     }
 
     @Singleton

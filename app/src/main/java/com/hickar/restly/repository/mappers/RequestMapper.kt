@@ -17,7 +17,7 @@ class RequestMapper @Inject constructor(
             gson.toJson(request.query),
             gson.toJson(request.headers),
             gson.toJson(request.body),
-            request.collectionId
+            request.parentId
         )
     }
 

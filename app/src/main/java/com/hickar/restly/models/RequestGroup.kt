@@ -1,8 +1,9 @@
 package com.hickar.restly.models
 
-class RequestGroup(
-    var id: String,
-    var name: String,
-    var description: String?,
-) {
+abstract class RequestGroup {
+    abstract var parentId: String?
+
+    fun isCollection(): Boolean {
+        return parentId == null
+    }
 }

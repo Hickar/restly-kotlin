@@ -10,7 +10,7 @@ data class Request(
     var query: RequestQuery = RequestQuery(),
     var headers: List<RequestHeader> = mutableListOf(),
     var body: RequestBody = RequestBody(),
-    var collectionId: String = Collection.DEFAULT
+    var parentId: String = Collection.DEFAULT
 ) {
     fun shouldHaveBody(): Boolean {
         return when (method) {

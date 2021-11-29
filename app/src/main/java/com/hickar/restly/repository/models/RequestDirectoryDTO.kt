@@ -1,16 +1,14 @@
 package com.hickar.restly.repository.models
 
-import androidx.annotation.NonNull
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.hickar.restly.models.RequestGroup
+import org.jetbrains.annotations.NotNull
 
-@Entity(tableName = "collections")
-data class CollectionDTO(
-    @NonNull @PrimaryKey val uid: String,
-    @NonNull val id: String,
+@Entity(tableName = "request_groups")
+data class RequestDirectoryDTO(
+    @PrimaryKey @NotNull val id: String,
     val name: String,
-    val description: String,
-    val owner: String,
+    val description: String?,
     override var parentId: String?
 ) : RequestGroup()

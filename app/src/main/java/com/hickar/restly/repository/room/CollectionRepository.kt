@@ -5,7 +5,9 @@ import com.hickar.restly.models.Collection
 import com.hickar.restly.models.Request
 import com.hickar.restly.repository.dao.CollectionDao
 import com.hickar.restly.repository.dao.RequestDao
+import com.hickar.restly.repository.dao.RequestGroupDao
 import com.hickar.restly.repository.mappers.CollectionMapper
+import com.hickar.restly.repository.mappers.RequestGroupMapper
 import com.hickar.restly.repository.mappers.RequestMapper
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -14,8 +16,10 @@ import javax.inject.Singleton
 class CollectionRepository @Inject constructor(
     private val collectionMapper: CollectionMapper,
     private val requestMapper: RequestMapper,
+    private val requestGroupMapper: RequestGroupMapper,
     private val collectionDao: CollectionDao,
     private val requestDao: RequestDao,
+    private val requestGroupDao: RequestGroupDao
 ) {
     @WorkerThread
     suspend fun getAllCollections(): List<Collection> {
@@ -43,8 +47,8 @@ class CollectionRepository @Inject constructor(
     }
 
     @WorkerThread
-    suspend fun getRequestsByCollectionId(id: String): List<Request> {
-        return requestMapper.toEntityList(requestDao.getByCollectionId(id))
+    suspend fun getRequestsByGroupId(id: String): List<Request> {
+        return requestMapper.toEntityList(requestDao.getByGroupId(id))
     }
 
     @WorkerThread

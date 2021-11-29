@@ -28,7 +28,7 @@ class RequestGroupViewModel @AssistedInject constructor(
     }
 
     suspend fun createNewDefaultRequest(): String {
-        val newRequest = Request(collectionId = collectionId)
+        val newRequest = Request(parentId = collectionId)
         repository.insertRequest(newRequest)
 
         refreshRequests()
@@ -37,7 +37,7 @@ class RequestGroupViewModel @AssistedInject constructor(
 
     fun refreshRequests() {
         viewModelScope.launch {
-            requests.value = repository.getRequestsByCollectionId(collectionId).toMutableList()
+            requests.value = repository.getRequestsByGroupId(collectionId).toMutableList()
         }
     }
 

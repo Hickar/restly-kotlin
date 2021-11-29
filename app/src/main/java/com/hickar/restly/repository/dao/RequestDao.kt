@@ -5,9 +5,6 @@ import com.hickar.restly.repository.models.RequestDTO
 
 @Dao
 interface RequestDao {
-    @Query("SELECT * FROM requests")
-    suspend fun getAll(): List<RequestDTO>
-
     @Query("SELECT * FROM requests WHERE id = :id")
     suspend fun getById(id: String): RequestDTO
 
@@ -20,9 +17,9 @@ interface RequestDao {
     @Delete
     suspend fun delete(request: RequestDTO)
 
-    @Query("SELECT * FROM requests WHERE collectionId = :collectionId")
-    suspend fun getByCollectionId(collectionId: String): List<RequestDTO>
+    @Query("SELECT * FROM requests WHERE parentId = :parentId")
+    suspend fun getByGroupId(parentId: String): List<RequestDTO>
 
-    @Query("DELETE FROM requests WHERE collectionId = :collectionId")
-    suspend fun deleteByCollectionId(collectionId: String)
+    @Query("DELETE FROM requests WHERE parentId = :parentId")
+    suspend fun deleteByCollectionId(parentId: String)
 }

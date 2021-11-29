@@ -14,5 +14,5 @@ data class RequestDTO(
     val query: String,
     val headers: String,
     val body: String,
-    val collectionId: String
+    val parentId: String
 )

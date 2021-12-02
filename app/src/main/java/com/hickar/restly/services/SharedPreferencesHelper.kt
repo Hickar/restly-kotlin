@@ -4,6 +4,7 @@ import android.content.Context
 import com.google.gson.Gson
 import com.hickar.restly.models.PostmanUserInfo
 import com.hickar.restly.models.RequestPrefs
+import com.hickar.restly.models.RestlyUserInfo
 import com.hickar.restly.models.WebViewPrefs
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -14,7 +15,22 @@ class SharedPreferencesHelper @Inject constructor(
 ) {
     private val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
-    fun getUserInfo(): PostmanUserInfo? {
+    fun getRestlyUserInfo(): RestlyUserInfo? {
+        val json = prefs.getString(USER, null)
+
+        return if (json == null) {
+            json
+        } else {
+            gson.fromJson(json, RestlyUserInfo::class.java)
+        }
+    }
+
+    fun setRestlyUserInfo(userInfo: RestlyUserInfo?) {
+        val json = gson.toJson(userInfo, RestlyUserInfo::class.java)
+        prefs.edit().putString(USER, json).apply()
+    }
+
+    fun getPostmanUserInfo(): PostmanUserInfo? {
         val json = prefs.getString(USER, null)
 
         return if (json == null) {
@@ -24,7 +40,7 @@ class SharedPreferencesHelper @Inject constructor(
         }
     }
 
-    fun setUserInfo(userInfo: PostmanUserInfo?) {
+    fun setPostmanUserInfo(userInfo: PostmanUserInfo?) {
         val json = gson.toJson(userInfo, PostmanUserInfo::class.java)
         prefs.edit().putString(USER, json).apply()
     }

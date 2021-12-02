@@ -3,7 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:paddingBottom="?attr/actionBarSize"
+    android:overScrollMode="never">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,7 +22,7 @@
             android:paddingBottom="16dp">
 
             <LinearLayout
-                android:id="@+id/settings_login_loggedin_container"
+                android:id="@+id/settings_login_restly_loggedin_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -41,11 +43,11 @@
                         app:strokeWidth="1dp">
 
                         <ImageView
-                            android:id="@+id/settings_login_avatar_image"
+                            android:id="@+id/settings_login_restly_avatar_image"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:background="@color/gray_400"
-                            android:contentDescription="@string/settings_login_avatar_description"
+                            android:contentDescription="@string/settings_login_restly_avatar_description"
                             android:scaleType="center"
                             android:src="@drawable/ic_default_user" />
                     </com.google.android.material.card.MaterialCardView>
@@ -58,7 +60,7 @@
                         android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/settings_login_fullname_label"
+                            android:id="@+id/settings_login_restly_fullname_label"
                             android:layout_width="match_parent"
                             android:layout_height="24dp"
                             android:layout_marginBottom="4dp"
@@ -68,7 +70,7 @@
                             android:textStyle="bold" />
 
                         <TextView
-                            android:id="@+id/settings_login_email_label"
+                            android:id="@+id/settings_login_restly_email_label"
                             android:layout_width="match_parent"
                             android:layout_height="24dp"
                             android:gravity="center_vertical"
@@ -77,7 +79,114 @@
                 </LinearLayout>
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/settings_logout_button"
+                    android:id="@+id/settings_logout_restly_button"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/settings_logout_restly_button_label"
+                    android:textColor="@color/red_500"
+                    app:rippleColor="@color/red_200"
+                    app:strokeColor="@color/red_200" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/settings_login_restly_notloggedin_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="@string/settings_login_restly_notlogged_title"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="@string/settings_login_restly_notlogged_description"
+                    android:textSize="16sp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/settings_login_restly_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_login_restly_button_label" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border_bottom"
+            android:orientation="vertical"
+            android:paddingVertical="16dp">
+
+            <LinearLayout
+                android:id="@+id/settings_login_postman_loggedin_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:visibility="visible">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:layout_gravity="center"
+                        android:layout_marginEnd="8dp"
+                        app:cardCornerRadius="40dp"
+                        app:strokeColor="@color/gray_400"
+                        app:strokeWidth="1dp">
+
+                        <ImageView
+                            android:id="@+id/settings_login_postman_avatar_image"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@color/gray_400"
+                            android:contentDescription="@string/settings_login_postman_avatar_description"
+                            android:scaleType="center"
+                            android:src="@drawable/ic_default_user" />
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/settings_login_postman_fullname_label"
+                            android:layout_width="match_parent"
+                            android:layout_height="24dp"
+                            android:layout_marginBottom="4dp"
+                            android:gravity="center_vertical"
+                            android:textColor="@color/black"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/settings_login_postman_email_label"
+                            android:layout_width="match_parent"
+                            android:layout_height="24dp"
+                            android:gravity="center_vertical"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/settings_logout_postman_button"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -89,7 +198,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/settings_login_notloggedin_container"
+                android:id="@+id/settings_login_postman_notloggedin_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -99,7 +208,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    android:text="@string/settings_login_notlogged_title"
+                    android:text="@string/settings_login_postman_notlogged_title"
                     android:textColor="@color/black"
                     android:textSize="20sp"
                     android:textStyle="bold" />
@@ -108,16 +217,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    android:text="@string/settings_login_notlogged_description"
+                    android:text="@string/settings_login_postman_notlogged_description"
                     android:textSize="16sp" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/settings_login_button"
+                    android:id="@+id/settings_login_postman_button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/settings_login_button_label" />
+                    android:text="@string/settings_login_postman_button_label" />
             </LinearLayout>
         </LinearLayout>
+
 
         <TextView
             style="@style/SectionHeaderText"
@@ -169,9 +279,9 @@
                     android:id="@+id/settings_request_timeout_input"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:inputType="number"
                     android:padding="0dp"
-                    android:textSize="16sp"
-                    android:inputType="number"/>
+                    android:textSize="16sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
@@ -179,9 +289,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:gravity="top"
             android:orientation="vertical"
-            android:layout_marginTop="8dp"
             android:paddingBottom="16dp">
 
             <TextView
@@ -193,18 +303,18 @@
                 android:textSize="16sp" />
 
             <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
                 android:layout_width="match_parent"
                 android:layout_height="38dp"
-                android:maxWidth="60dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox">
+                android:maxWidth="60dp">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/settings_request_maxsize_input"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:inputType="number"
                     android:padding="0dp"
-                    android:textSize="16sp"
-                    android:inputType="number" />
+                    android:textSize="16sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
@@ -238,12 +348,12 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:clipChildren="false"
+            android:clipToPadding="false"
             android:gravity="top"
             android:orientation="vertical"
-            android:layout_marginTop="8dp"
-            android:paddingBottom="16dp"
-            android:clipToPadding="false"
-            android:clipChildren="false">
+            android:paddingBottom="16dp">
 
             <TextView
                 android:layout_width="match_parent"
@@ -257,10 +367,10 @@
                 android:id="@+id/settings_webview_textsize_slider"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:valueFrom="12.0"
-                android:valueTo="32.0"
                 android:stepSize="1.0"
-                android:value="16.0"/>
+                android:value="16.0"
+                android:valueFrom="12.0"
+                android:valueTo="32.0" />
 
         </LinearLayout>
     </LinearLayout>

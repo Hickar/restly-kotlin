@@ -27,7 +27,8 @@ class SettingsViewModel @AssistedInject constructor(
     @Inject lateinit var networkService: NetworkService
     @Inject lateinit var gson: Gson
 
-    val isLoggedIn: MutableLiveData<Boolean> = MutableLiveData(false)
+    val isLoggedInRestly: MutableLiveData<Boolean> = MutableLiveData(false)
+    val isLoggedInPostman: MutableLiveData<Boolean> = MutableLiveData(false)
     val userInfo: MutableLiveData<PostmanUserInfo?> = MutableLiveData()
 
     val requestPrefs: MutableLiveData<RequestPrefs> = MutableLiveData(prefs.getRequestPrefs())
@@ -38,14 +39,20 @@ class SettingsViewModel @AssistedInject constructor(
     private var apiKeyGuess: String = ""
 
     init {
-        val savedUserInfo = prefs.getUserInfo()
+        val savedUserInfo = prefs.getPostmanUserInfo()
         if (savedUserInfo != null) {
             userInfo.value = savedUserInfo
-            isLoggedIn.value = true
+            isLoggedInPostman.value = true
         }
 
         requestPrefs.value = prefs.getRequestPrefs()
     }
+
+    fun loginToRestly(username: String, password: String) {
+
+    }
+
+    fun logoutFromRestly() {}
 
     fun loginToPostman(apiKey: String) {
         apiKeyGuess = apiKey
@@ -63,7 +70,7 @@ class SettingsViewModel @AssistedInject constructor(
 
     fun logoutFromPostman() {
         prefs.deleteUserInfo()
-        isLoggedIn.value = false
+        isLoggedInPostman.value = false
         userInfo.value = null
     }
 
@@ -113,10 +120,10 @@ class SettingsViewModel @AssistedInject constructor(
         if (response.code == 200) {
             val info = gson.fromJson(responseBody, PostmanGetMeInfo::class.java)
             userInfo.postValue(info.user)
-            isLoggedIn.postValue(true)
+            isLoggedInPostman.postValue(true)
 
             prefs.setApiKey(apiKeyGuess)
-            prefs.setUserInfo(info.user)
+            prefs.setPostmanUserInfo(info.user)
         } else {
             error.postValue(ErrorEvent.AuthenticationError)
         }

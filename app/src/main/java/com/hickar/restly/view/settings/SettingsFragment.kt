@@ -8,6 +8,7 @@ import androidx.appcompat.widget.SwitchCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.slider.Slider
 import com.hickar.restly.R
 import com.hickar.restly.databinding.SettingsBinding
@@ -53,13 +54,22 @@ class SettingsFragment : Fragment() {
     }
 
     private fun setupEventListeners() {
-        binding.settingsLoginButton.setOnClickListener {
+        binding.settingsLoginRestlyButton.setOnClickListener {
+            val action = SettingsFragmentDirections.actionNavigationSettingsToLoginFragment()
+            findNavController().navigate(action)
+        }
+
+        binding.settingsLogoutRestlyButton.setOnClickListener {
+            viewModel.logoutFromRestly()
+        }
+
+        binding.settingsLoginPostmanButton.setOnClickListener {
             EditTextDialog(R.string.settings_login_postman_dialog_title, "") { apiKey ->
                 viewModel.loginToPostman(apiKey)
             }.show(parentFragmentManager, "Postman Login")
         }
 
-        binding.settingsLogoutButton.setOnClickListener {
+        binding.settingsLogoutPostmanButton.setOnClickListener {
             viewModel.logoutFromPostman()
         }
 
@@ -93,20 +103,30 @@ class SettingsFragment : Fragment() {
     }
 
     private fun setupObservers() {
-        viewModel.isLoggedIn.observe(viewLifecycleOwner) { isLoggedIn ->
+        viewModel.isLoggedInPostman.observe(viewLifecycleOwner) { isLoggedIn ->
             if (isLoggedIn) {
-                binding.settingsLoginLoggedinContainer.show()
-                binding.settingsLoginNotloggedinContainer.hide()
+                binding.settingsLoginPostmanLoggedinContainer.show()
+                binding.settingsLoginPostmanNotloggedinContainer.hide()
             } else {
-                binding.settingsLoginLoggedinContainer.hide()
-                binding.settingsLoginNotloggedinContainer.show()
+                binding.settingsLoginPostmanLoggedinContainer.hide()
+                binding.settingsLoginPostmanNotloggedinContainer.show()
+            }
+        }
+
+        viewModel.isLoggedInRestly.observe(viewLifecycleOwner) { isLoggedIn ->
+            if (isLoggedIn) {
+                binding.settingsLoginRestlyLoggedinContainer.show()
+                binding.settingsLoginRestlyNotloggedinContainer.hide()
+            } else {
+                binding.settingsLoginRestlyLoggedinContainer.hide()
+                binding.settingsLoginRestlyNotloggedinContainer.show()
             }
         }
 
         viewModel.userInfo.observe(viewLifecycleOwner) { userInfo ->
             if (userInfo != null)  {
-                binding.settingsLoginFullnameLabel.text = userInfo.fullName.toEditable()
-                binding.settingsLoginEmailLabel.text = userInfo.email.toEditable()
+                binding.settingsLoginPostmanFullnameLabel.text = userInfo.fullName.toEditable()
+                binding.settingsLoginPostmanEmailLabel.text = userInfo.email.toEditable()
             }
         }
 

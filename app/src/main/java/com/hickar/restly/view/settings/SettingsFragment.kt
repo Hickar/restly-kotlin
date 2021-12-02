@@ -55,7 +55,12 @@ class SettingsFragment : Fragment() {
 
     private fun setupEventListeners() {
         binding.settingsLoginRestlyButton.setOnClickListener {
-            val action = SettingsFragmentDirections.actionNavigationSettingsToLoginFragment()
+            val action = SettingsFragmentDirections.actionNavigationSettingsToAccountLoginFragment()
+            findNavController().navigate(action)
+        }
+
+        binding.settingsRegisterRestlyButton.setOnClickListener {
+            val action = SettingsFragmentDirections.actionNavigationSettingsToAccountRegisterFragment()
             findNavController().navigate(action)
         }
 
@@ -123,7 +128,7 @@ class SettingsFragment : Fragment() {
             }
         }
 
-        viewModel.userInfo.observe(viewLifecycleOwner) { userInfo ->
+        viewModel.postmanUserInfo.observe(viewLifecycleOwner) { userInfo ->
             if (userInfo != null)  {
                 binding.settingsLoginPostmanFullnameLabel.text = userInfo.fullName.toEditable()
                 binding.settingsLoginPostmanEmailLabel.text = userInfo.email.toEditable()

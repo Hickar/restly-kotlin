@@ -118,6 +118,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/settings_login_restly_button_label" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/settings_register_restly_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_register_restly_button_label" />
             </LinearLayout>
         </LinearLayout>
 

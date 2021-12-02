@@ -16,7 +16,7 @@ class SharedPreferencesHelper @Inject constructor(
     private val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
     fun getRestlyUserInfo(): RestlyUserInfo? {
-        val json = prefs.getString(USER, null)
+        val json = prefs.getString(RESTLY_USER, null)
 
         return if (json == null) {
             json
@@ -27,11 +27,15 @@ class SharedPreferencesHelper @Inject constructor(
 
     fun setRestlyUserInfo(userInfo: RestlyUserInfo?) {
         val json = gson.toJson(userInfo, RestlyUserInfo::class.java)
-        prefs.edit().putString(USER, json).apply()
+        prefs.edit().putString(RESTLY_USER, json).apply()
+    }
+
+    fun deleteRestlyUserInfo() {
+        prefs.edit().remove(RESTLY_USER).apply()
     }
 
     fun getPostmanUserInfo(): PostmanUserInfo? {
-        val json = prefs.getString(USER, null)
+        val json = prefs.getString(POSTMAN_USER, null)
 
         return if (json == null) {
             json
@@ -42,11 +46,11 @@ class SharedPreferencesHelper @Inject constructor(
 
     fun setPostmanUserInfo(userInfo: PostmanUserInfo?) {
         val json = gson.toJson(userInfo, PostmanUserInfo::class.java)
-        prefs.edit().putString(USER, json).apply()
+        prefs.edit().putString(POSTMAN_USER, json).apply()
     }
 
-    fun deleteUserInfo() {
-        prefs.edit().remove(USER).apply()
+    fun deletePostmanUserInfo() {
+        prefs.edit().remove(POSTMAN_USER).apply()
     }
 
     fun getApiKey(): String? = prefs.getString(POSTMAN_KEY, null)
@@ -85,7 +89,8 @@ class SharedPreferencesHelper @Inject constructor(
 
     companion object {
         private const val PREFS_NAME = "com.restly.hickar.preferences"
-        private const val USER = "postman_user"
+        private const val RESTLY_USER = "restly_user"
+        private const val POSTMAN_USER = "postman_user"
         private const val POSTMAN_KEY = "postman_api_key"
         private const val REQUEST = "request"
         private const val WEBVIEW = "webview"

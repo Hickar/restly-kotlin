@@ -11,6 +11,7 @@
         <entry key="app/src/main/res/drawable/item_divider.xml" value="0.2557291666666667" />
         <entry key="app/src/main/res/drawable/recycler_divider.xml" value="0.259375" />
         <entry key="app/src/main/res/layout/account_login.xml" value="0.14855072463768115" />
+        <entry key="app/src/main/res/layout/account_register.xml" value="0.14855072463768115" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.24105668208813794" />
         <entry key="app/src/main/res/layout/activity_request_list.xml" value="0.18568840579710144" />
         <entry key="app/src/main/res/layout/authorization.xml" value="0.1046875" />

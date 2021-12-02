@@ -27,9 +27,13 @@ class SettingsViewModel @AssistedInject constructor(
     @Inject lateinit var networkService: NetworkService
     @Inject lateinit var gson: Gson
 
+    private var isLoggingToRestly: Boolean = false
     val isLoggedInRestly: MutableLiveData<Boolean> = MutableLiveData(false)
+    val restlyUserInfo: MutableLiveData<RestlyUserInfo?> = MutableLiveData()
+
+    private var isLoggingToPostman: Boolean = false
     val isLoggedInPostman: MutableLiveData<Boolean> = MutableLiveData(false)
-    val userInfo: MutableLiveData<PostmanUserInfo?> = MutableLiveData()
+    val postmanUserInfo: MutableLiveData<PostmanUserInfo?> = MutableLiveData()
 
     val requestPrefs: MutableLiveData<RequestPrefs> = MutableLiveData(prefs.getRequestPrefs())
     val webViewPrefs: MutableLiveData<WebViewPrefs> = MutableLiveData(prefs.getWebViewPrefs())
@@ -39,22 +43,52 @@ class SettingsViewModel @AssistedInject constructor(
     private var apiKeyGuess: String = ""
 
     init {
-        val savedUserInfo = prefs.getPostmanUserInfo()
-        if (savedUserInfo != null) {
-            userInfo.value = savedUserInfo
+        val savedPostmanUserInfo = prefs.getPostmanUserInfo()
+        if (savedPostmanUserInfo != null) {
+            postmanUserInfo.value = savedPostmanUserInfo
             isLoggedInPostman.value = true
+        }
+
+        val savedRestlyUserInfo = prefs.getRestlyUserInfo()
+        if (savedRestlyUserInfo != null) {
+            restlyUserInfo.value = savedRestlyUserInfo
+            isLoggedInRestly.value = true
         }
 
         requestPrefs.value = prefs.getRequestPrefs()
     }
 
     fun loginToRestly(username: String, password: String) {
+        isLoggingToRestly = true
+
+        val credentials = RestlyUserLoginCredentials(username, password)
+        val request = Request(
+            method = RequestMethod.POST,
+            body = RequestBody(
+                rawData = RequestRawData(
+                    gson.toJson(credentials, RestlyUserLoginCredentials::class.java),
+                    "application/json"
+                )
+            )
+        )
+
+        viewModelScope.launch {
+            networkService.sendRequest(request, this@SettingsViewModel)
+        }
+    }
+
+    fun logoutFromRestly() {
+        prefs.deleteRestlyUserInfo()
+        isLoggedInRestly.value = false
+        restlyUserInfo.value = null
+    }
+
+    fun signUpInRestly(email: String, username: String, password: String) {
 
     }
 
-    fun logoutFromRestly() {}
-
     fun loginToPostman(apiKey: String) {
+        isLoggingToPostman = true
         apiKeyGuess = apiKey
 
         viewModelScope.launch {
@@ -69,9 +103,9 @@ class SettingsViewModel @AssistedInject constructor(
     }
 
     fun logoutFromPostman() {
-        prefs.deleteUserInfo()
+        prefs.deletePostmanUserInfo()
         isLoggedInPostman.value = false
-        userInfo.value = null
+        postmanUserInfo.value = null
     }
 
     fun setRequestSslVerificationEnabled(enabled: Boolean) {
@@ -112,18 +146,26 @@ class SettingsViewModel @AssistedInject constructor(
             else -> ErrorEvent.ConnectionUnexpected
         }
         error.postValue(newError)
+
+        if (isLoggingToRestly) isLoggingToRestly = false
+        if (isLoggingToPostman) isLoggingToPostman = false
     }
 
     override fun onResponse(call: Call, response: Response) {
         val responseBody = response.body?.string()
 
         if (response.code == 200) {
-            val info = gson.fromJson(responseBody, PostmanGetMeInfo::class.java)
-            userInfo.postValue(info.user)
-            isLoggedInPostman.postValue(true)
+            if (isLoggingToPostman) {
+                val info = gson.fromJson(responseBody, PostmanGetMeInfo::class.java)
+                postmanUserInfo.postValue(info.user)
+                isLoggedInPostman.postValue(true)
 
-            prefs.setApiKey(apiKeyGuess)
-            prefs.setPostmanUserInfo(info.user)
+                prefs.setApiKey(apiKeyGuess)
+                prefs.setPostmanUserInfo(info.user)
+                isLoggingToPostman = false
+            } else if (isLoggingToRestly) {
+                isLoggingToRestly = false
+            }
         } else {
             error.postValue(ErrorEvent.AuthenticationError)
         }

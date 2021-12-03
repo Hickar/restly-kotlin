@@ -78,8 +78,8 @@
     <string name="settings_logout_restly_button_label">Logout</string>
 
     <!-- Errors -->
-    <string name="auth_error_name">Authentication Failed</string>
-    <string name="auth_error_description">Provided API key is invalid or expired.</string>
+    <string name="postman_auth_error_name">Authentication Failed</string>
+    <string name="postman_auth_error_description">Provided API key is invalid or expired.</string>
     <string name="conn_refused_error_name">Connection Refused</string>
     <string name="conn_refused_error_description">Connection was refused by host.</string>
     <string name="conn_timeout_error_name">Connection Timed Out</string>
@@ -100,6 +100,12 @@
     <string name="size_exceeds_limit_error_description">Response body size exceeds maximum limit. You can change this in \"Settings\" tab.</string>
     <string name="request_call_timeout_error_name">Request Call Timeout</string>
     <string name="request_call_timeout_error_description">Request call timeout exceeded maximum limit. You can change this in \"Settings\" tab.</string>
+    <string name="not_strong_password_error_name">Password isn\'t strong enough</string>
+    <string name="not_strong_password_error_description">Password must be length of 8 or more, contain one capital latter, number and a symbol.</string>
+    <string name="invalid_credentials_error_name">Invalid credentials</string>
+    <string name="invalid_credentials_error_description">Provided email/password was invalid.</string>
+    <string name="user_exists_error_name">This user is already exists</string>
+    <string name="user_exists_error_description">Account with such email already exists.</string>
 
     <string name="settings_section_request_title">Request</string>
     <string name="settings_request_timeout_label">Timeout (Milliseconds)</string>

@@ -5,8 +5,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
-import com.hickar.restly.consts.RequestMethod
 import com.hickar.restly.models.*
+import com.hickar.restly.services.AuthService
 import com.hickar.restly.services.NetworkService
 import com.hickar.restly.services.SharedPreferencesHelper
 import dagger.assisted.Assisted
@@ -14,7 +14,6 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch
 import okhttp3.Call
-import okhttp3.Response
 import java.io.IOException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -22,16 +21,18 @@ import javax.inject.Inject
 
 class SettingsViewModel @AssistedInject constructor(
     @Assisted private val handle: SavedStateHandle,
-    private val prefs: SharedPreferencesHelper
-) : ViewModel(), okhttp3.Callback {
-    @Inject lateinit var networkService: NetworkService
-    @Inject lateinit var gson: Gson
+    private val prefs: SharedPreferencesHelper,
+    private val authService: AuthService
+) : ViewModel(), AuthService.Delegate {
+    @Inject
+    lateinit var networkService: NetworkService
 
-    private var isLoggingToRestly: Boolean = false
+    @Inject
+    lateinit var gson: Gson
+
     val isLoggedInRestly: MutableLiveData<Boolean> = MutableLiveData(false)
     val restlyUserInfo: MutableLiveData<RestlyUserInfo?> = MutableLiveData()
 
-    private var isLoggingToPostman: Boolean = false
     val isLoggedInPostman: MutableLiveData<Boolean> = MutableLiveData(false)
     val postmanUserInfo: MutableLiveData<PostmanUserInfo?> = MutableLiveData()
 
@@ -39,8 +40,6 @@ class SettingsViewModel @AssistedInject constructor(
     val webViewPrefs: MutableLiveData<WebViewPrefs> = MutableLiveData(prefs.getWebViewPrefs())
 
     val error: MutableLiveData<ErrorEvent> = MutableLiveData()
-
-    private var apiKeyGuess: String = ""
 
     init {
         val savedPostmanUserInfo = prefs.getPostmanUserInfo()
@@ -59,21 +58,11 @@ class SettingsViewModel @AssistedInject constructor(
     }
 
     fun loginToRestly(username: String, password: String) {
-        isLoggingToRestly = true
-
-        val credentials = RestlyUserLoginCredentials(username, password)
-        val request = Request(
-            method = RequestMethod.POST,
-            body = RequestBody(
-                rawData = RequestRawData(
-                    gson.toJson(credentials, RestlyUserLoginCredentials::class.java),
-                    "application/json"
-                )
-            )
-        )
-
         viewModelScope.launch {
-            networkService.sendRequest(request, this@SettingsViewModel)
+            authService.loginToReslty(
+                RestlyLoginCredentials(username, password),
+                this@SettingsViewModel
+            )
         }
     }
 
@@ -84,21 +73,17 @@ class SettingsViewModel @AssistedInject constructor(
     }
 
     fun signUpInRestly(email: String, username: String, password: String) {
-
+        viewModelScope.launch {
+            authService.signUpInRestly(
+                RestlySignupCredentials(email, username, password),
+                this@SettingsViewModel
+            )
+        }
     }
 
     fun loginToPostman(apiKey: String) {
-        isLoggingToPostman = true
-        apiKeyGuess = apiKey
-
         viewModelScope.launch {
-            networkService.requestRaw(
-                "https://api.getpostman.com/me",
-                RequestMethod.GET.value,
-                listOf(RequestHeader("X-Api-key", apiKey)),
-                null,
-                this@SettingsViewModel
-            )
+            authService.loginToPostman(apiKey, this@SettingsViewModel)
         }
     }
 
@@ -143,32 +128,24 @@ class SettingsViewModel @AssistedInject constructor(
                     ErrorEvent.NoInternetConnectionError
                 }
             }
+            is InvalidCredentialsException -> ErrorEvent.InvalidCredentials
+            is NotStrongPasswordException -> ErrorEvent.NotStrongPassword
+            is UserExistsException -> ErrorEvent.UserExists
+            is WrongApiKeyException -> ErrorEvent.PostmanAuthError
             else -> ErrorEvent.ConnectionUnexpected
         }
         error.postValue(newError)
-
-        if (isLoggingToRestly) isLoggingToRestly = false
-        if (isLoggingToPostman) isLoggingToPostman = false
     }
 
-    override fun onResponse(call: Call, response: Response) {
-        val responseBody = response.body?.string()
+    override fun onRegistrationSuccess() {
+    }
 
-        if (response.code == 200) {
-            if (isLoggingToPostman) {
-                val info = gson.fromJson(responseBody, PostmanGetMeInfo::class.java)
-                postmanUserInfo.postValue(info.user)
-                isLoggedInPostman.postValue(true)
+    override fun onPostmanLoginSuccess(userInfo: PostmanUserInfo) {
+        postmanUserInfo.postValue(userInfo)
+    }
 
-                prefs.setApiKey(apiKeyGuess)
-                prefs.setPostmanUserInfo(info.user)
-                isLoggingToPostman = false
-            } else if (isLoggingToRestly) {
-                isLoggingToRestly = false
-            }
-        } else {
-            error.postValue(ErrorEvent.AuthenticationError)
-        }
+    override fun onRestlyLoginSuccess(userInfo: RestlyUserInfo) {
+        restlyUserInfo.postValue(userInfo)
     }
 
     @AssistedFactory

@@ -73,14 +73,53 @@ class NetworkService @Inject constructor(
         })
     }
 
-    suspend fun sendRequest(request: com.hickar.restly.models.Request, callbackDelegate: Callback) {
+    suspend fun requestRawUnsafe(
+        url: String,
+        method: String,
+        headers: List<RequestHeader>,
+        body: RequestBody?,
+        callbackDelegate: Callback
+    ) {
+        val builder = Request.Builder()
+            .url(url)
+            .method(method, body)
+
+        for (header in headers) {
+            if (header.enabled && !header.isEmpty()) builder.addHeader(header.key, header.value)
+        }
+
+        val request = builder.build()
+        val client = getUnsafeHttpClient()
+
+        getRemoteFileSize(url, object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                callbackDelegate.onFailure(call, e)
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val fileSize = response.body?.contentLength()!!.toMb()
+                response.close()
+                if (fileSize < prefs.getRequestPrefs().maxSize || prefs.getRequestPrefs().maxSize == 0L) {
+                    client.newCall(request).enqueue(callbackDelegate)
+                } else {
+                    callbackDelegate.onFailure(call, java.io.FileNotFoundException("File size exceeds maximum limit"))
+                }
+            }
+        })
+    }
+
+    suspend fun sendRequest(request: com.hickar.restly.models.Request, callbackDelegate: Callback, unsafe: Boolean = false) {
         val requestBody = if (request.shouldHaveBody()) {
             createRequestBody(request.body)
         } else {
             null
         }
 
-        requestRaw(request.query.url, request.method.value, request.headers, requestBody, callbackDelegate)
+        if (unsafe) {
+            requestRawUnsafe(request.query.url, request.method.value, request.headers, requestBody, callbackDelegate)
+        } else {
+            requestRaw(request.query.url, request.method.value, request.headers, requestBody, callbackDelegate)
+        }
     }
 
     private fun createRequestBody(body: com.hickar.restly.models.RequestBody?): RequestBody? {
@@ -156,7 +195,7 @@ class NetworkService @Inject constructor(
     }
 
     private fun createRawBody(body: RequestRawData): RequestBody {
-        return body.text.toRequestBody(body.mimeType.toMediaType())
+        return body.text.toRequestBody()
     }
 
     fun isNetworkAvailable(): Boolean {

@@ -34,6 +34,14 @@ class SharedPreferencesHelper @Inject constructor(
         prefs.edit().remove(RESTLY_USER).apply()
     }
 
+    fun setRestlyJwt(token: String) {
+        prefs.edit().putString(RESTLY_JWT, token).apply()
+    }
+
+    fun deleteRestlyJwt() {
+        prefs.edit().remove(RESTLY_JWT).apply()
+    }
+
     fun getPostmanUserInfo(): PostmanUserInfo? {
         val json = prefs.getString(POSTMAN_USER, null)
 
@@ -53,9 +61,9 @@ class SharedPreferencesHelper @Inject constructor(
         prefs.edit().remove(POSTMAN_USER).apply()
     }
 
-    fun getApiKey(): String? = prefs.getString(POSTMAN_KEY, null)
+    fun getPostmanApiKey(): String? = prefs.getString(POSTMAN_KEY, null)
 
-    fun setApiKey(key: String) = prefs.edit().putString(POSTMAN_KEY, key).apply()
+    fun setPostmanApiKey(key: String) = prefs.edit().putString(POSTMAN_KEY, key).apply()
 
     fun getRequestPrefs(): RequestPrefs {
         val json = prefs.getString(REQUEST, null)
@@ -90,6 +98,7 @@ class SharedPreferencesHelper @Inject constructor(
     companion object {
         private const val PREFS_NAME = "com.restly.hickar.preferences"
         private const val RESTLY_USER = "restly_user"
+        private const val RESTLY_JWT = "restly_jwt"
         private const val POSTMAN_USER = "postman_user"
         private const val POSTMAN_KEY = "postman_api_key"
         private const val REQUEST = "request"

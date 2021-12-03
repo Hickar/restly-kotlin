@@ -73,9 +73,9 @@
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.hickar.restly.view.account.AccountLoginFragment"
-        android:label="LoginFragment" />
+        android:label="Login" />
     <fragment
         android:id="@+id/accountRegisterFragment"
         android:name="com.hickar.restly.view.account.AccountRegisterFragment"
-        android:label="AccountRegisterFragment" />
+        android:label="Registration" />
 </navigation>

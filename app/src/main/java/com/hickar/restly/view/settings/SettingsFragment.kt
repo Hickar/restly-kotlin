@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.slider.Slider
 import com.hickar.restly.R
@@ -28,7 +28,7 @@ import javax.inject.Inject
 class SettingsFragment : Fragment() {
 
     @Inject lateinit var factory: SettingsViewModel.Factory
-    private val viewModel: SettingsViewModel by viewModels {
+    private val viewModel: SettingsViewModel by activityViewModels {
         LambdaFactory(this) { stateHandle ->
             factory.build(stateHandle)
         }

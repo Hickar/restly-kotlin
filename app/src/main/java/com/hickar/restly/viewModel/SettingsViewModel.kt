@@ -30,6 +30,8 @@ class SettingsViewModel @AssistedInject constructor(
     @Inject
     lateinit var gson: Gson
 
+    val successfulRegistration: MutableLiveData<Boolean> = MutableLiveData(false)
+
     val isLoggedInRestly: MutableLiveData<Boolean> = MutableLiveData(false)
     val restlyUserInfo: MutableLiveData<RestlyUserInfo?> = MutableLiveData()
 
@@ -39,7 +41,7 @@ class SettingsViewModel @AssistedInject constructor(
     val requestPrefs: MutableLiveData<RequestPrefs> = MutableLiveData(prefs.getRequestPrefs())
     val webViewPrefs: MutableLiveData<WebViewPrefs> = MutableLiveData(prefs.getWebViewPrefs())
 
-    val error: MutableLiveData<ErrorEvent> = MutableLiveData()
+    val error: MutableLiveData<ErrorEvent?> = MutableLiveData()
 
     init {
         val savedPostmanUserInfo = prefs.getPostmanUserInfo()
@@ -138,14 +140,17 @@ class SettingsViewModel @AssistedInject constructor(
     }
 
     override fun onRegistrationSuccess() {
+        successfulRegistration.postValue(true)
     }
 
     override fun onPostmanLoginSuccess(userInfo: PostmanUserInfo) {
         postmanUserInfo.postValue(userInfo)
+        isLoggedInPostman.postValue(true)
     }
 
     override fun onRestlyLoginSuccess(userInfo: RestlyUserInfo) {
         restlyUserInfo.postValue(userInfo)
+        isLoggedInRestly.postValue(true)
     }
 
     @AssistedFactory

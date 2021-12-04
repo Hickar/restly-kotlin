@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.hickar.restly.databinding.AccountRegisterBinding
+import com.hickar.restly.view.dialogs.WarningDialog
 import com.hickar.restly.viewModel.SettingsViewModel
 
 class AccountRegisterFragment : Fragment() {
@@ -39,5 +40,19 @@ class AccountRegisterFragment : Fragment() {
         }
     }
 
-    private fun setupObservers() {}
+    private fun setupObservers() {
+        viewModel.error.observe(viewLifecycleOwner) { error ->
+            if (error != null) {
+                WarningDialog(error.title, error.message).show(parentFragmentManager, "Registration")
+                viewModel.error.value = null
+            }
+        }
+
+        viewModel.successfulRegistration.observe(viewLifecycleOwner) { signedUp ->
+            if (signedUp) {
+                requireActivity().onBackPressed()
+                viewModel.successfulRegistration.value = false
+            }
+        }
+    }
 }

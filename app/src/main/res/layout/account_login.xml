@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="16sp"
-        android:text="@string/account_login_username_input_hint"
+        android:text="@string/account_login_email_input_hint"
         android:paddingBottom="4dp"/>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -21,10 +21,10 @@
         app:hintEnabled="false">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/account_login_username_input"
+            android:id="@+id/account_login_email_input"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="@string/account_login_username_input_hint"
+            android:hint="@string/account_login_email_input_hint"
             android:inputType="text"
             android:padding="0dp"/>
     </com.google.android.material.textfield.TextInputLayout>

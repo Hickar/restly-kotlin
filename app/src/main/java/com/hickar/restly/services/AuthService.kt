@@ -16,7 +16,7 @@ class AuthService @Inject constructor(
 
     suspend fun loginToPostman(apiKey: String, delegate: Delegate) {
         val request = Request(
-            query = RequestQuery("https://api.getpostman.com/me"),
+            query = RequestQuery(POSTMAN_GETME_URL),
             method = RequestMethod.GET,
             headers = listOf(RequestHeader("X-Api-key", apiKey))
         )
@@ -27,21 +27,18 @@ class AuthService @Inject constructor(
             }
 
             override fun onResponse(call: Call, response: Response) {
-                val body = response.body?.string()
-
-                if (body != null) {
-                    when (response.code) {
-                        200 -> {
+                when (response.code) {
+                    200 -> {
+                        val body = response.body?.string()
+                        if (body != null) {
                             val userInfo = gson.fromJson(body, PostmanGetMeInfo::class.java)?.user
                             if (userInfo != null) {
                                 prefs.setPostmanApiKey(apiKey)
                                 prefs.setPostmanUserInfo(userInfo)
                                 delegate.onPostmanLoginSuccess(userInfo)
                             }
-                        }
-                        else -> {
+                        } else {
                             delegate.onFailure(call, WrongApiKeyException())
-                            return
                         }
                     }
                 }
@@ -51,7 +48,7 @@ class AuthService @Inject constructor(
 
     suspend fun loginToReslty(credentials: RestlyLoginCredentials, delegate: Delegate) {
         val request = Request(
-            query = RequestQuery("http://10.0.2.2:8080/api/authorize"),
+            query = RequestQuery("$RESTLY_URL_DEV/api/authorize"),
             method = RequestMethod.POST,
             body = RequestBody(
                 enabled = true,
@@ -69,20 +66,20 @@ class AuthService @Inject constructor(
             }
 
             override fun onResponse(call: Call, response: Response) {
-                val body = response.body?.string()
-
-                if (body != null) {
-                    when (response.code) {
-                        200 -> {
-                            prefs.setRestlyJwt(body)
-
+                when (response.code) {
+                    200 -> {
+                        val body = response.body?.string()
+                        if (body != null) {
                             val userInfo = gson.fromJson(body, RestlyUserInfo::class.java)
+
+                            prefs.setRestlyUserInfo(userInfo)
+                            prefs.setRestlyJwt(userInfo.token)
                             delegate.onRestlyLoginSuccess(userInfo)
+                        } else {
+                            delegate.onFailure(call, EmptyAuthResponseBodyException())
                         }
-                        409 -> delegate.onFailure(call, InvalidCredentialsException())
                     }
-                } else {
-                    delegate.onFailure(call, EmptyAuthResponseBodyException())
+                    404, 409, 422 -> delegate.onFailure(call, InvalidCredentialsException())
                 }
             }
         })
@@ -90,7 +87,7 @@ class AuthService @Inject constructor(
 
     suspend fun signUpInRestly(credentials: RestlySignupCredentials, delegate: Delegate) {
         val request = Request(
-            query = RequestQuery("http://10.0.2.2:8080/api/user"),
+            query = RequestQuery("$RESTLY_URL_DEV/api/user"),
             method = RequestMethod.POST,
             body = RequestBody(
                 enabled = true,
@@ -108,21 +105,20 @@ class AuthService @Inject constructor(
             }
 
             override fun onResponse(call: Call, response: Response) {
-                val body = response.body?.string()
-
-                if (body != null) {
-                    when (response.code) {
-                        201 -> {
+                when (response.code) {
+                    201 -> {
+                        val body = response.body?.string()
+                        if (body != null) {
                             prefs.setRestlyJwt(body)
                             delegate.onRegistrationSuccess()
-                        }
-                        409 -> {
-                            delegate.onFailure(call, NotStrongPasswordException())
-                            return
+                        } else {
+                            delegate.onFailure(call, EmptyAuthResponseBodyException())
                         }
                     }
-                } else {
-                    delegate.onFailure(call, EmptyAuthResponseBodyException())
+                    409, 422 -> {
+                        delegate.onFailure(call, NotStrongPasswordException())
+                        return
+                    }
                 }
             }
         })
@@ -136,5 +132,11 @@ class AuthService @Inject constructor(
         fun onPostmanLoginSuccess(userInfo: PostmanUserInfo)
 
         fun onFailure(call: Call, e: IOException)
+    }
+
+    companion object {
+        private const val POSTMAN_GETME_URL = "https://api.getpostman.com/me"
+        private const val RESTLY_URL_DEV = "http://10.0.2.2:8080"
+        private const val RESTLY_URL_PROD = "https://restly.com"
     }
 }

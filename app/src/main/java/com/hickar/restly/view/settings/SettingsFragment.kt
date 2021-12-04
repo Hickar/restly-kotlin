@@ -135,6 +135,13 @@ class SettingsFragment : Fragment() {
             }
         }
 
+        viewModel.restlyUserInfo.observe(viewLifecycleOwner) { userInfo ->
+            if (userInfo != null) {
+                binding.settingsLoginRestlyFullnameLabel.text = userInfo.username.toEditable()
+                binding.settingsLoginRestlyEmailLabel.text = userInfo.email.toEditable()
+            }
+        }
+
         viewModel.requestPrefs.observe(viewLifecycleOwner) { requestPrefs ->
             binding.settingsRequestSslverificationSwitch.isChecked = requestPrefs.sslVerificationEnabled
             binding.settingsRequestMaxsizeInput.text = requestPrefs.maxSize.toString().toEditable()
@@ -147,7 +154,17 @@ class SettingsFragment : Fragment() {
         }
 
         viewModel.error.observe(viewLifecycleOwner) { error ->
-            WarningDialog(error.title, error.message).show(parentFragmentManager, "AuthError")
+            if (error != null) {
+                WarningDialog(error.title, error.message).show(parentFragmentManager, "AuthError")
+                viewModel.error.value = null
+            }
+        }
+
+        viewModel.successfulRegistration.observe(viewLifecycleOwner) { signedUp ->
+            if (signedUp == true) {
+                WarningDialog(R.string.successful_sign_up_title, R.string.successful_sign_up_description)
+                    .show(parentFragmentManager, "SignUp")
+            }
         }
     }
 

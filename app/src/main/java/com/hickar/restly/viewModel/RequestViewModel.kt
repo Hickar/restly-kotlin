@@ -30,7 +30,6 @@ import java.net.UnknownHostException
 import java.util.*
 import javax.inject.Inject
 
-//@HiltViewModel
 class RequestViewModel @AssistedInject constructor(
     @Assisted private val handle: SavedStateHandle,
     private val repository: CollectionRepository

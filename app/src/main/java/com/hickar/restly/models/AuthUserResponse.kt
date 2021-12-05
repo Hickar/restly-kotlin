@@ -1,7 +1,8 @@
 package com.hickar.restly.models
 
-data class RestlyUserInfo(
+data class AuthUserResponse(
     var id: String,
+    var username: String,
     var email: String,
-    var username: String
+    var token: String
 )

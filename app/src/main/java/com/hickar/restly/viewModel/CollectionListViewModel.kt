@@ -23,7 +23,7 @@ class CollectionListViewModel @AssistedInject constructor(
     }
 
     suspend fun createNewCollection(): String {
-        val newCollection = Collection(UUID.randomUUID().toString(), UUID.randomUUID().toString())
+        val newCollection = Collection(id = UUID.randomUUID().toString())
         collectionRepository.insertCollection(newCollection)
 
         refreshCollections()
@@ -42,6 +42,7 @@ class CollectionListViewModel @AssistedInject constructor(
     fun refreshCollections() {
         viewModelScope.launch {
             collections.value = collectionRepository.getAllCollections().toMutableList()
+            collectionRepository.saveAllToRemote()
         }
     }
 

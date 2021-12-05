@@ -1,7 +1,6 @@
 package com.hickar.restly.models
 
 data class Collection(
-    var uid: String = DEFAULT,
     var id: String = DEFAULT,
     var name: String = "New Collection",
     var description: String = "",

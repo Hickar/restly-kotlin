@@ -11,7 +11,7 @@ interface RequestDao {
     @Query("SELECT * FROM requests WHERE id = :id")
     suspend fun getById(id: String): RequestDTO
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(request: RequestDTO)
 
     @Update

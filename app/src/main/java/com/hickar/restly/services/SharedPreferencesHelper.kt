@@ -34,7 +34,11 @@ class SharedPreferencesHelper @Inject constructor(
         prefs.edit().remove(RESTLY_USER).apply()
     }
 
-    fun setRestlyJwt(token: String) {
+    fun getRestlyJwt(): String? {
+        return prefs.getString(RESTLY_JWT, null)
+    }
+
+    fun setRestlyJwt(token: String?) {
         prefs.edit().putString(RESTLY_JWT, token).apply()
     }
 

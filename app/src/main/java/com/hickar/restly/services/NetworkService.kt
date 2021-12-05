@@ -6,6 +6,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import com.hickar.restly.extensions.toMb
 import com.hickar.restly.models.*
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -108,7 +109,42 @@ class NetworkService @Inject constructor(
         })
     }
 
-    suspend fun sendRequest(request: com.hickar.restly.models.Request, callbackDelegate: Callback, unsafe: Boolean = false) {
+    suspend private fun requestSync(
+        url: String,
+        method: String,
+        headers: List<RequestHeader>,
+        body: RequestBody?,
+    ): Response? {
+        val builder = Request.Builder()
+            .url(url)
+            .method(method, body)
+
+        for (header in headers) {
+            if (header.enabled && !header.isEmpty()) builder.addHeader(header.key, header.value)
+        }
+
+        val request = builder.build()
+        val client = if (prefs.getRequestPrefs().sslVerificationEnabled) {
+            OkHttpClient.Builder()
+                .callTimeout(prefs.getRequestPrefs().timeout, TimeUnit.MILLISECONDS)
+                .build()
+        } else {
+            getUnsafeHttpClient()
+        }
+
+        return try {
+            client.newCall(request).execute()
+        } catch (e: IOException) {
+            Log.e("NetworkService.requestSync", e.localizedMessage)
+            null
+        }
+    }
+
+    suspend fun sendRequest(
+        request: com.hickar.restly.models.Request,
+        callbackDelegate: Callback,
+        unsafe: Boolean = false
+    ) {
         val requestBody = if (request.shouldHaveBody()) {
             createRequestBody(request.body)
         } else {
@@ -120,6 +156,19 @@ class NetworkService @Inject constructor(
         } else {
             requestRaw(request.query.url, request.method.value, request.headers, requestBody, callbackDelegate)
         }
+    }
+
+    suspend fun sendRequestSync(
+        request: com.hickar.restly.models.Request,
+        unsafe: Boolean = false
+    ): Response? {
+        val requestBody = if (request.shouldHaveBody()) {
+            createRequestBody(request.body)
+        } else {
+            null
+        }
+
+        return requestSync(request.query.url, request.method.value, request.headers, requestBody)
     }
 
     private fun createRequestBody(body: com.hickar.restly.models.RequestBody?): RequestBody? {

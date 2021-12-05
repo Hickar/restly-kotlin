@@ -70,11 +70,19 @@ class AuthService @Inject constructor(
                     200 -> {
                         val body = response.body?.string()
                         if (body != null) {
-                            val userInfo = gson.fromJson(body, RestlyUserInfo::class.java)
+                            val authCredentials = gson.fromJson(body, AuthUserResponse::class.java)
+                            if (authCredentials != null) {
+                                val userInfo = RestlyUserInfo(
+                                    authCredentials.id,
+                                    authCredentials.email,
+                                    authCredentials.username
+                                )
 
-                            prefs.setRestlyUserInfo(userInfo)
-                            prefs.setRestlyJwt(userInfo.token)
-                            delegate.onRestlyLoginSuccess(userInfo)
+                                prefs.setRestlyUserInfo(userInfo)
+                                prefs.setRestlyJwt(authCredentials.token)
+
+                                delegate.onRestlyLoginSuccess(userInfo)
+                            }
                         } else {
                             delegate.onFailure(call, EmptyAuthResponseBodyException())
                         }

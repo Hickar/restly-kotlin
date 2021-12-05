@@ -9,7 +9,7 @@ import com.hickar.restly.repository.dao.RequestDao
 import com.hickar.restly.repository.models.CollectionDTO
 import com.hickar.restly.repository.models.RequestDTO
 
-@Database(entities = [RequestDTO::class, CollectionDTO::class], version = 8)
+@Database(entities = [RequestDTO::class, CollectionDTO::class], version = 9)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun requestDao(database: AppDatabase = this): RequestDao
     abstract fun collectionDao(database: AppDatabase = this): CollectionDao

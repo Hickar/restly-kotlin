@@ -44,7 +44,7 @@ class RequestMapper @Inject constructor(
             gson.fromJson(request.query, RequestQuery::class.java),
             headers,
             gson.fromJson(request.body, RequestBody::class.java),
-            request.collectionId
+            request.parentId
         )
     }
 

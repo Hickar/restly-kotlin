@@ -42,6 +42,6 @@ class DatabaseModule {
     @Singleton
     @Provides
     fun provideGson(): Gson {
-        return GsonBuilder().serializeNulls().create()
+        return GsonBuilder().disableHtmlEscaping().serializeNulls().create()
     }
 }

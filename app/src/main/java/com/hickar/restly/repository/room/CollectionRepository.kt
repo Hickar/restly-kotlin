@@ -4,11 +4,17 @@ import androidx.annotation.WorkerThread
 import com.hickar.restly.models.Collection
 import com.hickar.restly.models.Request
 import com.hickar.restly.repository.dao.CollectionDao
+import com.hickar.restly.repository.dao.CollectionRemoteSource
 import com.hickar.restly.repository.dao.RequestDao
 import com.hickar.restly.repository.dao.RequestGroupDao
 import com.hickar.restly.repository.mappers.CollectionMapper
 import com.hickar.restly.repository.mappers.RequestGroupMapper
 import com.hickar.restly.repository.mappers.RequestMapper
+import com.hickar.restly.repository.models.CollectionDTO
+import com.hickar.restly.repository.models.CollectionRemoteDTO
+import com.hickar.restly.services.SharedPreferencesHelper
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -19,10 +25,34 @@ class CollectionRepository @Inject constructor(
     private val requestGroupMapper: RequestGroupMapper,
     private val collectionDao: CollectionDao,
     private val requestDao: RequestDao,
-    private val requestGroupDao: RequestGroupDao
+    private val collectionRemoteSource: CollectionRemoteSource,
+    private val prefs: SharedPreferencesHelper
 ) {
     @WorkerThread
     suspend fun getAllCollections(): List<Collection> {
+//        if (prefs.getRestlyUserInfo() != null) {
+//            val token = prefs.getRestlyJwt()
+//            collectionRemoteSource.getCollections(token) { collections ->
+//                MainScope().launch {
+//                    for (collection in collections) {
+//                        collectionDao.insert(
+//                            CollectionDTO(
+//                                collection.id,
+//                                collection.name,
+//                                collection.description,
+//                                collection.owner,
+//                                null
+//                            )
+//                        )
+//
+//                        for (request in collection.items) {
+//                            requestDao.insert(requestMapper.toDTO(request))
+//                        }
+//                    }
+//                }
+//            }
+//        }
+
         return collectionMapper.toEntityList(collectionDao.getAll())
     }
 
@@ -74,5 +104,30 @@ class CollectionRepository @Inject constructor(
     @WorkerThread
     suspend fun deleteRequestsByCollectionId(id: String) {
         return requestDao.deleteByCollectionId(id)
+    }
+
+    @WorkerThread
+    suspend fun saveAllToRemote() {
+//        if (prefs.getRestlyUserInfo() != null) {
+//            val token = prefs.getRestlyJwt()
+//            val collections = collectionDao.getAll()
+//            val collectionDTOs = mutableListOf<CollectionRemoteDTO>()
+//
+//            for (collection in collections) {
+//                val requests = requestMapper.toEntityList(requestDao.getByCollectionId(collection.id))
+//
+//                collectionDTOs.add(
+//                    CollectionRemoteDTO(
+//                        collection.id,
+//                        collection.name,
+//                        collection.description,
+//                        collection.owner,
+//                        requests
+//                    )
+//                )
+//            }
+//
+//            collectionRemoteSource.postCollections(token, collectionDTOs)
+//        }
     }
 }

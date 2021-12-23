@@ -9,16 +9,12 @@
         android:id="@+id/request_body_tabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tabMode="fixed"
-        android:overScrollMode="never" />
+        android:overScrollMode="never"
+        app:tabMode="fixed" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/request_body_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/request_body_tabs" />
+        android:layout_weight="1" />
 </LinearLayout>

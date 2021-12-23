@@ -9,11 +9,11 @@ class CollectionMapper @Inject constructor(
     private val gson: Gson
 ) : Mapper<Collection, CollectionDTO> {
     override fun toDTO(entity: Collection): CollectionDTO {
-        return CollectionDTO(entity.uid, entity.id, entity.name, entity.description, entity.owner)
+        return CollectionDTO(entity.id, entity.name, entity.description, entity.owner, entity.parentId)
     }
 
     override fun toEntity(dto: CollectionDTO): Collection {
-        return Collection(dto.uid, dto.id, dto.name, dto.description, dto.owner)
+        return Collection(dto.id, dto.name, dto.description, dto.owner, dto.parentId)
     }
 
     override fun toDTOList(entities: List<Collection>): List<CollectionDTO> {

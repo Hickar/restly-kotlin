@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "requests")
 data class RequestDTO(
-    @NonNull @PrimaryKey(autoGenerate = true) val id: Long,
+    @PrimaryKey @NonNull val id: String,
     @NonNull @ColumnInfo(defaultValue = "GET") val method: String,
     @NonNull @ColumnInfo(defaultValue = "New Request") val name: String,
     val query: String,

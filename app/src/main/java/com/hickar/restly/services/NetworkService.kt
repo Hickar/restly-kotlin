@@ -6,8 +6,10 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import com.hickar.restly.extensions.toMb
 import com.hickar.restly.models.*
+import dagger.hilt.android.qualifiers.ApplicationContext
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Request
@@ -20,12 +22,13 @@ import java.io.IOException
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
 
-class NetworkService(
-    private val context: Context,
+class NetworkService @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val prefs: SharedPreferencesHelper
 ) {
     private val contentResolver = context.contentResolver
@@ -71,14 +74,101 @@ class NetworkService(
         })
     }
 
-    suspend fun sendRequest(request: com.hickar.restly.models.Request, callbackDelegate: Callback) {
+    suspend fun requestRawUnsafe(
+        url: String,
+        method: String,
+        headers: List<RequestHeader>,
+        body: RequestBody?,
+        callbackDelegate: Callback
+    ) {
+        val builder = Request.Builder()
+            .url(url)
+            .method(method, body)
+
+        for (header in headers) {
+            if (header.enabled && !header.isEmpty()) builder.addHeader(header.key, header.value)
+        }
+
+        val request = builder.build()
+        val client = getUnsafeHttpClient()
+
+        getRemoteFileSize(url, object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                callbackDelegate.onFailure(call, e)
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val fileSize = response.body?.contentLength()!!.toMb()
+                response.close()
+                if (fileSize < prefs.getRequestPrefs().maxSize || prefs.getRequestPrefs().maxSize == 0L) {
+                    client.newCall(request).enqueue(callbackDelegate)
+                } else {
+                    callbackDelegate.onFailure(call, java.io.FileNotFoundException("File size exceeds maximum limit"))
+                }
+            }
+        })
+    }
+
+    suspend private fun requestSync(
+        url: String,
+        method: String,
+        headers: List<RequestHeader>,
+        body: RequestBody?,
+    ): Response? {
+        val builder = Request.Builder()
+            .url(url)
+            .method(method, body)
+
+        for (header in headers) {
+            if (header.enabled && !header.isEmpty()) builder.addHeader(header.key, header.value)
+        }
+
+        val request = builder.build()
+        val client = if (prefs.getRequestPrefs().sslVerificationEnabled) {
+            OkHttpClient.Builder()
+                .callTimeout(prefs.getRequestPrefs().timeout, TimeUnit.MILLISECONDS)
+                .build()
+        } else {
+            getUnsafeHttpClient()
+        }
+
+        return try {
+            client.newCall(request).execute()
+        } catch (e: IOException) {
+            Log.e("NetworkService.requestSync", e.localizedMessage)
+            null
+        }
+    }
+
+    suspend fun sendRequest(
+        request: com.hickar.restly.models.Request,
+        callbackDelegate: Callback,
+        unsafe: Boolean = false
+    ) {
         val requestBody = if (request.shouldHaveBody()) {
             createRequestBody(request.body)
         } else {
             null
         }
 
-        requestRaw(request.query.url, request.method.value, request.headers, requestBody, callbackDelegate)
+        if (unsafe) {
+            requestRawUnsafe(request.query.url, request.method.value, request.headers, requestBody, callbackDelegate)
+        } else {
+            requestRaw(request.query.url, request.method.value, request.headers, requestBody, callbackDelegate)
+        }
+    }
+
+    suspend fun sendRequestSync(
+        request: com.hickar.restly.models.Request,
+        unsafe: Boolean = false
+    ): Response? {
+        val requestBody = if (request.shouldHaveBody()) {
+            createRequestBody(request.body)
+        } else {
+            null
+        }
+
+        return requestSync(request.query.url, request.method.value, request.headers, requestBody)
     }
 
     private fun createRequestBody(body: com.hickar.restly.models.RequestBody?): RequestBody? {
@@ -154,7 +244,7 @@ class NetworkService(
     }
 
     private fun createRawBody(body: RequestRawData): RequestBody {
-        return body.text.toRequestBody(body.mimeType.toMediaType())
+        return body.text.toRequestBody()
     }
 
     fun isNetworkAvailable(): Boolean {

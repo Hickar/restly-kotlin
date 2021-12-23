@@ -4,8 +4,9 @@ import com.google.gson.Gson
 import com.hickar.restly.consts.RequestMethod
 import com.hickar.restly.models.*
 import com.hickar.restly.repository.models.RequestDTO
+import javax.inject.Inject
 
-class RequestMapper(
+class RequestMapper @Inject constructor(
     private val gson: Gson
 ) : Mapper<Request, RequestDTO> {
     override fun toDTO(request: Request): RequestDTO {

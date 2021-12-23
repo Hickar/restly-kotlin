@@ -1,60 +1,98 @@
 package com.hickar.restly.viewModel
 
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hickar.restly.consts.RequestMethod
+import com.google.gson.Gson
 import com.hickar.restly.models.*
-import com.hickar.restly.services.ServiceLocator
+import com.hickar.restly.services.AuthService
+import com.hickar.restly.services.NetworkService
+import com.hickar.restly.services.SharedPreferencesHelper
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch
 import okhttp3.Call
-import okhttp3.Response
 import java.io.IOException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
+import javax.inject.Inject
 
-class SettingsViewModel : ViewModel(), okhttp3.Callback {
-    private val prefs = ServiceLocator.getInstance().getSharedPreferences()
-    private val networkService = ServiceLocator.getInstance().getNetworkClient()
+class SettingsViewModel @AssistedInject constructor(
+    @Assisted private val handle: SavedStateHandle,
+    private val prefs: SharedPreferencesHelper,
+    private val authService: AuthService
+) : ViewModel(), AuthService.Delegate {
+    @Inject
+    lateinit var networkService: NetworkService
 
-    val isLoggedIn: MutableLiveData<Boolean> = MutableLiveData(false)
-    val userInfo: MutableLiveData<PostmanUserInfo> = MutableLiveData()
+    @Inject
+    lateinit var gson: Gson
+
+    val successfulRegistration: MutableLiveData<Boolean> = MutableLiveData(false)
+
+    val isLoggedInRestly: MutableLiveData<Boolean> = MutableLiveData(false)
+    val restlyUserInfo: MutableLiveData<RestlyUserInfo?> = MutableLiveData()
+
+    val isLoggedInPostman: MutableLiveData<Boolean> = MutableLiveData(false)
+    val postmanUserInfo: MutableLiveData<PostmanUserInfo?> = MutableLiveData()
 
     val requestPrefs: MutableLiveData<RequestPrefs> = MutableLiveData(prefs.getRequestPrefs())
     val webViewPrefs: MutableLiveData<WebViewPrefs> = MutableLiveData(prefs.getWebViewPrefs())
 
-    val error: MutableLiveData<ErrorEvent> = MutableLiveData()
-
-    private var apiKeyGuess: String = ""
+    val error: MutableLiveData<ErrorEvent?> = MutableLiveData()
 
     init {
-        val savedUserInfo = prefs.getUserInfo()
-        if (savedUserInfo != null) {
-            userInfo.value = savedUserInfo
-            isLoggedIn.value = true
+        val savedPostmanUserInfo = prefs.getPostmanUserInfo()
+        if (savedPostmanUserInfo != null) {
+            postmanUserInfo.value = savedPostmanUserInfo
+            isLoggedInPostman.value = true
+        }
+
+        val savedRestlyUserInfo = prefs.getRestlyUserInfo()
+        if (savedRestlyUserInfo != null) {
+            restlyUserInfo.value = savedRestlyUserInfo
+            isLoggedInRestly.value = true
         }
 
         requestPrefs.value = prefs.getRequestPrefs()
     }
 
-    fun loginToPostman(apiKey: String) {
-        apiKeyGuess = apiKey
-
+    fun loginToRestly(username: String, password: String) {
         viewModelScope.launch {
-            networkService.requestRaw(
-                "https://api.getpostman.com/me",
-                RequestMethod.GET.value,
-                listOf(RequestHeader("X-Api-key", apiKey)),
-                null,
+            authService.loginToReslty(
+                RestlyLoginCredentials(username, password),
                 this@SettingsViewModel
             )
         }
     }
 
+    fun logoutFromRestly() {
+        prefs.deleteRestlyUserInfo()
+        isLoggedInRestly.value = false
+        restlyUserInfo.value = null
+    }
+
+    fun signUpInRestly(email: String, username: String, password: String) {
+        viewModelScope.launch {
+            authService.signUpInRestly(
+                RestlySignupCredentials(email, username, password),
+                this@SettingsViewModel
+            )
+        }
+    }
+
+    fun loginToPostman(apiKey: String) {
+        viewModelScope.launch {
+            authService.loginToPostman(apiKey, this@SettingsViewModel)
+        }
+    }
+
     fun logoutFromPostman() {
-        prefs.deleteUserInfo()
-        isLoggedIn.value = false
-        userInfo.value = null
+        prefs.deletePostmanUserInfo()
+        isLoggedInPostman.value = false
+        postmanUserInfo.value = null
     }
 
     fun setRequestSslVerificationEnabled(enabled: Boolean) {
@@ -92,24 +130,31 @@ class SettingsViewModel : ViewModel(), okhttp3.Callback {
                     ErrorEvent.NoInternetConnectionError
                 }
             }
+            is InvalidCredentialsException -> ErrorEvent.InvalidCredentials
+            is NotStrongPasswordException -> ErrorEvent.NotStrongPassword
+            is UserExistsException -> ErrorEvent.UserExists
+            is WrongApiKeyException -> ErrorEvent.PostmanAuthError
             else -> ErrorEvent.ConnectionUnexpected
         }
         error.postValue(newError)
     }
 
-    override fun onResponse(call: Call, response: Response) {
-        val responseBody = response.body?.string()
-        val gson = ServiceLocator.getInstance().getGson()
+    override fun onRegistrationSuccess() {
+        successfulRegistration.postValue(true)
+    }
 
-        if (response.code == 200) {
-            val info = gson.fromJson(responseBody, PostmanGetMeInfo::class.java)
-            userInfo.postValue(info.user)
-            isLoggedIn.postValue(true)
+    override fun onPostmanLoginSuccess(userInfo: PostmanUserInfo) {
+        postmanUserInfo.postValue(userInfo)
+        isLoggedInPostman.postValue(true)
+    }
 
-            prefs.setApiKey(apiKeyGuess)
-            prefs.setUserInfo(info.user)
-        } else {
-            error.postValue(ErrorEvent.AuthenticationError)
-        }
+    override fun onRestlyLoginSuccess(userInfo: RestlyUserInfo) {
+        restlyUserInfo.postValue(userInfo)
+        isLoggedInRestly.postValue(true)
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun build(handle: SavedStateHandle): SettingsViewModel
     }
 }

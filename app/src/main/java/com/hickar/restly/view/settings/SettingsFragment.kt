@@ -7,7 +7,8 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.slider.Slider
 import com.hickar.restly.R
 import com.hickar.restly.databinding.SettingsBinding
@@ -18,11 +19,20 @@ import com.hickar.restly.extensions.toLongSafely
 import com.hickar.restly.utils.NumberRangeInputFilter
 import com.hickar.restly.view.dialogs.EditTextDialog
 import com.hickar.restly.view.dialogs.WarningDialog
+import com.hickar.restly.viewModel.LambdaFactory
 import com.hickar.restly.viewModel.SettingsViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class SettingsFragment : Fragment() {
 
-    private val viewModel: SettingsViewModel by viewModels()
+    @Inject lateinit var factory: SettingsViewModel.Factory
+    private val viewModel: SettingsViewModel by activityViewModels {
+        LambdaFactory(this) { stateHandle ->
+            factory.build(stateHandle)
+        }
+    }
 
     private var _binding: SettingsBinding? = null
     private val binding get() = _binding!!
@@ -44,13 +54,27 @@ class SettingsFragment : Fragment() {
     }
 
     private fun setupEventListeners() {
-        binding.settingsLoginButton.setOnClickListener {
+        binding.settingsLoginRestlyButton.setOnClickListener {
+            val action = SettingsFragmentDirections.actionNavigationSettingsToAccountLoginFragment()
+            findNavController().navigate(action)
+        }
+
+        binding.settingsRegisterRestlyButton.setOnClickListener {
+            val action = SettingsFragmentDirections.actionNavigationSettingsToAccountRegisterFragment()
+            findNavController().navigate(action)
+        }
+
+        binding.settingsLogoutRestlyButton.setOnClickListener {
+            viewModel.logoutFromRestly()
+        }
+
+        binding.settingsLoginPostmanButton.setOnClickListener {
             EditTextDialog(R.string.settings_login_postman_dialog_title, "") { apiKey ->
                 viewModel.loginToPostman(apiKey)
             }.show(parentFragmentManager, "Postman Login")
         }
 
-        binding.settingsLogoutButton.setOnClickListener {
+        binding.settingsLogoutPostmanButton.setOnClickListener {
             viewModel.logoutFromPostman()
         }
 
@@ -84,20 +108,37 @@ class SettingsFragment : Fragment() {
     }
 
     private fun setupObservers() {
-        viewModel.isLoggedIn.observe(viewLifecycleOwner) { isLoggedIn ->
+        viewModel.isLoggedInPostman.observe(viewLifecycleOwner) { isLoggedIn ->
             if (isLoggedIn) {
-                binding.settingsLoginLoggedinContainer.show()
-                binding.settingsLoginNotloggedinContainer.hide()
+                binding.settingsLoginPostmanLoggedinContainer.show()
+                binding.settingsLoginPostmanNotloggedinContainer.hide()
             } else {
-                binding.settingsLoginLoggedinContainer.hide()
-                binding.settingsLoginNotloggedinContainer.show()
+                binding.settingsLoginPostmanLoggedinContainer.hide()
+                binding.settingsLoginPostmanNotloggedinContainer.show()
             }
         }
 
-        viewModel.userInfo.observe(viewLifecycleOwner) { userInfo ->
+        viewModel.isLoggedInRestly.observe(viewLifecycleOwner) { isLoggedIn ->
+            if (isLoggedIn) {
+                binding.settingsLoginRestlyLoggedinContainer.show()
+                binding.settingsLoginRestlyNotloggedinContainer.hide()
+            } else {
+                binding.settingsLoginRestlyLoggedinContainer.hide()
+                binding.settingsLoginRestlyNotloggedinContainer.show()
+            }
+        }
+
+        viewModel.postmanUserInfo.observe(viewLifecycleOwner) { userInfo ->
             if (userInfo != null)  {
-                binding.settingsLoginFullnameLabel.text = userInfo.fullName.toEditable()
-                binding.settingsLoginEmailLabel.text = userInfo.email.toEditable()
+                binding.settingsLoginPostmanFullnameLabel.text = userInfo.fullName.toEditable()
+                binding.settingsLoginPostmanEmailLabel.text = userInfo.email.toEditable()
+            }
+        }
+
+        viewModel.restlyUserInfo.observe(viewLifecycleOwner) { userInfo ->
+            if (userInfo != null) {
+                binding.settingsLoginRestlyFullnameLabel.text = userInfo.username.toEditable()
+                binding.settingsLoginRestlyEmailLabel.text = userInfo.email.toEditable()
             }
         }
 
@@ -113,7 +154,17 @@ class SettingsFragment : Fragment() {
         }
 
         viewModel.error.observe(viewLifecycleOwner) { error ->
-            WarningDialog(error.title, error.message).show(parentFragmentManager, "AuthError")
+            if (error != null) {
+                WarningDialog(error.title, error.message).show(parentFragmentManager, "AuthError")
+                viewModel.error.value = null
+            }
+        }
+
+        viewModel.successfulRegistration.observe(viewLifecycleOwner) { signedUp ->
+            if (signedUp == true) {
+                WarningDialog(R.string.successful_sign_up_title, R.string.successful_sign_up_description)
+                    .show(parentFragmentManager, "SignUp")
+            }
         }
     }
 

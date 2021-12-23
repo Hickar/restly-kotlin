@@ -1,9 +1,10 @@
 package com.hickar.restly.models
 
 import com.hickar.restly.consts.RequestMethod
+import java.util.*
 
 data class Request(
-    var id: Long = 0,
+    var id: String = UUID.randomUUID().toString(),
     var method: RequestMethod = RequestMethod.GET,
     var name: String = "New Request",
     var query: RequestQuery = RequestQuery(),

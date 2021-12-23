@@ -1,11 +1,22 @@
 package com.hickar.restly.repository.dao
 
-import androidx.room.Dao
-import androidx.room.Query
+import androidx.room.*
 import com.hickar.restly.repository.models.CollectionDTO
 
 @Dao
-abstract class CollectionDao : BaseDao<CollectionDTO>("collections") {
-    @Query("SELECT * FROM collections WHERE id = :collectionId")
-    abstract suspend fun getById(collectionId: String): CollectionDTO
+interface CollectionDao {
+    @Query("SELECT * FROM collections")
+    suspend fun getAll(): List<CollectionDTO>
+
+    @Query("SELECT * FROM collections WHERE id = :id")
+    suspend fun getById(id: String): CollectionDTO
+
+    @Insert
+    suspend fun insert(collection: CollectionDTO)
+
+    @Update
+    suspend fun update(collection: CollectionDTO)
+
+    @Delete
+    suspend fun delete(collection: CollectionDTO)
 }

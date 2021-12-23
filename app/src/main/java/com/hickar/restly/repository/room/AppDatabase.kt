@@ -8,9 +8,8 @@ import com.hickar.restly.repository.dao.CollectionDao
 import com.hickar.restly.repository.dao.RequestDao
 import com.hickar.restly.repository.models.CollectionDTO
 import com.hickar.restly.repository.models.RequestDTO
-import kotlinx.coroutines.CoroutineScope
 
-@Database(entities = [RequestDTO::class, CollectionDTO::class], version = 7)
+@Database(entities = [RequestDTO::class, CollectionDTO::class], version = 9)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun requestDao(database: AppDatabase = this): RequestDao
     abstract fun collectionDao(database: AppDatabase = this): CollectionDao
@@ -20,8 +19,7 @@ abstract class AppDatabase : RoomDatabase() {
         private var INSTANCE: AppDatabase? = null
 
         fun getDatabase(
-            context: Context,
-            scope: CoroutineScope
+            context: Context
         ): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(

@@ -4,16 +4,50 @@ import android.content.Context
 import com.google.gson.Gson
 import com.hickar.restly.models.PostmanUserInfo
 import com.hickar.restly.models.RequestPrefs
+import com.hickar.restly.models.RestlyUserInfo
 import com.hickar.restly.models.WebViewPrefs
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
-class SharedPreferencesHelper(
-    context: Context,
+class SharedPreferencesHelper @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val gson: Gson
 ) {
     private val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
-    fun getUserInfo(): PostmanUserInfo? {
-        val json = prefs.getString(USER, null)
+    fun getRestlyUserInfo(): RestlyUserInfo? {
+        val json = prefs.getString(RESTLY_USER, null)
+
+        return if (json == null) {
+            json
+        } else {
+            gson.fromJson(json, RestlyUserInfo::class.java)
+        }
+    }
+
+    fun setRestlyUserInfo(userInfo: RestlyUserInfo?) {
+        val json = gson.toJson(userInfo, RestlyUserInfo::class.java)
+        prefs.edit().putString(RESTLY_USER, json).apply()
+    }
+
+    fun deleteRestlyUserInfo() {
+        prefs.edit().remove(RESTLY_USER).apply()
+    }
+
+    fun getRestlyJwt(): String? {
+        return prefs.getString(RESTLY_JWT, null)
+    }
+
+    fun setRestlyJwt(token: String?) {
+        prefs.edit().putString(RESTLY_JWT, token).apply()
+    }
+
+    fun deleteRestlyJwt() {
+        prefs.edit().remove(RESTLY_JWT).apply()
+    }
+
+    fun getPostmanUserInfo(): PostmanUserInfo? {
+        val json = prefs.getString(POSTMAN_USER, null)
 
         return if (json == null) {
             json
@@ -22,18 +56,18 @@ class SharedPreferencesHelper(
         }
     }
 
-    fun setUserInfo(userInfo: PostmanUserInfo?) {
+    fun setPostmanUserInfo(userInfo: PostmanUserInfo?) {
         val json = gson.toJson(userInfo, PostmanUserInfo::class.java)
-        prefs.edit().putString(USER, json).apply()
+        prefs.edit().putString(POSTMAN_USER, json).apply()
     }
 
-    fun deleteUserInfo() {
-        prefs.edit().remove(USER).apply()
+    fun deletePostmanUserInfo() {
+        prefs.edit().remove(POSTMAN_USER).apply()
     }
 
-    fun getApiKey(): String? = prefs.getString(POSTMAN_KEY, null)
+    fun getPostmanApiKey(): String? = prefs.getString(POSTMAN_KEY, null)
 
-    fun setApiKey(key: String) = prefs.edit().putString(POSTMAN_KEY, key).apply()
+    fun setPostmanApiKey(key: String) = prefs.edit().putString(POSTMAN_KEY, key).apply()
 
     fun getRequestPrefs(): RequestPrefs {
         val json = prefs.getString(REQUEST, null)
@@ -67,7 +101,9 @@ class SharedPreferencesHelper(
 
     companion object {
         private const val PREFS_NAME = "com.restly.hickar.preferences"
-        private const val USER = "postman_user"
+        private const val RESTLY_USER = "restly_user"
+        private const val RESTLY_JWT = "restly_jwt"
+        private const val POSTMAN_USER = "postman_user"
         private const val POSTMAN_KEY = "postman_api_key"
         private const val REQUEST = "request"
         private const val WEBVIEW = "webview"

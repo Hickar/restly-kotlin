@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/collection_graph.xml"
-    app:startDestination="@id/requestListFragment">
+    app:startDestination="@id/requestGroupFragment">
 
     <fragment
-        android:id="@+id/requestListFragment"
-        android:name="com.hickar.restly.view.requestList.RequestListFragment"
-        android:label="@string/requests_tab_title"
-        tools:layout="@layout/request_list">
+        android:id="@+id/requestGroupFragment"
+        android:name="com.hickar.restly.view.requestGroup.RequestGroupFragment"
+        android:label="@string/requests_tab_title">
         <argument
             android:name="collectionId"
             app:argType="string"
@@ -19,14 +17,14 @@
             android:defaultValue="Requests"
             app:argType="string" />
         <action
-            android:id="@+id/action_requestListFragment_to_requestDetailFragment"
-            app:destination="@id/requestDetailFragment"
+            android:id="@+id/action_requestGroupFragment_to_requestFragment"
+            app:destination="@id/requestFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
         <action
-            android:id="@+id/action_requestListFragment_to_collectionEditFragment"
+            android:id="@+id/action_requestGroupFragment_to_collectionEditFragment"
             app:destination="@id/collectionEditFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
@@ -50,20 +48,20 @@
         android:label="Response Info" />
 
     <fragment
-        android:id="@+id/requestDetailFragment"
+        android:id="@+id/requestFragment"
         android:name="com.hickar.restly.view.request.RequestFragment">
         <argument
             android:name="requestId"
-            app:argType="long" />
+            app:argType="string" />
         <action
-            android:id="@+id/action_requestDetailFragment_to_requestBodyEditRawFragment"
+            android:id="@+id/action_requestFragment_to_requestBodyEditRawFragment"
             app:destination="@id/requestBodyEditRawFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
         <action
-            android:id="@+id/action_requestDetailFragment_to_responseBodyInfoFragment"
+            android:id="@+id/action_requestFragment_to_responseBodyInfoFragment"
             app:destination="@id/responseBodyInfoFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"

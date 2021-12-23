@@ -20,20 +20,25 @@ import com.hickar.restly.utils.KeyboardUtil
 import com.hickar.restly.view.dialogs.EditTextDialog
 import com.hickar.restly.view.dialogs.WarningDialog
 import com.hickar.restly.view.request.adapters.RequestViewPagerAdapter
+import com.hickar.restly.viewModel.LambdaFactory
 import com.hickar.restly.viewModel.RequestViewModel
-import com.hickar.restly.viewModel.RequestViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class RequestFragment : Fragment() {
     private var _binding: RequestBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var applicationScope: CoroutineScope
 
-    private val viewModel: RequestViewModel by activityViewModels {
-        val application = requireActivity().application as RestlyApplication
-        RequestViewModelFactory(application.requestRepository)
+    @Inject lateinit var factory: RequestViewModel.Factory
+    val viewModel: RequestViewModel by activityViewModels {
+        LambdaFactory(this) { stateHandle ->
+            factory.build(stateHandle)
+        }
     }
 
     private lateinit var tabLayout: TabLayout
@@ -41,7 +46,7 @@ class RequestFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.loadRequest(arguments?.get(REQUEST_ID_KEY) as Long)
+        viewModel.loadRequest(arguments?.get(REQUEST_ID_KEY) as String)
         applicationScope = (requireActivity().application as RestlyApplication).applicationScope
     }
 

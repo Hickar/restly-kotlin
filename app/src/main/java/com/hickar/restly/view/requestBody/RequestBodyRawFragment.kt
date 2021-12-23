@@ -45,7 +45,7 @@ class RequestBodyRawFragment : Fragment() {
 
         binding.requestBodyRawEditButton.setOnClickListener {
             val rawData = viewModel.rawData.value?.text
-            val action = RequestFragmentDirections.actionRequestDetailFragmentToRequestBodyEditRawFragment(rawData)
+            val action = RequestFragmentDirections.actionRequestFragmentToRequestBodyEditRawFragment(rawData)
             findNavController().navigate(action)
         }
 

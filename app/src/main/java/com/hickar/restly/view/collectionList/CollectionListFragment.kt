@@ -10,20 +10,26 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.hickar.restly.R
-import com.hickar.restly.RestlyApplication
 import com.hickar.restly.databinding.CollectionListBinding
 import com.hickar.restly.utils.SwipeDeleteCallback
 import com.hickar.restly.view.collectionList.adapters.CollectionListAdapter
 import com.hickar.restly.view.dialogs.ConfirmationDialog
-import com.hickar.restly.view.requestList.RequestListFragment
+import com.hickar.restly.view.requestGroup.RequestGroupFragment
 import com.hickar.restly.viewModel.CollectionListViewModel
-import com.hickar.restly.viewModel.CollectionViewModelFactory
+import com.hickar.restly.viewModel.LambdaFactory
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.runBlocking
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class CollectionListFragment : Fragment() {
+    @Inject lateinit var factory: CollectionListViewModel.Factory
     private val viewModel: CollectionListViewModel by activityViewModels {
-        CollectionViewModelFactory(requireActivity().application as RestlyApplication)
+        LambdaFactory(this) { stateHandle ->
+            factory.build(stateHandle)
+        }
     }
+
     private lateinit var recyclerView: RecyclerView
 
     private lateinit var itemTouchHelper: ItemTouchHelper
@@ -49,9 +55,9 @@ class CollectionListFragment : Fragment() {
     private fun setupAdapters() {
         val adapter = CollectionListAdapter {
             val bundle = Bundle()
-            bundle.putString(RequestListFragment.COLLECTION_ID_KEY, it.id)
-            bundle.putString(RequestListFragment.COLLECTION_NAME_KEY, it.name)
-            findNavController().navigate(R.id.navigate_fromCollectionTab_toRequestList, bundle)
+            bundle.putString(RequestGroupFragment.COLLECTION_ID_KEY, it.id)
+            bundle.putString(RequestGroupFragment.COLLECTION_NAME_KEY, it.name)
+            findNavController().navigate(R.id.navigate_fromCollectionTab_toRequestGroup, bundle)
         }
 
         recyclerView = binding.collectionList
@@ -104,9 +110,9 @@ class CollectionListFragment : Fragment() {
                     val newCollectionId = viewModel.createNewCollection()
                     val bundle = Bundle()
 
-                    bundle.putString(RequestListFragment.COLLECTION_ID_KEY, newCollectionId)
-                    bundle.putString(RequestListFragment.COLLECTION_NAME_KEY, "New Collection")
-                    findNavController().navigate(R.id.navigate_fromCollectionTab_toRequestList, bundle)
+                    bundle.putString(RequestGroupFragment.COLLECTION_ID_KEY, newCollectionId)
+                    bundle.putString(RequestGroupFragment.COLLECTION_NAME_KEY, "New Collection")
+                    findNavController().navigate(R.id.navigate_fromCollectionTab_toRequestGroup, bundle)
 
                     return@coroutineScope true
                 }

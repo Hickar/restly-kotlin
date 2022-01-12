@@ -14,7 +14,7 @@ class TransitionToDefaultRequestGroup : Fragment() {
         setHasOptionsMenu(true)
 
         val action = TransitionToDefaultRequestGroupDirections.navigateFromRequestTabToRequestGroup(
-            Collection.DEFAULT,
+            Collection.DEFAULT, Collection.DEFAULT
         )
         findNavController().navigate(action)
         return super.onCreateView(inflater, container, savedInstanceState)

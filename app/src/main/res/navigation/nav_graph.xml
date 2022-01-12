@@ -19,10 +19,9 @@
                 android:name="collectionId"
                 app:argType="string"
                 app:nullable="true" />
-            <argument
-                android:name="collectionName"
-                android:defaultValue="Requests"
-                app:argType="string" />
+            <argument android:name="groupId"
+                app:argType="string"
+                app:nullable="true" />
         </action>
     </fragment>
 
@@ -42,10 +41,9 @@
                 android:name="collectionId"
                 app:argType="string"
                 app:nullable="true" />
-            <argument
-                android:name="collectionName"
-                android:defaultValue="Requests"
-                app:argType="string" />
+            <argument android:name="groupId"
+                app:argType="string"
+                app:nullable="true" />
         </action>
     </fragment>
 

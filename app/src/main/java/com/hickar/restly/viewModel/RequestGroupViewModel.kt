@@ -18,43 +18,56 @@ class RequestGroupViewModel @AssistedInject constructor(
     private val repository: CollectionRepository,
 ) : ViewModel() {
 
+    val group: MutableLiveData<RequestDirectory> = MutableLiveData()
     val requests: MutableLiveData<MutableList<Request>> = MutableLiveData()
-    var groupId: String = Collection.DEFAULT
+    val folders: MutableLiveData<MutableList<RequestDirectory>> = MutableLiveData()
 
-    fun loadRequests(groupId: String?) {
+    private var groupId: String = RequestDirectory.DEFAULT
+
+    fun loadRequestGroup(groupId: String?) {
         if (groupId != null) {
             this.groupId = groupId
-            refreshRequests()
         }
+        refreshRequestGroup()
     }
 
     suspend fun createNewDefaultRequest(): String {
         val newRequest = Request(parentId = groupId)
         repository.insertRequest(newRequest)
 
-        refreshRequests()
+        refreshRequestGroup()
         return newRequest.id
     }
 
     suspend fun createNewGroup(): String {
         val newGroup = RequestDirectory(name = "New Folder", parentId = groupId)
-//        repository.insertGroup(newGroup)
+        repository.insertRequestGroup(newGroup)
 
-        refreshRequests()
+        refreshRequestGroup()
         return newGroup.id
     }
 
-    fun refreshRequests() {
+    fun refreshRequestGroup() {
         viewModelScope.launch {
-            requests.value = repository.getRequestsByGroupId(groupId).toMutableList()
+            group.value = repository.getRequestGroupById(groupId)
+            if (group.value == null) {
+                group.value = RequestDirectory(
+                    id = RequestDirectory.DEFAULT,
+                    name = "New Folder"
+                )
+                repository.insertRequestGroup(group.value!!)
+            }
+
+            requests.value = group.value?.requests
+            folders.value = group.value?.groups
         }
     }
 
     fun deleteRequest(position: Int) {
         viewModelScope.launch {
             repository.deleteRequest(requests.value!![position])
-            requests.value?.removeAt(position)
-            requests.value = requests.value
+            group.value?.requests?.removeAt(position)
+            group.value = group.value
         }
     }
 

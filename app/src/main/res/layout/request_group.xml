@@ -12,9 +12,9 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:overScrollMode="never"
-        android:paddingBottom="?attr/actionBarSize"
         android:scrollbars="vertical"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:visibility="gone"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/request_group_requests"
@@ -24,6 +24,7 @@
         android:overScrollMode="never"
         android:paddingBottom="?attr/actionBarSize"
         android:scrollbars="vertical"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:visibility="gone"/>
 
 </LinearLayout>

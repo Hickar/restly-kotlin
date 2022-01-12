@@ -13,7 +13,12 @@ class RequestGroupMapper @Inject constructor(
     }
 
     override fun toEntity(dto: RequestDirectoryDTO): RequestDirectory {
-        return RequestDirectory(dto.id, dto.name, dto.description, dto.parentId)
+        return RequestDirectory(
+            id = dto.id,
+            name = dto.name,
+            description = dto.description,
+            parentId = dto.parentId
+        )
     }
 
     override fun toDTOList(entities: List<RequestDirectory>): List<RequestDirectoryDTO> {

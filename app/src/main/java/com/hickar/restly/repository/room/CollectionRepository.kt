@@ -3,9 +3,12 @@ package com.hickar.restly.repository.room
 import androidx.annotation.WorkerThread
 import com.hickar.restly.models.Collection
 import com.hickar.restly.models.Request
+import com.hickar.restly.models.RequestDirectory
+import com.hickar.restly.models.RequestGroup
 import com.hickar.restly.repository.dao.CollectionDao
 import com.hickar.restly.repository.dao.CollectionRemoteSource
 import com.hickar.restly.repository.dao.RequestDao
+import com.hickar.restly.repository.dao.RequestGroupDao
 import com.hickar.restly.repository.mappers.CollectionMapper
 import com.hickar.restly.repository.mappers.RequestGroupMapper
 import com.hickar.restly.repository.mappers.RequestMapper
@@ -20,6 +23,7 @@ class CollectionRepository @Inject constructor(
     private val requestGroupMapper: RequestGroupMapper,
     private val collectionDao: CollectionDao,
     private val requestDao: RequestDao,
+    private val requestGroupDao: RequestGroupDao,
     private val collectionRemoteSource: CollectionRemoteSource,
     private val prefs: SharedPreferencesHelper
 ) {
@@ -74,6 +78,27 @@ class CollectionRepository @Inject constructor(
     @WorkerThread
     suspend fun getRequestsByGroupId(id: String): List<Request> {
         return requestMapper.toEntityList(requestDao.getByGroupId(id))
+    }
+
+    @WorkerThread
+    suspend fun getRequestGroupById(id: String): RequestDirectory? {
+        val requestGroupDto = requestGroupDao.getById(id) ?: return null
+        val subgroups = requestGroupMapper.toEntityList(requestGroupDao.getByParentId(requestGroupDto.id))
+        val requests = requestMapper.toEntityList(requestDao.getByGroupId(requestGroupDto.id))
+
+        return RequestDirectory(
+            id = requestGroupDto.id,
+            name = requestGroupDto.name,
+            description = requestGroupDto.description,
+            requests = requests.toMutableList(),
+            groups = subgroups.toMutableList(),
+            parentId = requestGroupDto.parentId
+        )
+    }
+
+    @WorkerThread
+    suspend fun insertRequestGroup(requestGroup: RequestDirectory) {
+        requestGroupDao.insert(requestGroupMapper.toDTO(requestGroup))
     }
 
     @WorkerThread

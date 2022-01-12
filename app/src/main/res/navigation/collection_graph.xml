@@ -13,9 +13,9 @@
             app:argType="string"
             app:nullable="true" />
         <argument
-            android:name="collectionName"
-            android:defaultValue="Requests"
-            app:argType="string" />
+            android:name="groupId"
+            app:argType="string"
+            app:nullable="true" />
         <action
             android:id="@+id/action_requestGroupFragment_to_requestFragment"
             app:destination="@id/requestFragment"
@@ -36,10 +36,7 @@
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"/>
-        <argument android:name="groupId"
-            app:argType="string"
-            app:nullable="true" />
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
 
     <fragment

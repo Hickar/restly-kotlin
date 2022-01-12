@@ -16,7 +16,7 @@ import com.hickar.restly.repository.models.RequestDirectoryDTO
         RequestDTO::class,
         CollectionDTO::class,
         RequestDirectoryDTO::class
-    ], version = 9
+    ], version = 10
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun requestDao(database: AppDatabase = this): RequestDao

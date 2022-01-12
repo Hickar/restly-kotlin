@@ -16,8 +16,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hickar.restly.MainActivity
 import com.hickar.restly.R
 import com.hickar.restly.databinding.RequestGroupBinding
+import com.hickar.restly.extensions.show
 import com.hickar.restly.utils.SwipeDeleteCallback
-import com.hickar.restly.view.requestGroup.adapters.RequestGroupAdapter
+import com.hickar.restly.view.requestGroup.adapters.FolderListAdapter
+import com.hickar.restly.view.requestGroup.adapters.RequestListAdapter
 import com.hickar.restly.viewModel.CollectionViewModel
 import com.hickar.restly.viewModel.LambdaFactory
 import com.hickar.restly.viewModel.RequestGroupViewModel
@@ -28,7 +30,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class RequestGroupFragment : Fragment() {
 
-    private lateinit var recyclerView: RecyclerView
+    private lateinit var requestsRecyclerView: RecyclerView
+    private lateinit var foldersRecyclerView: RecyclerView
 
     @Inject
     lateinit var collectionFactory: CollectionViewModel.Factory
@@ -51,8 +54,8 @@ class RequestGroupFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestGroupViewModel.loadRequests(arguments?.getString(GROUP_ID_KEY))
         collectionViewModel.loadCollection(arguments?.getString(COLLECTION_ID_KEY))
+        requestGroupViewModel.loadRequestGroup(arguments?.getString(GROUP_ID_KEY))
     }
 
     override fun onCreateView(
@@ -81,9 +84,9 @@ class RequestGroupFragment : Fragment() {
         val backButtonEnabled: Boolean
 
         val collection = collectionViewModel.collection
-        val groupId = requestGroupViewModel.groupId
+        val group = requestGroupViewModel.group.value
 
-        if (collection.isDefault() && collection.parentId == null && collection.id == groupId) {
+        if (collection.isDefault() && collection.parentId == null && collection.id == group?.id) {
             menuId = R.menu.request_group_default_collection_menu
             backButtonEnabled = false
         } else {
@@ -99,32 +102,55 @@ class RequestGroupFragment : Fragment() {
     }
 
     private fun setupAdapters() {
-        val adapter = RequestGroupAdapter {
-            val action =
-                RequestGroupFragmentDirections.actionRequestGroupFragmentToRequestFragment(it.id)
-            this.findNavController().navigate(action)
-        }
+        val requestsAdapter = RequestListAdapter { navigateToRequest(it.id) }
+        requestsRecyclerView = binding.requestGroupRequests
+        requestsRecyclerView.layoutManager = LinearLayoutManager(context)
+        requestsRecyclerView.adapter = requestsAdapter
 
-        recyclerView = binding.requestGroupRequests
-        recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.adapter = adapter
-
-        val touchHelper = ItemTouchHelper(SwipeDeleteCallback(requireContext()) { position ->
+        ItemTouchHelper(SwipeDeleteCallback(requireContext()) { position ->
             requestGroupViewModel.deleteRequest(position)
-        })
-        touchHelper.attachToRecyclerView(recyclerView)
+        }).attachToRecyclerView(requestsRecyclerView)
+
+        val foldersAdapter = FolderListAdapter { navigateToFolder(it.id) }
+        foldersRecyclerView = binding.requestGroupFolders
+        foldersRecyclerView.layoutManager = LinearLayoutManager(context)
+        foldersRecyclerView.adapter = foldersAdapter
+
+        ItemTouchHelper(SwipeDeleteCallback(requireContext()) { position ->
+            requestGroupViewModel.deleteRequest(position)
+        }).attachToRecyclerView(requestsRecyclerView)
+    }
+
+    private fun navigateToRequest(id: String) {
+        val action = RequestGroupFragmentDirections.actionRequestGroupFragmentToRequestFragment(id)
+        this.findNavController().navigate(action)
+    }
+
+    private fun navigateToFolder(groupId: String) {
+        val collectionId = this@RequestGroupFragment.collectionViewModel.collection.id
+
+        val action = RequestGroupFragmentDirections.actionRequestGroupFragmentSelf(collectionId, groupId)
+        this.findNavController().navigate(action)
     }
 
     private fun setupDecoration() {
         val dividerDecoration = DividerItemDecoration(context, RecyclerView.VERTICAL)
         val dividerDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.item_divider)
         dividerDecoration.setDrawable(dividerDrawable!!)
-        recyclerView.addItemDecoration(dividerDecoration)
+
+        requestsRecyclerView.addItemDecoration(dividerDecoration)
+        foldersRecyclerView.addItemDecoration(dividerDecoration)
     }
 
     private fun setupObservers() {
         requestGroupViewModel.requests.observe(viewLifecycleOwner, { requests ->
-            (recyclerView.adapter as RequestGroupAdapter).submitList(requests)
+            if (requests.size > 0) binding.requestGroupRequests.show()
+            (requestsRecyclerView.adapter as RequestListAdapter).submitList(requests)
+        })
+
+        requestGroupViewModel.folders.observe(viewLifecycleOwner, { folders ->
+            if (folders.size > 0) binding.requestGroupFolders.show()
+            (foldersRecyclerView.adapter as FolderListAdapter).submitList(folders)
         })
 
         collectionViewModel.name.observe(viewLifecycleOwner) { name ->
@@ -184,7 +210,7 @@ class RequestGroupFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        requestGroupViewModel.refreshRequests()
+        requestGroupViewModel.refreshRequestGroup()
     }
 
     override fun onDestroyView() {

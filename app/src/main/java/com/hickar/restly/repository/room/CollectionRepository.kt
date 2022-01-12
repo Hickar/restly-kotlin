@@ -6,15 +6,10 @@ import com.hickar.restly.models.Request
 import com.hickar.restly.repository.dao.CollectionDao
 import com.hickar.restly.repository.dao.CollectionRemoteSource
 import com.hickar.restly.repository.dao.RequestDao
-import com.hickar.restly.repository.dao.RequestGroupDao
 import com.hickar.restly.repository.mappers.CollectionMapper
 import com.hickar.restly.repository.mappers.RequestGroupMapper
 import com.hickar.restly.repository.mappers.RequestMapper
-import com.hickar.restly.repository.models.CollectionDTO
-import com.hickar.restly.repository.models.CollectionRemoteDTO
 import com.hickar.restly.services.SharedPreferencesHelper
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 

@@ -13,7 +13,9 @@ class TransitionToDefaultRequestGroup : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         setHasOptionsMenu(true)
 
-        val action = TransitionToDefaultRequestGroupDirections.navigateFromRequestTabToRequestGroup(Collection.DEFAULT)
+        val action = TransitionToDefaultRequestGroupDirections.navigateFromRequestTabToRequestGroup(
+            Collection.DEFAULT,
+        )
         findNavController().navigate(action)
         return super.onCreateView(inflater, container, savedInstanceState)
     }

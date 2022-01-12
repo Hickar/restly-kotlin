@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hickar.restly.models.Collection
 import com.hickar.restly.models.Request
+import com.hickar.restly.models.RequestDirectory
 import com.hickar.restly.repository.room.CollectionRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -18,26 +19,34 @@ class RequestGroupViewModel @AssistedInject constructor(
 ) : ViewModel() {
 
     val requests: MutableLiveData<MutableList<Request>> = MutableLiveData()
-    var collectionId: String = Collection.DEFAULT
+    var groupId: String = Collection.DEFAULT
 
-    fun loadRequests(collectionId: String?) {
-        if (collectionId != null) {
-            this.collectionId = collectionId
+    fun loadRequests(groupId: String?) {
+        if (groupId != null) {
+            this.groupId = groupId
             refreshRequests()
         }
     }
 
     suspend fun createNewDefaultRequest(): String {
-        val newRequest = Request(parentId = collectionId)
+        val newRequest = Request(parentId = groupId)
         repository.insertRequest(newRequest)
 
         refreshRequests()
         return newRequest.id
     }
 
+    suspend fun createNewGroup(): String {
+        val newGroup = RequestDirectory(name = "New Folder", parentId = groupId)
+//        repository.insertGroup(newGroup)
+
+        refreshRequests()
+        return newGroup.id
+    }
+
     fun refreshRequests() {
         viewModelScope.launch {
-            requests.value = repository.getRequestsByGroupId(collectionId).toMutableList()
+            requests.value = repository.getRequestsByGroupId(groupId).toMutableList()
         }
     }
 

@@ -2,19 +2,16 @@ package com.hickar.restly.repository.dao
 
 import android.util.Log
 import com.google.gson.Gson
-import com.google.gson.JsonParser
 import com.google.gson.reflect.TypeToken
 import com.hickar.restly.consts.Paths.Companion.RESTLY_URL_DEV
 import com.hickar.restly.consts.RequestMethod
 import com.hickar.restly.models.*
-import com.hickar.restly.repository.models.CollectionDTO
 import com.hickar.restly.repository.models.CollectionRemoteDTO
 import com.hickar.restly.services.NetworkService
 import okhttp3.Call
 import okhttp3.Response
 import java.io.IOException
 import javax.inject.Inject
-import javax.security.auth.callback.Callback
 
 class CollectionRemoteSource @Inject constructor(
     private val gson: Gson,

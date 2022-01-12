@@ -7,6 +7,7 @@ import androidx.appcompat.view.SupportMenuInflater
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -21,7 +22,7 @@ import com.hickar.restly.viewModel.CollectionViewModel
 import com.hickar.restly.viewModel.LambdaFactory
 import com.hickar.restly.viewModel.RequestGroupViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -29,14 +30,16 @@ class RequestGroupFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
 
-    @Inject lateinit var collectionFactory: CollectionViewModel.Factory
+    @Inject
+    lateinit var collectionFactory: CollectionViewModel.Factory
     private val requestGroupViewModel: RequestGroupViewModel by viewModels {
         LambdaFactory(this) { stateHandle ->
             requestGroupFactory.build(stateHandle)
         }
     }
 
-    @Inject lateinit var requestGroupFactory: RequestGroupViewModel.Factory
+    @Inject
+    lateinit var requestGroupFactory: RequestGroupViewModel.Factory
     private val collectionViewModel: CollectionViewModel by viewModels {
         LambdaFactory(this) { stateHandle ->
             collectionFactory.build(stateHandle)
@@ -48,7 +51,7 @@ class RequestGroupFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestGroupViewModel.loadRequests(arguments?.getString(COLLECTION_ID_KEY))
+        requestGroupViewModel.loadRequests(arguments?.getString(GROUP_ID_KEY))
         collectionViewModel.loadCollection(arguments?.getString(COLLECTION_ID_KEY))
     }
 
@@ -76,7 +79,11 @@ class RequestGroupFragment : Fragment() {
 
         val menuId: Int
         val backButtonEnabled: Boolean
-        if (collectionViewModel.collection.isDefault()) {
+
+        val collection = collectionViewModel.collection
+        val groupId = requestGroupViewModel.groupId
+
+        if (collection.isDefault() && collection.parentId == null && collection.id == groupId) {
             menuId = R.menu.request_group_default_collection_menu
             backButtonEnabled = false
         } else {
@@ -86,16 +93,19 @@ class RequestGroupFragment : Fragment() {
 
         val inflater = SupportMenuInflater(requireContext())
         inflater.inflate(menuId, menu)
-        (requireActivity() as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(backButtonEnabled)
+        (requireActivity() as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(
+            backButtonEnabled
+        )
     }
 
     private fun setupAdapters() {
         val adapter = RequestGroupAdapter {
-            val action = RequestGroupFragmentDirections.actionRequestGroupFragmentToRequestFragment(it.id)
+            val action =
+                RequestGroupFragmentDirections.actionRequestGroupFragmentToRequestFragment(it.id)
             this.findNavController().navigate(action)
         }
 
-        recyclerView = binding.requestGroup
+        recyclerView = binding.requestGroupRequests
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = adapter
 
@@ -139,22 +149,33 @@ class RequestGroupFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.request_group_menu_add_button -> {
-                runBlocking coroutineScope@{
+                lifecycleScope.launch {
                     val newRequestId = requestGroupViewModel.createNewDefaultRequest()
                     val action =
                         RequestGroupFragmentDirections.actionRequestGroupFragmentToRequestFragment(
                             newRequestId
                         )
                     findNavController().navigate(action)
-
-                    return@coroutineScope true
                 }
+                true
             }
             R.id.request_group_collection_menu_edit_button -> {
-                val action = RequestGroupFragmentDirections.actionRequestGroupFragmentToCollectionEditFragment(
-                    collectionViewModel.collection.id
-                )
+                val action =
+                    RequestGroupFragmentDirections.actionRequestGroupFragmentToCollectionEditFragment(
+                        collectionViewModel.collection.id
+                    )
                 findNavController().navigate(action)
+                true
+            }
+            R.id.request_group_add_folder_button -> {
+                lifecycleScope.launch {
+                    val collectionId = collectionViewModel.collection.id
+                    val newGroupId = requestGroupViewModel.createNewGroup()
+                    val action = RequestGroupFragmentDirections.actionRequestGroupFragmentSelf(
+                        collectionId, newGroupId
+                    )
+                    findNavController().navigate(action)
+                }
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -173,6 +194,7 @@ class RequestGroupFragment : Fragment() {
 
     companion object {
         const val COLLECTION_ID_KEY = "collectionId"
+        const val GROUP_ID_KEY = "groupId"
         const val COLLECTION_NAME_KEY = "collectionName"
     }
 }

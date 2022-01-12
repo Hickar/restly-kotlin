@@ -55,6 +55,7 @@ class CollectionListFragment : Fragment() {
     private fun setupAdapters() {
         val adapter = CollectionListAdapter {
             val bundle = Bundle()
+            bundle.putString(RequestGroupFragment.GROUP_ID_KEY, it.id)
             bundle.putString(RequestGroupFragment.COLLECTION_ID_KEY, it.id)
             bundle.putString(RequestGroupFragment.COLLECTION_NAME_KEY, it.name)
             findNavController().navigate(R.id.navigate_fromCollectionTab_toRequestGroup, bundle)

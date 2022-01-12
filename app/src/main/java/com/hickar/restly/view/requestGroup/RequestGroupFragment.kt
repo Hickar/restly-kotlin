@@ -4,12 +4,10 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.view.SupportMenuInflater
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,6 +15,7 @@ import com.hickar.restly.MainActivity
 import com.hickar.restly.R
 import com.hickar.restly.databinding.RequestGroupBinding
 import com.hickar.restly.extensions.show
+import com.hickar.restly.utils.RecyclerViewDecoration
 import com.hickar.restly.utils.SwipeDeleteCallback
 import com.hickar.restly.view.requestGroup.adapters.FolderListAdapter
 import com.hickar.restly.view.requestGroup.adapters.RequestListAdapter
@@ -102,54 +101,40 @@ class RequestGroupFragment : Fragment() {
     }
 
     private fun setupAdapters() {
-        val requestsAdapter = RequestListAdapter { navigateToRequest(it.id) }
         requestsRecyclerView = binding.requestGroupRequests
         requestsRecyclerView.layoutManager = LinearLayoutManager(context)
-        requestsRecyclerView.adapter = requestsAdapter
+        requestsRecyclerView.adapter = RequestListAdapter { navigateToRequest(it.id) }
 
         ItemTouchHelper(SwipeDeleteCallback(requireContext()) { position ->
             requestGroupViewModel.deleteRequest(position)
         }).attachToRecyclerView(requestsRecyclerView)
 
-        val foldersAdapter = FolderListAdapter { navigateToFolder(it.id) }
         foldersRecyclerView = binding.requestGroupFolders
         foldersRecyclerView.layoutManager = LinearLayoutManager(context)
-        foldersRecyclerView.adapter = foldersAdapter
+        foldersRecyclerView.adapter = FolderListAdapter {
+            val collectionId = this@RequestGroupFragment.collectionViewModel.collection.id
+            navigateToFolder(collectionId, it.id)
+        }
 
         ItemTouchHelper(SwipeDeleteCallback(requireContext()) { position ->
             requestGroupViewModel.deleteRequest(position)
         }).attachToRecyclerView(requestsRecyclerView)
-    }
-
-    private fun navigateToRequest(id: String) {
-        val action = RequestGroupFragmentDirections.actionRequestGroupFragmentToRequestFragment(id)
-        this.findNavController().navigate(action)
-    }
-
-    private fun navigateToFolder(groupId: String) {
-        val collectionId = this@RequestGroupFragment.collectionViewModel.collection.id
-
-        val action = RequestGroupFragmentDirections.actionRequestGroupFragmentSelf(collectionId, groupId)
-        this.findNavController().navigate(action)
     }
 
     private fun setupDecoration() {
-        val dividerDecoration = DividerItemDecoration(context, RecyclerView.VERTICAL)
-        val dividerDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.item_divider)
-        dividerDecoration.setDrawable(dividerDrawable!!)
-
-        requestsRecyclerView.addItemDecoration(dividerDecoration)
-        foldersRecyclerView.addItemDecoration(dividerDecoration)
+        val decoration = RecyclerViewDecoration.vertical(requireContext(), R.drawable.item_divider)
+        requestsRecyclerView.addItemDecoration(decoration)
+        foldersRecyclerView.addItemDecoration(decoration)
     }
 
     private fun setupObservers() {
         requestGroupViewModel.requests.observe(viewLifecycleOwner, { requests ->
-            if (requests.size > 0) binding.requestGroupRequests.show()
+            if (requests.isEmpty()) binding.requestGroupRequests.show()
             (requestsRecyclerView.adapter as RequestListAdapter).submitList(requests)
         })
 
         requestGroupViewModel.folders.observe(viewLifecycleOwner, { folders ->
-            if (folders.size > 0) binding.requestGroupFolders.show()
+            if (folders.isEmpty()) binding.requestGroupFolders.show()
             (foldersRecyclerView.adapter as FolderListAdapter).submitList(folders)
         })
 
@@ -177,35 +162,42 @@ class RequestGroupFragment : Fragment() {
             R.id.request_group_menu_add_button -> {
                 lifecycleScope.launch {
                     val newRequestId = requestGroupViewModel.createNewDefaultRequest()
-                    val action =
-                        RequestGroupFragmentDirections.actionRequestGroupFragmentToRequestFragment(
-                            newRequestId
-                        )
-                    findNavController().navigate(action)
+                    navigateToRequest(newRequestId)
                 }
                 true
             }
             R.id.request_group_collection_menu_edit_button -> {
-                val action =
-                    RequestGroupFragmentDirections.actionRequestGroupFragmentToCollectionEditFragment(
-                        collectionViewModel.collection.id
-                    )
-                findNavController().navigate(action)
+                navigateToCollectionEdit(collectionViewModel.collection.id)
                 true
             }
             R.id.request_group_add_folder_button -> {
                 lifecycleScope.launch {
                     val collectionId = collectionViewModel.collection.id
                     val newGroupId = requestGroupViewModel.createNewGroup()
-                    val action = RequestGroupFragmentDirections.actionRequestGroupFragmentSelf(
-                        collectionId, newGroupId
-                    )
-                    findNavController().navigate(action)
+                    navigateToFolder(collectionId, newGroupId)
                 }
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun navigateToRequest(id: String) {
+        val action = RequestGroupFragmentDirections.actionRequestGroupFragmentToRequestFragment(id)
+        this.findNavController().navigate(action)
+    }
+
+    private fun navigateToFolder(collectionId: String, groupId: String) {
+        val action = RequestGroupFragmentDirections.actionRequestGroupFragmentSelf(collectionId, groupId)
+        this.findNavController().navigate(action)
+    }
+
+    private fun navigateToCollectionEdit(collectionId: String) {
+        val action =
+            RequestGroupFragmentDirections.actionRequestGroupFragmentToCollectionEditFragment(
+                collectionId
+            )
+        findNavController().navigate(action)
     }
 
     override fun onResume() {
@@ -221,6 +213,5 @@ class RequestGroupFragment : Fragment() {
     companion object {
         const val COLLECTION_ID_KEY = "collectionId"
         const val GROUP_ID_KEY = "groupId"
-        const val COLLECTION_NAME_KEY = "collectionName"
     }
 }

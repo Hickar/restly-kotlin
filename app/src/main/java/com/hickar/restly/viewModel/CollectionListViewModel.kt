@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hickar.restly.models.Collection
+import com.hickar.restly.models.RequestDirectory
 import com.hickar.restly.repository.room.CollectionRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -24,6 +25,9 @@ class CollectionListViewModel @AssistedInject constructor(
 
     suspend fun createNewCollection(): String {
         val newCollection = Collection(id = UUID.randomUUID().toString())
+        val newRequestGroup = RequestDirectory(id = newCollection.id, name = "New Folder")
+
+        collectionRepository.insertRequestGroup(newRequestGroup)
         collectionRepository.insertCollection(newCollection)
 
         refreshCollections()

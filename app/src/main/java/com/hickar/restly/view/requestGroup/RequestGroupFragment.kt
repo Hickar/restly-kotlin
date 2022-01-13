@@ -14,9 +14,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hickar.restly.MainActivity
 import com.hickar.restly.R
 import com.hickar.restly.databinding.RequestGroupBinding
+import com.hickar.restly.extensions.reattachToRecyclerView
 import com.hickar.restly.extensions.show
 import com.hickar.restly.utils.RecyclerViewDecoration
 import com.hickar.restly.utils.SwipeDeleteCallback
+import com.hickar.restly.view.dialogs.ConfirmationDialog
 import com.hickar.restly.view.requestGroup.adapters.FolderListAdapter
 import com.hickar.restly.view.requestGroup.adapters.RequestListAdapter
 import com.hickar.restly.viewModel.CollectionViewModel
@@ -31,6 +33,8 @@ class RequestGroupFragment : Fragment() {
 
     private lateinit var requestsRecyclerView: RecyclerView
     private lateinit var foldersRecyclerView: RecyclerView
+
+    private lateinit var foldersItemTouchHelper: ItemTouchHelper
 
     @Inject
     lateinit var collectionFactory: CollectionViewModel.Factory
@@ -116,9 +120,24 @@ class RequestGroupFragment : Fragment() {
             navigateToFolder(collectionId, it.id)
         }
 
-        ItemTouchHelper(SwipeDeleteCallback(requireContext()) { position ->
-            requestGroupViewModel.deleteRequest(position)
-        }).attachToRecyclerView(requestsRecyclerView)
+        foldersItemTouchHelper = ItemTouchHelper(SwipeDeleteCallback(requireContext()) { position ->
+            val dialog = ConfirmationDialog(
+                R.string.dialog_delete_group_title,
+                R.string.dialog_delete_group_message,
+                R.string.dialog_ok_confirm_delete_option,
+                { dialog, _ ->
+                    dialog.cancel()
+                    foldersItemTouchHelper.reattachToRecyclerView(foldersRecyclerView)
+                },
+                { _, _ ->
+                    requestGroupViewModel.deleteFolder(position)
+                }
+            )
+
+            dialog.show(parentFragmentManager, "Confirmation")
+        })
+
+        foldersItemTouchHelper.attachToRecyclerView(foldersRecyclerView)
     }
 
     private fun setupDecoration() {
@@ -129,12 +148,12 @@ class RequestGroupFragment : Fragment() {
 
     private fun setupObservers() {
         requestGroupViewModel.requests.observe(viewLifecycleOwner, { requests ->
-            if (requests.isEmpty()) binding.requestGroupRequests.show()
+            if (requests.size > 0) binding.requestGroupRequests.show()
             (requestsRecyclerView.adapter as RequestListAdapter).submitList(requests)
         })
 
         requestGroupViewModel.folders.observe(viewLifecycleOwner, { folders ->
-            if (folders.isEmpty()) binding.requestGroupFolders.show()
+            if (folders.size > 0) binding.requestGroupFolders.show()
             (foldersRecyclerView.adapter as FolderListAdapter).submitList(folders)
         })
 
@@ -142,7 +161,7 @@ class RequestGroupFragment : Fragment() {
             requireActivity().invalidateOptionsMenu()
             (requireActivity() as MainActivity).supportActionBar?.title =
                 if (collectionViewModel.collection.isDefault()) {
-                    "Requests"
+                    getString(R.string.default_collection_title)
                 } else {
                     name
                 }

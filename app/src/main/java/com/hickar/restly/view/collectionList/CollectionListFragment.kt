@@ -2,20 +2,18 @@ package com.hickar.restly.view.collectionList
 
 import android.os.Bundle
 import android.view.*
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.hickar.restly.R
 import com.hickar.restly.databinding.CollectionListBinding
+import com.hickar.restly.extensions.reattachToRecyclerView
 import com.hickar.restly.utils.RecyclerViewDecoration
 import com.hickar.restly.utils.SwipeDeleteCallback
 import com.hickar.restly.view.collectionList.adapters.CollectionListAdapter
 import com.hickar.restly.view.dialogs.ConfirmationDialog
-import com.hickar.restly.view.requestGroup.RequestGroupFragment
 import com.hickar.restly.viewModel.CollectionListViewModel
 import com.hickar.restly.viewModel.LambdaFactory
 import dagger.hilt.android.AndroidEntryPoint
@@ -69,10 +67,7 @@ class CollectionListFragment : Fragment() {
                 R.string.dialog_ok_confirm_delete_option,
                 { dialog, _ ->
                     dialog.cancel()
-// Hack from the official documentation
-// https://developer.android.com/reference/android/support/v7/widget/helper/ItemTouchHelper.html#attachToRecyclerView(android.support.v7.widget.RecyclerView)
-                    itemTouchHelper.attachToRecyclerView(null)
-                    itemTouchHelper.attachToRecyclerView(recyclerView)
+                    itemTouchHelper.reattachToRecyclerView(recyclerView)
                 },
                 { _, _ ->
                     viewModel.deleteCollection(position)

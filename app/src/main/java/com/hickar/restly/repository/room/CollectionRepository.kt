@@ -4,7 +4,6 @@ import androidx.annotation.WorkerThread
 import com.hickar.restly.models.Collection
 import com.hickar.restly.models.Request
 import com.hickar.restly.models.RequestDirectory
-import com.hickar.restly.models.RequestGroup
 import com.hickar.restly.repository.dao.CollectionDao
 import com.hickar.restly.repository.dao.CollectionRemoteSource
 import com.hickar.restly.repository.dao.RequestDao
@@ -76,14 +75,15 @@ class CollectionRepository @Inject constructor(
     }
 
     @WorkerThread
-    suspend fun getRequestsByGroupId(id: String): List<Request> {
-        return requestMapper.toEntityList(requestDao.getByGroupId(id))
-    }
-
-    @WorkerThread
     suspend fun getRequestGroupById(id: String): RequestDirectory? {
         val requestGroupDto = requestGroupDao.getById(id) ?: return null
-        val subgroups = requestGroupMapper.toEntityList(requestGroupDao.getByParentId(requestGroupDto.id))
+        val subgroups = mutableListOf<RequestDirectory>()
+
+        requestGroupDao.getByParentId(requestGroupDto.id).forEach { subgroupDto ->
+            val subgroup = getRequestGroupById(subgroupDto.id)
+            if (subgroup != null) subgroups.add(subgroup)
+        }
+
         val requests = requestMapper.toEntityList(requestDao.getByGroupId(requestGroupDto.id))
 
         return RequestDirectory(
@@ -99,6 +99,16 @@ class CollectionRepository @Inject constructor(
     @WorkerThread
     suspend fun insertRequestGroup(requestGroup: RequestDirectory) {
         requestGroupDao.insert(requestGroupMapper.toDTO(requestGroup))
+    }
+
+    @WorkerThread
+    suspend fun deleteRequestGroup(requestGroup: RequestDirectory) {
+        requestGroupDao.deleteById(requestGroup.id)
+        requestGroupDao.deleteGroupsByParentId(requestGroup.id)
+        requestDao.deleteRequestsByGroupId(requestGroup.id)
+        for (subgroup in requestGroup.groups) {
+            deleteRequestGroup(subgroup)
+        }
     }
 
     @WorkerThread
@@ -123,7 +133,7 @@ class CollectionRepository @Inject constructor(
 
     @WorkerThread
     suspend fun deleteRequestsByCollectionId(id: String) {
-        return requestDao.deleteByCollectionId(id)
+        return requestDao.deleteRequestsByGroupId(id)
     }
 
     @WorkerThread

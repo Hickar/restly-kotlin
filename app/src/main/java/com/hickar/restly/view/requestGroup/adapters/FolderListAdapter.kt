@@ -3,15 +3,11 @@ package com.hickar.restly.view.requestGroup.adapters
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.hickar.restly.databinding.RequestGroupFolderItemBinding
-import com.hickar.restly.databinding.RequestGroupRequestItemBinding
-import com.hickar.restly.models.Request
 import com.hickar.restly.models.RequestDirectory
-import com.hickar.restly.utils.MethodCardViewUtil
 
 class FolderListAdapter(
     private val onItemClicked: (RequestDirectory) -> Unit

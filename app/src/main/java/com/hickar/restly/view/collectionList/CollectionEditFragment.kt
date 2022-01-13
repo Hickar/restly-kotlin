@@ -28,7 +28,7 @@ class CollectionEditFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.loadCollection(arguments?.getString("collectionId"))
+        viewModel.loadCollection(arguments?.getString(COLLECTION_ID_KEY))
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -78,5 +78,9 @@ class CollectionEditFragment : Fragment() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    companion object {
+        const val COLLECTION_ID_KEY = "collectionId"
     }
 }

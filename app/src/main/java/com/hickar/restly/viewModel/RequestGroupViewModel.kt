@@ -4,7 +4,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hickar.restly.models.Collection
 import com.hickar.restly.models.Request
 import com.hickar.restly.models.RequestDirectory
 import com.hickar.restly.repository.room.CollectionRepository
@@ -66,8 +65,16 @@ class RequestGroupViewModel @AssistedInject constructor(
     fun deleteRequest(position: Int) {
         viewModelScope.launch {
             repository.deleteRequest(requests.value!![position])
-            group.value?.requests?.removeAt(position)
-            group.value = group.value
+            requests.value?.removeAt(position)
+            requests.value = requests.value
+        }
+    }
+
+    fun deleteFolder(position: Int) {
+        viewModelScope.launch {
+            repository.deleteRequestGroup(folders.value!![position])
+            folders.value?.removeAt(position)
+            folders.value = folders.value
         }
     }
 

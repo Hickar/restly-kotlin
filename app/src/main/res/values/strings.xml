@@ -5,6 +5,9 @@
     <string name="settings_tab_title">Settings</string>
     <string name="request_menu_add_button_text">Add</string>
 
+    <string name="default_collection_title">Requests</string>
+    <string name="collection_default_title">New Collection</string>
+    <string name="request_group_default_title">New Folder</string>
 
     <string name="request_detail_name_default_text">New Request</string>
     <string name="request_detail_url_placeholder_text">https://</string>
@@ -43,6 +46,8 @@
     <string name="dialog_ok_confirm_delete_option">Delete</string>
     <string name="dialog_delete_collection_title">Delete collection</string>
     <string name="dialog_delete_collection_message">Are you sure you want to delete the collection? All children requests will be deleted too.</string>
+    <string name="dialog_delete_group_title">Delete request group</string>
+    <string name="dialog_delete_group_message">Are you sure you want to delete this request group? All children request groups and requests will be deleted too.</string>
     <string name="dialog_rename_title">Rename</string>
     <string name="edit_text_dialog_title">Body Data</string>
     <string name="successful_sign_up_title">You\'ve successfully signed up</string>

@@ -17,6 +17,12 @@ interface RequestGroupDao {
     @Update
     suspend fun update(requestDirectoryDTO: RequestDirectoryDTO)
 
+    @Query("DELETE FROM request_groups WHERE id = :id")
+    suspend fun deleteById(id: String)
+
     @Delete
     suspend fun delete(requestDirectoryDTO: RequestDirectoryDTO)
+
+    @Query("DELETE FROM request_groups WHERE parentId = :id")
+    suspend fun deleteGroupsByParentId(id: String)
 }

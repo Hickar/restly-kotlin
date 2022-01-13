@@ -102,6 +102,11 @@ class CollectionRepository @Inject constructor(
     }
 
     @WorkerThread
+    suspend fun updateRequestGroup(requestGroup: RequestDirectory) {
+        return requestGroupDao.update(requestGroupMapper.toDTO(requestGroup))
+    }
+
+    @WorkerThread
     suspend fun deleteRequestGroup(requestGroup: RequestDirectory) {
         requestGroupDao.deleteById(requestGroup.id)
         requestGroupDao.deleteGroupsByParentId(requestGroup.id)

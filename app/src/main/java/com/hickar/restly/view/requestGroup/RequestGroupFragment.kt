@@ -157,13 +157,17 @@ class RequestGroupFragment : Fragment() {
             (foldersRecyclerView.adapter as FolderListAdapter).submitList(folders)
         })
 
-        collectionViewModel.name.observe(viewLifecycleOwner) { name ->
+        requestGroupViewModel.group.observe(viewLifecycleOwner) { group ->
             requireActivity().invalidateOptionsMenu()
             (requireActivity() as MainActivity).supportActionBar?.title =
-                if (collectionViewModel.collection.isDefault()) {
+                if (group.isDefault()) {
                     getString(R.string.default_collection_title)
                 } else {
-                    name
+                    if (group.isRoot()) {
+                        collectionViewModel.collection.name
+                    } else {
+                        group.name
+                    }
                 }
         }
     }

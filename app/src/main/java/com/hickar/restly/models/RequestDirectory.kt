@@ -37,4 +37,8 @@ class RequestDirectory(
     fun isDefault(): Boolean {
         return id == DEFAULT
     }
+
+    fun isRoot(): Boolean {
+        return parentId == null
+    }
 }

@@ -63,12 +63,19 @@
     <string name="response_body_raw_unsupported_type">Raw data preview of media files is unsupported</string>
     <string name="response_body_empty_placeholder_text">You haven\'t sent request yet</string>
 
-    <string name="collection_list_edit_fragment_label">Edit Collection</string>
-    <string name="collection_list_edit_name_input_hint">My Collection</string>
-    <string name="collection_list_edit_description_input_hint">Description of your collection...</string>
-    <string name="collection_list_edit_name_label">Collection Name</string>
-    <string name="collection_list_edit_description_label">Collection Desciption</string>
+    <string name="collection_edit_fragment_label">Edit Collection</string>
+    <string name="collection_edit_name_input_hint">My Collection</string>
+    <string name="collection_edit_description_input_hint">Description of your collection...</string>
+    <string name="collection_edit_name_label">Collection Name</string>
+    <string name="collection_edit_description_label">Collection Desciption</string>
     <string name="collection_edit_menu_save_option_text">Save</string>
+
+    <string name="request_group_edit_fragment_label">Edit Request Folder</string>
+    <string name="request_group_edit_name_input_hint">My Request Folder</string>
+    <string name="request_group_edit_description_input_hint">Description of your request folder...</string>
+    <string name="request_group_edit_name_label">Collection Name</string>
+    <string name="request_group_edit_description_label">Folder description</string>
+    <string name="request_group_edit_menu_save_option_text">Save</string>
 
     <string name="settings_login_postman_avatar_description">Postman user picture</string>
     <string name="settings_login_postman_notlogged_title">Log In to Postman</string>

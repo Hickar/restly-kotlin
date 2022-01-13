@@ -42,6 +42,7 @@
         <entry key="app/src/main/res/layout/request_detail_recycler_view.xml" value="0.11510416666666666" />
         <entry key="app/src/main/res/layout/request_group.xml" value="0.14855072463768115" />
         <entry key="app/src/main/res/layout/request_group_container.xml" value="0.10052083333333334" />
+        <entry key="app/src/main/res/layout/request_group_edit.xml" value="0.1431159420289855" />
         <entry key="app/src/main/res/layout/request_group_folder_item.xml" value="0.16394927536231885" />
         <entry key="app/src/main/res/layout/request_group_host.xml" value="0.10052083333333334" />
         <entry key="app/src/main/res/layout/request_group_item.xml" value="0.1234375" />

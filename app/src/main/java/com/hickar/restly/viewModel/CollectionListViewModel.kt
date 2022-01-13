@@ -25,7 +25,7 @@ class CollectionListViewModel @AssistedInject constructor(
 
     suspend fun createNewCollection(): String {
         val newCollection = Collection(id = UUID.randomUUID().toString())
-        val newRequestGroup = RequestDirectory(id = newCollection.id, name = "New Folder")
+        val newRequestGroup = RequestDirectory(id = newCollection.id, name = newCollection.name)
 
         collectionRepository.insertRequestGroup(newRequestGroup)
         collectionRepository.insertCollection(newCollection)

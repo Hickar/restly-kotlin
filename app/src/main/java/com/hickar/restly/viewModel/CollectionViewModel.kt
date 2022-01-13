@@ -36,18 +36,19 @@ class CollectionViewModel @AssistedInject constructor(
         }
     }
 
-    fun setName(newName: String) {
-        this.name.value = newName
+    fun setName(name: String) {
+        this.name.value = name
     }
 
-    fun setDescription(newDescription: String) {
-        description.value = newDescription
+    fun setDescription(description: String) {
+        this.description.value = description
     }
 
     fun saveCollection() {
         viewModelScope.launch {
             collection.name = name.value!!
             collection.description = description.value!!
+
             collectionRepository.updateCollection(collection)
         }
     }

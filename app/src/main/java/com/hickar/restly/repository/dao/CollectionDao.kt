@@ -9,7 +9,7 @@ interface CollectionDao {
     suspend fun getAll(): List<CollectionDTO>
 
     @Query("SELECT * FROM collections WHERE id = :id")
-    suspend fun getById(id: String): CollectionDTO
+    suspend fun getById(id: String): CollectionDTO?
 
     @Insert
     suspend fun insert(collection: CollectionDTO)

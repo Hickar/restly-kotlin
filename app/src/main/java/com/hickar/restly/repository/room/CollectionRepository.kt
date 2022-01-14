@@ -55,8 +55,9 @@ class CollectionRepository @Inject constructor(
     }
 
     @WorkerThread
-    suspend fun getCollectionById(id: String): Collection {
-        return collectionMapper.toEntity(collectionDao.getById(id))
+    suspend fun getCollectionById(id: String): Collection? {
+        val collectionDto = collectionDao.getById(id) ?: return null
+        return collectionMapper.toEntity(collectionDto)
     }
 
     @WorkerThread
@@ -91,7 +92,7 @@ class CollectionRepository @Inject constructor(
             name = requestGroupDto.name,
             description = requestGroupDto.description,
             requests = requests.toMutableList(),
-            groups = subgroups.toMutableList(),
+            subgroups = subgroups.toMutableList(),
             parentId = requestGroupDto.parentId
         )
     }
@@ -111,7 +112,7 @@ class CollectionRepository @Inject constructor(
         requestGroupDao.deleteById(requestGroup.id)
         requestGroupDao.deleteGroupsByParentId(requestGroup.id)
         requestDao.deleteRequestsByGroupId(requestGroup.id)
-        for (subgroup in requestGroup.groups) {
+        for (subgroup in requestGroup.subgroups) {
             deleteRequestGroup(subgroup)
         }
     }

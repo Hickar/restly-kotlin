@@ -75,7 +75,7 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
         <action
-            android:id="@+id/action_requestFragment_to_responseBodyInfoFragment"
+            android:id="@+id/action_requestFragmentt_to_responseBodyInfoFragment"
             app:destination="@id/responseBodyInfoFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"

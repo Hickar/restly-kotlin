@@ -7,7 +7,7 @@ class RequestDirectory(
     var name: String,
     var description: String? = "",
     var requests: MutableList<Request> = mutableListOf(),
-    var groups: MutableList<RequestDirectory> = mutableListOf(),
+    var subgroups: MutableList<RequestDirectory> = mutableListOf(),
     override var parentId: String? = null
 ) : RequestGroup() {
     override fun equals(other: Any?): Boolean {
@@ -16,7 +16,7 @@ class RequestDirectory(
                 && other.name == name
                 && other.description == description
                 && other.requests == requests
-                && other.groups == groups
+                && other.subgroups == subgroups
                 && other.parentId == parentId
     }
 
@@ -25,7 +25,7 @@ class RequestDirectory(
         result = 31 * result + name.hashCode()
         result = 31 * result + (description?.hashCode() ?: 0)
         result = 31 * result + requests.hashCode()
-        result = 31 * result + groups.hashCode()
+        result = 31 * result + subgroups.hashCode()
         result = 31 * result + (parentId?.hashCode() ?: 0)
         return result
     }

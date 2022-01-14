@@ -43,7 +43,7 @@ class ResponseTabFragment : Fragment() {
 
     private fun setupEventListeners() {
         binding.responseStatusInfo.setOnClickListener {
-            val action = RequestFragmentDirections.actionRequestFragmentToResponseBodyInfoFragment()
+            val action = RequestFragmentDirections.actionRequestFragmenttToResponseBodyInfoFragment()
             findNavController().navigate(action)
         }
     }

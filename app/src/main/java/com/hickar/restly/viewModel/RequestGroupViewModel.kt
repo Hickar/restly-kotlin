@@ -17,26 +17,28 @@ class RequestGroupViewModel @AssistedInject constructor(
     private val repository: CollectionRepository,
 ) : ViewModel() {
 
+    var group: RequestDirectory = RequestDirectory(id = RequestDirectory.DEFAULT, name = "New Folder")
+
     val name: MutableLiveData<String> = MutableLiveData()
     val description: MutableLiveData<String?> = MutableLiveData()
-    val group: MutableLiveData<RequestDirectory> = MutableLiveData()
     val requests: MutableLiveData<MutableList<Request>> = MutableLiveData()
     val folders: MutableLiveData<MutableList<RequestDirectory>> = MutableLiveData()
 
-    private var groupId: String = RequestDirectory.DEFAULT
+    private var groupId = RequestDirectory.DEFAULT
 
     fun loadRequestGroup(groupId: String?) {
         if (groupId != null) {
             this.groupId = groupId
         }
-        refreshRequestGroup()
+
+        refreshRequestGroup(this.groupId)
     }
 
     suspend fun createNewDefaultRequest(): String {
         val newRequest = Request(parentId = groupId)
         repository.insertRequest(newRequest)
 
-        refreshRequestGroup()
+        refreshRequestGroup(groupId)
         return newRequest.id
     }
 
@@ -44,25 +46,25 @@ class RequestGroupViewModel @AssistedInject constructor(
         val newGroup = RequestDirectory(name = "New Folder", parentId = groupId)
         repository.insertRequestGroup(newGroup)
 
-        refreshRequestGroup()
+        refreshRequestGroup(groupId)
         return newGroup.id
     }
 
-    fun refreshRequestGroup() {
+    fun refreshCurrentRequestGroup() {
+        refreshRequestGroup(groupId)
+    }
+
+    private fun refreshRequestGroup(id: String) {
         viewModelScope.launch {
-            group.value = repository.getRequestGroupById(groupId)
-            if (group.value == null) {
-                group.value = RequestDirectory(
-                    id = RequestDirectory.DEFAULT,
-                    name = "New Folder"
-                )
-                repository.insertRequestGroup(group.value!!)
+            val queriedGroup = repository.getRequestGroupById(id)
+            if (queriedGroup != null) {
+                group = queriedGroup
             }
 
-            requests.value = group.value?.requests
-            folders.value = group.value?.groups
-            name.value = group.value?.name
-            description.value = group.value?.description
+            requests.value = group.requests
+            folders.value = group.subgroups
+            name.value = group.name
+            description.value = group.description
         }
     }
 
@@ -92,12 +94,12 @@ class RequestGroupViewModel @AssistedInject constructor(
 
     fun saveRequestGroup() {
         viewModelScope.launch {
-            group.value?.name = name.value!!
-            group.value?.description = description.value
-            group.value?.requests = requests.value!!
-            group.value?.groups = folders.value!!
+            group.name = name.value!!
+            group.description = description.value
+            group.requests = requests.value!!
+            group.subgroups = folders.value!!
 
-            repository.updateRequestGroup(group.value!!)
+            repository.updateRequestGroup(group)
         }
     }
 

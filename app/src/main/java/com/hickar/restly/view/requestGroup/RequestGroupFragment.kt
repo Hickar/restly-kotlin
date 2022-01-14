@@ -87,9 +87,13 @@ class RequestGroupFragment : Fragment() {
         val backButtonEnabled: Boolean
 
         val collection = collectionViewModel.collection
-        val group = requestGroupViewModel.group.value
+        val group = requestGroupViewModel.group
 
-        if (collection.isDefault() && collection.parentId == null && collection.id == group?.id) {
+        if (
+            collection.isDefault() &&
+            collection.parentId == null &&
+            collection.id == group.id
+        ) {
             menuId = R.menu.request_group_default_collection_menu
             backButtonEnabled = false
         } else {
@@ -157,7 +161,8 @@ class RequestGroupFragment : Fragment() {
             (foldersRecyclerView.adapter as FolderListAdapter).submitList(folders)
         })
 
-        requestGroupViewModel.group.observe(viewLifecycleOwner) { group ->
+        requestGroupViewModel.name.observe(viewLifecycleOwner) { name ->
+            val group = requestGroupViewModel.group
             requireActivity().invalidateOptionsMenu()
             (requireActivity() as MainActivity).supportActionBar?.title =
                 if (group.isDefault()) {
@@ -166,7 +171,7 @@ class RequestGroupFragment : Fragment() {
                     if (group.isRoot()) {
                         collectionViewModel.collection.name
                     } else {
-                        group.name
+                        name
                     }
                 }
         }
@@ -190,10 +195,10 @@ class RequestGroupFragment : Fragment() {
                 true
             }
             R.id.request_group_collection_menu_edit_button -> {
-                if (requestGroupViewModel.group.value!!.isRoot()) {
+                if (requestGroupViewModel.group.isRoot()) {
                     navigateToCollectionEdit(collectionViewModel.collection.id)
                 } else {
-                    navigateToRequestGroupEdit(requestGroupViewModel.group.value!!.id)
+                    navigateToRequestGroupEdit(requestGroupViewModel.group.id)
                 }
                 true
             }
@@ -235,7 +240,8 @@ class RequestGroupFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        requestGroupViewModel.refreshRequestGroup()
+        requestGroupViewModel.refreshCurrentRequestGroup()
+        collectionViewModel.refreshCurrentCollection()
     }
 
     override fun onDestroyView() {

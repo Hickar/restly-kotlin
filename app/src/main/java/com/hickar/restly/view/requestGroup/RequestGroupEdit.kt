@@ -9,7 +9,7 @@ import com.hickar.restly.R
 import com.hickar.restly.databinding.RequestGroupEditBinding
 import com.hickar.restly.extensions.observeOnce
 import com.hickar.restly.extensions.toEditable
-import com.hickar.restly.viewModel.CollectionViewModel
+import com.hickar.restly.viewModel.LambdaFactory
 import com.hickar.restly.viewModel.RequestGroupViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -19,12 +19,16 @@ class RequestGroupEditFragment : Fragment() {
     private var _binding: RequestGroupEditBinding? = null
     private val binding get() = _binding!!
 
-    @Inject lateinit var factory: CollectionViewModel.Factory
-    private val viewModel: RequestGroupViewModel by viewModels({ requireParentFragment() })
+    @Inject lateinit var factory: RequestGroupViewModel.Factory
+    private val viewModel: RequestGroupViewModel by viewModels {
+        LambdaFactory(this) { stateHandle ->
+            factory.build(stateHandle)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        viewModel.loadRequestGroup(arguments?.getString(COLLECTION_ID_KEY))
+        viewModel.loadRequestGroup(arguments?.getString(GROUP_ID_KEY))
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -57,7 +61,7 @@ class RequestGroupEditFragment : Fragment() {
         }
 
         viewModel.description.observeOnce(viewLifecycleOwner) { description ->
-            binding.requestGroupEditDescriptionInput.text = description.toEditable()
+            binding.requestGroupEditDescriptionInput.text = description?.toEditable() ?: "".toEditable()
         }
     }
 
@@ -77,6 +81,6 @@ class RequestGroupEditFragment : Fragment() {
     }
 
     companion object {
-        const val COLLECTION_ID_KEY = "collectionId"
+        const val GROUP_ID_KEY = "groupId"
     }
 }

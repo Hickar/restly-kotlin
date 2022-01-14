@@ -18,7 +18,7 @@ class RequestGroupViewModel @AssistedInject constructor(
 ) : ViewModel() {
 
     val name: MutableLiveData<String> = MutableLiveData()
-    val description: MutableLiveData<String> = MutableLiveData()
+    val description: MutableLiveData<String?> = MutableLiveData()
     val group: MutableLiveData<RequestDirectory> = MutableLiveData()
     val requests: MutableLiveData<MutableList<Request>> = MutableLiveData()
     val folders: MutableLiveData<MutableList<RequestDirectory>> = MutableLiveData()
@@ -61,6 +61,8 @@ class RequestGroupViewModel @AssistedInject constructor(
 
             requests.value = group.value?.requests
             folders.value = group.value?.groups
+            name.value = group.value?.name
+            description.value = group.value?.description
         }
     }
 
@@ -91,11 +93,11 @@ class RequestGroupViewModel @AssistedInject constructor(
     fun saveRequestGroup() {
         viewModelScope.launch {
             group.value?.name = name.value!!
-            group.value?.description = description.value!!
+            group.value?.description = description.value
             group.value?.requests = requests.value!!
             group.value?.groups = folders.value!!
 
-            repository.updateRequestGroup(group.value)
+            repository.updateRequestGroup(group.value!!)
         }
     }
 

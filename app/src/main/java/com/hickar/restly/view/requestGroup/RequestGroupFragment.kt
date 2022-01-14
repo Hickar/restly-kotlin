@@ -38,17 +38,17 @@ class RequestGroupFragment : Fragment() {
 
     @Inject
     lateinit var collectionFactory: CollectionViewModel.Factory
-    private val requestGroupViewModel: RequestGroupViewModel by viewModels {
+    private val collectionViewModel: CollectionViewModel by viewModels {
         LambdaFactory(this) { stateHandle ->
-            requestGroupFactory.build(stateHandle)
+            collectionFactory.build(stateHandle)
         }
     }
 
     @Inject
     lateinit var requestGroupFactory: RequestGroupViewModel.Factory
-    private val collectionViewModel: CollectionViewModel by viewModels {
+    private val requestGroupViewModel: RequestGroupViewModel by viewModels {
         LambdaFactory(this) { stateHandle ->
-            collectionFactory.build(stateHandle)
+            requestGroupFactory.build(stateHandle)
         }
     }
 
@@ -190,7 +190,11 @@ class RequestGroupFragment : Fragment() {
                 true
             }
             R.id.request_group_collection_menu_edit_button -> {
-                navigateToCollectionEdit(collectionViewModel.collection.id)
+                if (requestGroupViewModel.group.value!!.isRoot()) {
+                    navigateToCollectionEdit(collectionViewModel.collection.id)
+                } else {
+                    navigateToRequestGroupEdit(requestGroupViewModel.group.value!!.id)
+                }
                 true
             }
             R.id.request_group_add_folder_button -> {
@@ -216,10 +220,16 @@ class RequestGroupFragment : Fragment() {
     }
 
     private fun navigateToCollectionEdit(collectionId: String) {
-        val action =
-            RequestGroupFragmentDirections.actionRequestGroupFragmentToCollectionEditFragment(
-                collectionId
-            )
+        val action = RequestGroupFragmentDirections.actionRequestGroupFragmentToCollectionEditFragment(
+            collectionId
+        )
+        findNavController().navigate(action)
+    }
+
+    private fun navigateToRequestGroupEdit(groupId: String) {
+        val action = RequestGroupFragmentDirections.actionRequestGroupFragmentToRequestGroupEditFragment(
+            groupId
+        )
         findNavController().navigate(action)
     }
 

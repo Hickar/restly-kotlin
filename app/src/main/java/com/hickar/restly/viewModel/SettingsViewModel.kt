@@ -22,12 +22,10 @@ class SettingsViewModel @AssistedInject constructor(
     @Assisted private val handle: SavedStateHandle,
     private val prefs: SharedPreferencesHelper,
     private val authService: AuthService
-) : ViewModel(), AuthService.Delegate {
-    @Inject
-    lateinit var networkService: NetworkService
+) : ViewModel() {
+    @Inject lateinit var networkService: NetworkService
 
-    @Inject
-    lateinit var gson: Gson
+    @Inject lateinit var gson: Gson
 
     val successfulRegistration: MutableLiveData<Boolean> = MutableLiveData(false)
 
@@ -61,10 +59,12 @@ class SettingsViewModel @AssistedInject constructor(
     fun loginToRestly(username: String, password: String) {
         viewModelScope.launch {
             try {
-                authService.loginToReslty(
-                    RestlyLoginCredentials(username, password),
-                    this@SettingsViewModel
-                )
+                val credentials = RestlyLoginCredentials(username, password)
+                val userInfo = authService.loginToReslty(credentials)
+                if (userInfo != null) {
+                    prefs.setRestlyUserInfo(userInfo)
+                    prefs.setRestlyJwt(userInfo.token)
+                }
             } catch (e: IOException) {
                 error.postValue(getErrorEvent(e))
             }
@@ -80,10 +80,8 @@ class SettingsViewModel @AssistedInject constructor(
     fun signUpInRestly(email: String, username: String, password: String) {
         viewModelScope.launch {
             try {
-                authService.signUpInRestly(
-                    RestlySignupCredentials(email, username, password),
-                    this@SettingsViewModel
-                )
+                val token = authService.signUpInRestly(RestlySignupCredentials(email, username, password))
+                if (token != null) prefs.setRestlyJwt(token)
             } catch (e: IOException) {
                 error.postValue(getErrorEvent(e))
             }
@@ -93,7 +91,13 @@ class SettingsViewModel @AssistedInject constructor(
     fun loginToPostman(apiKey: String) {
         viewModelScope.launch {
             try {
-                authService.loginToPostman(apiKey, this@SettingsViewModel)
+                val userInfo = authService.loginToPostman(apiKey)
+                if (userInfo != null) {
+                    prefs.setPostmanApiKey(apiKey)
+                    prefs.setPostmanUserInfo(userInfo)
+                    postmanUserInfo.postValue(userInfo)
+                    isLoggedInPostman.postValue(true)
+                }
             } catch (e: IOException) {
                 error.postValue(getErrorEvent(e))
             }
@@ -147,20 +151,6 @@ class SettingsViewModel @AssistedInject constructor(
             is WrongApiKeyException -> ErrorEvent.PostmanAuthError
             else -> ErrorEvent.ConnectionUnexpected
         }
-    }
-
-    override fun onRegistrationSuccess() {
-        successfulRegistration.postValue(true)
-    }
-
-    override fun onPostmanLoginSuccess(userInfo: PostmanUserInfo) {
-        postmanUserInfo.postValue(userInfo)
-        isLoggedInPostman.postValue(true)
-    }
-
-    override fun onRestlyLoginSuccess(userInfo: RestlyUserInfo) {
-        restlyUserInfo.postValue(userInfo)
-        isLoggedInRestly.postValue(true)
     }
 
     @AssistedFactory

@@ -7,6 +7,7 @@ import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Build
 import android.util.Log
+import com.hickar.restly.extensions.await
 import com.hickar.restly.extensions.toMb
 import com.hickar.restly.models.*
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -38,14 +39,15 @@ class NetworkService @Inject constructor(
         method: String,
         headers: List<RequestHeader>,
         body: RequestBody?,
-        callbackDelegate: Callback
-    ) {
+    ): Response {
         val builder = Request.Builder()
             .url(url)
             .method(method, body)
 
         for (header in headers) {
-            if (header.enabled && !header.isEmpty()) builder.addHeader(header.key, header.value)
+            if (header.enabled && !header.isEmpty()) {
+                builder.addHeader(header.key, header.value)
+            }
         }
 
         val request = builder.build()
@@ -57,21 +59,15 @@ class NetworkService @Inject constructor(
             getUnsafeHttpClient()
         }
 
-        getRemoteFileSize(url, object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                callbackDelegate.onFailure(call, e)
-            }
+        val remoteFileSizeResponse = getRemoteFileSize(url)
+        val fileSize = remoteFileSizeResponse.body?.contentLength()!!.toMb()
+        remoteFileSizeResponse.close()
 
-            override fun onResponse(call: Call, response: Response) {
-                val fileSize = response.body?.contentLength()!!.toMb()
-                response.close()
-                if (fileSize < prefs.getRequestPrefs().maxSize || prefs.getRequestPrefs().maxSize == 0L) {
-                    client.newCall(request).enqueue(callbackDelegate)
-                } else {
-                    callbackDelegate.onFailure(call, java.io.FileNotFoundException("File size exceeds maximum limit"))
-                }
-            }
-        })
+        if (fileSize < prefs.getRequestPrefs().maxSize || prefs.getRequestPrefs().maxSize == 0L) {
+            return client.newCall(request).await()
+        } else {
+            throw java.io.FileNotFoundException("File size exceeds maximum limit")
+        }
     }
 
     suspend fun requestRawUnsafe(
@@ -79,8 +75,7 @@ class NetworkService @Inject constructor(
         method: String,
         headers: List<RequestHeader>,
         body: RequestBody?,
-        callbackDelegate: Callback
-    ) {
+    ): Response {
         val builder = Request.Builder()
             .url(url)
             .method(method, body)
@@ -92,21 +87,15 @@ class NetworkService @Inject constructor(
         val request = builder.build()
         val client = getUnsafeHttpClient()
 
-        getRemoteFileSize(url, object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                callbackDelegate.onFailure(call, e)
-            }
+        val remoteFileSizeResponse = getRemoteFileSize(url)
+        val fileSize = remoteFileSizeResponse.body?.contentLength()!!.toMb()
+        remoteFileSizeResponse.close()
 
-            override fun onResponse(call: Call, response: Response) {
-                val fileSize = response.body?.contentLength()!!.toMb()
-                response.close()
-                if (fileSize < prefs.getRequestPrefs().maxSize || prefs.getRequestPrefs().maxSize == 0L) {
-                    client.newCall(request).enqueue(callbackDelegate)
-                } else {
-                    callbackDelegate.onFailure(call, java.io.FileNotFoundException("File size exceeds maximum limit"))
-                }
-            }
-        })
+        if (fileSize < prefs.getRequestPrefs().maxSize || prefs.getRequestPrefs().maxSize == 0L) {
+            return client.newCall(request).await()
+        } else {
+            throw java.io.FileNotFoundException("File size exceeds maximum limit")
+        }
     }
 
     suspend private fun requestSync(
@@ -142,19 +131,18 @@ class NetworkService @Inject constructor(
 
     suspend fun sendRequest(
         request: com.hickar.restly.models.Request,
-        callbackDelegate: Callback,
         unsafe: Boolean = false
-    ) {
+    ): Response {
         val requestBody = if (request.shouldHaveBody()) {
             createRequestBody(request.body)
         } else {
             null
         }
 
-        if (unsafe) {
-            requestRawUnsafe(request.query.url, request.method.value, request.headers, requestBody, callbackDelegate)
+        return if (unsafe) {
+            requestRawUnsafe(request.query.url, request.method.value, request.headers, requestBody)
         } else {
-            requestRaw(request.query.url, request.method.value, request.headers, requestBody, callbackDelegate)
+            requestRaw(request.query.url, request.method.value, request.headers, requestBody)
         }
     }
 
@@ -300,7 +288,7 @@ class NetworkService @Inject constructor(
             .build()
     }
 
-    private fun getRemoteFileSize(url: String, callback: Callback) {
+    private suspend fun getRemoteFileSize(url: String): Response {
         val request = Request.Builder().url(url).method("HEAD", null).build()
         val client = if (prefs.getRequestPrefs().sslVerificationEnabled) {
             OkHttpClient.Builder()
@@ -309,6 +297,6 @@ class NetworkService @Inject constructor(
         } else {
             getUnsafeHttpClient()
         }
-        client.newCall(request).enqueue(callback)
+        return client.newCall(request).await()
     }
 }

@@ -11,6 +11,8 @@ import com.hickar.restly.repository.dao.RequestGroupDao
 import com.hickar.restly.repository.mappers.CollectionMapper
 import com.hickar.restly.repository.mappers.RequestGroupMapper
 import com.hickar.restly.repository.mappers.RequestMapper
+import com.hickar.restly.repository.models.CollectionDTO
+import com.hickar.restly.repository.models.CollectionRemoteDTO
 import com.hickar.restly.services.SharedPreferencesHelper
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -24,34 +26,35 @@ class CollectionRepository @Inject constructor(
     private val requestDao: RequestDao,
     private val requestGroupDao: RequestGroupDao,
     private val collectionRemoteSource: CollectionRemoteSource,
-    private val prefs: SharedPreferencesHelper
+    private val prefs: SharedPreferencesHelper,
 ) {
     @WorkerThread
-    suspend fun getAllCollections(): List<Collection> {
-//        if (prefs.getRestlyUserInfo() != null) {
-//            val token = prefs.getRestlyJwt()
-//            collectionRemoteSource.getCollections(token) { collections ->
-//                MainScope().launch {
-//                    for (collection in collections) {
-//                        collectionDao.insert(
-//                            CollectionDTO(
-//                                collection.id,
-//                                collection.name,
-//                                collection.description,
-//                                collection.owner,
-//                                null
-//                            )
-//                        )
-//
-//                        for (request in collection.items) {
-//                            requestDao.insert(requestMapper.toDTO(request))
-//                        }
-//                    }
-//                }
-//            }
-//        }
+    suspend fun getAllCollections(forceUpdate: Boolean = false): List<Collection> {
+        if (forceUpdate && prefs.getPostmanUserInfo() != null) {
+            val token = prefs.getPostmanApiKey()
+            val collections = collectionRemoteSource.getCollections(token)
+            saveRemoteCollections(collections)
+        }
 
         return collectionMapper.toEntityList(collectionDao.getAll())
+    }
+
+    private suspend fun saveRemoteCollections(collections: List<CollectionRemoteDTO>) {
+        for (collection in collections) {
+            collectionDao.insert(
+                CollectionDTO(
+                    collection.id,
+                    collection.name,
+                    collection.description,
+                    collection.owner,
+                    null
+                )
+            )
+
+            for (request in collection.items) {
+                requestDao.insert(requestMapper.toDTO(request))
+            }
+        }
     }
 
     @WorkerThread

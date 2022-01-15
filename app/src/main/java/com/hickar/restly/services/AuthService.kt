@@ -3,9 +3,6 @@ package com.hickar.restly.services
 import com.google.gson.Gson
 import com.hickar.restly.consts.RequestMethod
 import com.hickar.restly.models.*
-import okhttp3.Call
-import okhttp3.Response
-import java.io.IOException
 import javax.inject.Inject
 
 class AuthService @Inject constructor(
@@ -21,29 +18,24 @@ class AuthService @Inject constructor(
             headers = listOf(RequestHeader("X-Api-key", apiKey))
         )
 
-        networkService.sendRequest(request, object : okhttp3.Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                delegate.onFailure(call, e)
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                when (response.code) {
-                    200 -> {
-                        val body = response.body?.string()
-                        if (body != null) {
-                            val userInfo = gson.fromJson(body, PostmanGetMeInfo::class.java)?.user
-                            if (userInfo != null) {
-                                prefs.setPostmanApiKey(apiKey)
-                                prefs.setPostmanUserInfo(userInfo)
-                                delegate.onPostmanLoginSuccess(userInfo)
-                            }
-                        } else {
-                            delegate.onFailure(call, WrongApiKeyException())
-                        }
+        val response = networkService.sendRequest(request)
+        when (response.code) {
+            200 -> {
+                val body = response.body?.string()
+                if (body != null) {
+                    val userInfo = gson.fromJson(body, PostmanGetMeInfo::class.java)?.user
+                    if (userInfo != null) {
+                        prefs.setPostmanApiKey(apiKey)
+                        prefs.setPostmanUserInfo(userInfo)
+                        delegate.onPostmanLoginSuccess(userInfo)
                     }
+                } else {
+                    throw WrongApiKeyException("invalid API key was provided")
                 }
             }
-        })
+        }
+
+        return
     }
 
     suspend fun loginToReslty(credentials: RestlyLoginCredentials, delegate: Delegate) {
@@ -60,37 +52,30 @@ class AuthService @Inject constructor(
             )
         )
 
-        networkService.sendRequest(request, object : okhttp3.Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                delegate.onFailure(call, e)
-            }
+        val response = networkService.sendRequest(request)
+        when (response.code) {
+            200 -> {
+                val body = response.body?.string()
+                if (body != null) {
+                    val authCredentials = gson.fromJson(body, AuthUserResponse::class.java)
+                    if (authCredentials != null) {
+                        val userInfo = RestlyUserInfo(
+                            authCredentials.id,
+                            authCredentials.email,
+                            authCredentials.username
+                        )
 
-            override fun onResponse(call: Call, response: Response) {
-                when (response.code) {
-                    200 -> {
-                        val body = response.body?.string()
-                        if (body != null) {
-                            val authCredentials = gson.fromJson(body, AuthUserResponse::class.java)
-                            if (authCredentials != null) {
-                                val userInfo = RestlyUserInfo(
-                                    authCredentials.id,
-                                    authCredentials.email,
-                                    authCredentials.username
-                                )
+                        prefs.setRestlyUserInfo(userInfo)
+                        prefs.setRestlyJwt(authCredentials.token)
 
-                                prefs.setRestlyUserInfo(userInfo)
-                                prefs.setRestlyJwt(authCredentials.token)
-
-                                delegate.onRestlyLoginSuccess(userInfo)
-                            }
-                        } else {
-                            delegate.onFailure(call, EmptyAuthResponseBodyException())
-                        }
+                        delegate.onRestlyLoginSuccess(userInfo)
                     }
-                    404, 409, 422 -> delegate.onFailure(call, InvalidCredentialsException())
+                } else {
+                    throw EmptyAuthResponseBodyException()
                 }
             }
-        })
+            404, 409, 422 -> throw InvalidCredentialsException()
+        }
     }
 
     suspend fun signUpInRestly(credentials: RestlySignupCredentials, delegate: Delegate) {
@@ -107,39 +92,27 @@ class AuthService @Inject constructor(
             )
         )
 
-        networkService.sendRequest(request, object : okhttp3.Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                delegate.onFailure(call, e)
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                when (response.code) {
-                    201 -> {
-                        val body = response.body?.string()
-                        if (body != null) {
-                            prefs.setRestlyJwt(body)
-                            delegate.onRegistrationSuccess()
-                        } else {
-                            delegate.onFailure(call, EmptyAuthResponseBodyException())
-                        }
-                    }
-                    409, 422 -> {
-                        delegate.onFailure(call, NotStrongPasswordException())
-                        return
-                    }
+        val response = networkService.sendRequest(request)
+        when (response.code) {
+            201 -> {
+                val body = response.body?.string()
+                if (body != null) {
+                    prefs.setRestlyJwt(body)
+                    delegate.onRegistrationSuccess()
+                } else {
+                    throw EmptyAuthResponseBodyException()
                 }
             }
-        })
+            409, 422 -> {
+                throw NotStrongPasswordException()
+            }
+        }
     }
 
     interface Delegate {
         fun onRegistrationSuccess()
-
         fun onRestlyLoginSuccess(userInfo: RestlyUserInfo)
-
         fun onPostmanLoginSuccess(userInfo: PostmanUserInfo)
-
-        fun onFailure(call: Call, e: IOException)
     }
 
     companion object {

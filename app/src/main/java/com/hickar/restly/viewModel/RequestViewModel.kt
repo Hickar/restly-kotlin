@@ -18,7 +18,6 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import okhttp3.Call
 import okhttp3.Response
 import java.io.File
 import java.io.FileNotFoundException
@@ -33,7 +32,7 @@ import javax.inject.Inject
 class RequestViewModel @AssistedInject constructor(
     @Assisted private val handle: SavedStateHandle,
     private val repository: CollectionRepository
-) : ViewModel(), okhttp3.Callback {
+) : ViewModel() {
 
     @Inject lateinit var fileManager: FileService
     @Inject lateinit var networkService: NetworkService
@@ -230,9 +229,10 @@ class RequestViewModel @AssistedInject constructor(
     fun sendRequest() {
         viewModelScope.launch {
             try {
-                networkService.sendRequest(currentRequest, this@RequestViewModel)
-            } catch (e: IllegalArgumentException) {
-                error.postValue(ErrorEvent.UnexpectedUrlScheme)
+                val response = networkService.sendRequest(currentRequest)
+                onSuccess(response)
+            } catch (e: IOException) {
+                error.postValue(getErrorEvent(e))
             }
         }
     }
@@ -261,8 +261,8 @@ class RequestViewModel @AssistedInject constructor(
         fileManager.deleteFile(response.value?.body?.file)
     }
 
-    override fun onFailure(call: Call, e: IOException) {
-        val newError = when (e) {
+    private fun getErrorEvent(e: IOException): ErrorEvent {
+        return when (e) {
             is SocketTimeoutException -> ErrorEvent.ConnectionTimeout
             is ConnectException -> ErrorEvent.ConnectionRefused
             is UnknownHostException -> {
@@ -276,10 +276,9 @@ class RequestViewModel @AssistedInject constructor(
             is FileNotFoundException -> ErrorEvent.SizeExceedsLimit
             else -> ErrorEvent.ConnectionUnexpected
         }
-        error.postValue(newError)
     }
 
-    override fun onResponse(call: Call, response: Response) {
+    private fun onSuccess(response: Response) {
         if (response.body != null) {
             val bodySize = if (response.body!!.contentLength() == -1L) 0L else response.body!!.contentLength()
             val contentType = response.body!!.contentType().toString()

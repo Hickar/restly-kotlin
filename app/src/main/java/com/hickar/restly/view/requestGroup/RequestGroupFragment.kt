@@ -89,11 +89,7 @@ class RequestGroupFragment : Fragment() {
         val collection = collectionViewModel.collection
         val group = requestGroupViewModel.group
 
-        if (
-            collection.isDefault() &&
-            collection.parentId == null &&
-            collection.id == group.id
-        ) {
+        if (collection.isDefault() && group.isRoot()) {
             menuId = R.menu.request_group_default_collection_menu
             backButtonEnabled = false
         } else {
@@ -164,16 +160,11 @@ class RequestGroupFragment : Fragment() {
         requestGroupViewModel.name.observe(viewLifecycleOwner) { name ->
             val group = requestGroupViewModel.group
             requireActivity().invalidateOptionsMenu()
-            (requireActivity() as MainActivity).supportActionBar?.title =
-                if (group.isDefault()) {
-                    getString(R.string.default_collection_title)
-                } else {
-                    if (group.isRoot()) {
-                        collectionViewModel.collection.name
-                    } else {
-                        name
-                    }
-                }
+            (requireActivity() as MainActivity).supportActionBar?.title = when {
+                group.isDefault() -> getString(R.string.default_collection_title)
+                group.isRoot() -> collectionViewModel.collection.name
+                else -> name
+            }
         }
     }
 

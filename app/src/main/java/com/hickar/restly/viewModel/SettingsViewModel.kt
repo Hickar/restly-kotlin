@@ -13,7 +13,6 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch
-import okhttp3.Call
 import java.io.IOException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -61,10 +60,14 @@ class SettingsViewModel @AssistedInject constructor(
 
     fun loginToRestly(username: String, password: String) {
         viewModelScope.launch {
-            authService.loginToReslty(
-                RestlyLoginCredentials(username, password),
-                this@SettingsViewModel
-            )
+            try {
+                authService.loginToReslty(
+                    RestlyLoginCredentials(username, password),
+                    this@SettingsViewModel
+                )
+            } catch (e: IOException) {
+                error.postValue(getErrorEvent(e))
+            }
         }
     }
 
@@ -76,16 +79,24 @@ class SettingsViewModel @AssistedInject constructor(
 
     fun signUpInRestly(email: String, username: String, password: String) {
         viewModelScope.launch {
-            authService.signUpInRestly(
-                RestlySignupCredentials(email, username, password),
-                this@SettingsViewModel
-            )
+            try {
+                authService.signUpInRestly(
+                    RestlySignupCredentials(email, username, password),
+                    this@SettingsViewModel
+                )
+            } catch (e: IOException) {
+                error.postValue(getErrorEvent(e))
+            }
         }
     }
 
     fun loginToPostman(apiKey: String) {
         viewModelScope.launch {
-            authService.loginToPostman(apiKey, this@SettingsViewModel)
+            try {
+                authService.loginToPostman(apiKey, this@SettingsViewModel)
+            } catch (e: IOException) {
+                error.postValue(getErrorEvent(e))
+            }
         }
     }
 
@@ -120,8 +131,8 @@ class SettingsViewModel @AssistedInject constructor(
         prefs.setWebViewPrefs(webViewPrefs.value!!)
     }
 
-    override fun onFailure(call: Call, e: IOException) {
-        val newError = when (e) {
+    private fun getErrorEvent(e: IOException): ErrorEvent {
+        return when (e) {
             is SocketTimeoutException -> ErrorEvent.ConnectionTimeout
             is UnknownHostException -> {
                 if (networkService.isNetworkAvailable()) {
@@ -136,7 +147,6 @@ class SettingsViewModel @AssistedInject constructor(
             is WrongApiKeyException -> ErrorEvent.PostmanAuthError
             else -> ErrorEvent.ConnectionUnexpected
         }
-        error.postValue(newError)
     }
 
     override fun onRegistrationSuccess() {

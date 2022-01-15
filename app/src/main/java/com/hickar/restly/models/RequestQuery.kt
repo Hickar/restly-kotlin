@@ -1,11 +1,16 @@
 package com.hickar.restly.models
 
 import com.hickar.restly.extensions.indexOfDiff
+import java.net.URL
 
 class RequestQuery(
     var url: String = ""
 ) {
     var domain: String = ""
+    var protocol: String = ""
+    var host: List<String> = listOf()
+    var path: List<String> = listOf()
+    var port: Int = 0
     var parameters: MutableList<RequestQueryParameter> = mutableListOf()
 
     init {
@@ -24,6 +29,8 @@ class RequestQuery(
                     domain = url
                 }
             }
+
+            parseParts(url)
         }
     }
 
@@ -78,6 +85,7 @@ class RequestQuery(
         }
 
         domain = parseDomain(newUrl)
+        parseParts(newUrl)
         this.url = buildQueryString(domain, parameters)
     }
 
@@ -164,5 +172,13 @@ class RequestQuery(
         } else {
             url
         }
+    }
+
+    private fun parseParts(url: String) {
+        val tmpUrl = URL(url)
+        protocol = tmpUrl.protocol
+        host = tmpUrl.authority.split(".")
+        path = tmpUrl.path.split("/")
+        port = tmpUrl.port
     }
 }

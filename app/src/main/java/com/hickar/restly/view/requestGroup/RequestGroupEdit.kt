@@ -2,6 +2,7 @@ package com.hickar.restly.view.requestGroup
 
 import android.os.Bundle
 import android.view.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -57,6 +58,7 @@ class RequestGroupEditFragment : Fragment() {
 
     private fun setupObservers() {
         viewModel.name.observeOnce(viewLifecycleOwner) { name ->
+            (requireActivity() as AppCompatActivity).supportActionBar?.title = name
             binding.requestGroupEditNameInput.text = name.toEditable()
         }
 

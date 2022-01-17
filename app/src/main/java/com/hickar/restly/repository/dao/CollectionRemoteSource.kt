@@ -54,6 +54,7 @@ class CollectionRemoteSource @Inject constructor(
                 if (response.code == 200) {
                     val body = response.body?.string()
                     val collection = gson.fromJson(body, CollectionRemoteDTO::class.java)
+                    println(collection)
                 }
             }
         } catch (e: IOException) {

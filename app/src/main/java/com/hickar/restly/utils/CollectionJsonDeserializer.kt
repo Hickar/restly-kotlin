@@ -149,7 +149,12 @@ class CollectionJsonDeserializer : JsonDeserializer<CollectionRemoteDTO> {
                     enabled = !get("disabled").asBoolean
                 }
 
-                val newHeader = RequestHeader(key = key, value = value, enabled = enabled)
+                var description: String? = null
+                if (has("description")) {
+                    description = get("description").asString
+                }
+
+                val newHeader = RequestHeader(key = key, value = value, enabled = enabled, description = description)
                 headersList.add(newHeader)
             }
         }
@@ -165,8 +170,96 @@ class CollectionJsonDeserializer : JsonDeserializer<CollectionRemoteDTO> {
 
             val bodyType = get("mode").asString
             when (bodyType) {
-                "formdata" -> {}
-                "file" -> {}
+                "formdata" -> {
+                    if (has("formdata")) {
+                        val formDataList: MutableList<RequestFormData> = mutableListOf()
+                        val formDataJsonObjects = get("formdata").asJsonArray
+
+                        for (formData in formDataJsonObjects) {
+                            val formDataObject = formData.asJsonObject
+
+                            formDataObject.run {
+                                val key = get("key").asString
+                                val value = get("value").asString
+
+                                var enabled = true
+                                if (has("disabled")) {
+                                    enabled = get("disabled").asBoolean
+                                }
+
+                                var description: String? = null
+                                if (has("description")) {
+                                    description = get("description").asString
+                                }
+
+                                val newFormDataItem = RequestFormData(
+                                    key = key,
+                                    value = value,
+                                    enabled = enabled,
+                                    description = description
+                                )
+                                formDataList.add(newFormDataItem)
+                            }
+                        }
+
+                        return RequestBody(enabled = true, type = BodyType.FORMDATA, formData = formDataList)
+                    }
+                }
+                "urlencoded" -> {
+                    if (has("urlencoded")) {
+                        val multipartDataList: MutableList<RequestMultipartData> = mutableListOf()
+                        val multipartDataJsonObjects = get("urlencoded").asJsonArray
+
+                        for (multipartData in multipartDataJsonObjects) {
+                            val multipartDataObject = multipartData.asJsonObject
+
+                            multipartDataObject.run {
+                                val key = get("key").asString
+                                val value = get("value").asString
+
+                                var enabled = true
+                                if (has("disabled")) {
+                                    enabled = get("disabled").asBoolean
+                                }
+
+                                var description: String? = null
+                                if (has("description")) {
+                                    description = get("description").asString
+                                }
+
+                                val newFormDataItem = RequestMultipartData(
+                                    key = key,
+                                    value = value,
+                                    enabled = enabled,
+                                    description = description
+                                )
+                                multipartDataList.add(newFormDataItem)
+                            }
+                        }
+
+                        return RequestBody(enabled = true, type = BodyType.MULTIPART, multipartData = multipartDataList)
+                    }
+                }
+                "raw" -> {
+                    var rawData = ""
+                    if (has("raw")) {
+                        rawData = get("raw").asString
+                    }
+
+                    return RequestBody(enabled = true, type = BodyType.RAW, rawData = RequestRawData(rawData))
+                }
+                "file" -> {
+                    var file: RequestFile? = null
+                    if (has("file")) {
+                        val fileObject = get("file").asJsonObject
+                        if (fileObject.has("src")) {
+                            val src = fileObject.get("src").asString
+                            file = RequestFile(name = src, path = src, uri = src, mimeType = "", size = 0)
+                        }
+                    }
+
+                    return RequestBody(type = BodyType.BINARY, binaryData = RequestBinaryData(file = file))
+                }
             }
         }
 

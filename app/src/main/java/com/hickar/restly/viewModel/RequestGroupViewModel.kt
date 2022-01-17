@@ -4,8 +4,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hickar.restly.models.Request
 import com.hickar.restly.models.RequestDirectory
+import com.hickar.restly.models.RequestItem
 import com.hickar.restly.repository.room.CollectionRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -21,7 +21,7 @@ class RequestGroupViewModel @AssistedInject constructor(
 
     val name: MutableLiveData<String> = MutableLiveData()
     val description: MutableLiveData<String?> = MutableLiveData()
-    val requests: MutableLiveData<MutableList<Request>> = MutableLiveData()
+    val requests: MutableLiveData<MutableList<RequestItem>> = MutableLiveData()
     val folders: MutableLiveData<MutableList<RequestDirectory>> = MutableLiveData()
 
     private var groupId = RequestDirectory.DEFAULT
@@ -35,8 +35,8 @@ class RequestGroupViewModel @AssistedInject constructor(
     }
 
     suspend fun createNewDefaultRequest(): String {
-        val newRequest = Request(parentId = groupId)
-        repository.insertRequest(newRequest)
+        val newRequest = RequestItem(parentId = groupId)
+        repository.insertRequestItem(newRequest)
 
         refreshRequestGroup(groupId)
         return newRequest.id
@@ -70,7 +70,7 @@ class RequestGroupViewModel @AssistedInject constructor(
 
     fun deleteRequest(position: Int) {
         viewModelScope.launch {
-            repository.deleteRequest(requests.value!![position])
+            repository.deleteRequestItem(requests.value!![position])
             requests.value?.removeAt(position)
             requests.value = requests.value
         }

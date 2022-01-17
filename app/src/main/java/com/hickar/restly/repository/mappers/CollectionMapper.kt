@@ -1,19 +1,16 @@
 package com.hickar.restly.repository.mappers
 
-import com.google.gson.Gson
 import com.hickar.restly.models.Collection
 import com.hickar.restly.repository.models.CollectionDTO
 import javax.inject.Inject
 
-class CollectionMapper @Inject constructor(
-    private val gson: Gson
-) : Mapper<Collection, CollectionDTO> {
+class CollectionMapper @Inject constructor() : Mapper<Collection, CollectionDTO> {
     override fun toDTO(entity: Collection): CollectionDTO {
         return CollectionDTO(entity.id, entity.name, entity.description, entity.owner, entity.parentId)
     }
 
-    override fun toEntity(dto: CollectionDTO): Collection {
-        return Collection(dto.id, dto.name, dto.description, dto.owner, dto.parentId)
+    override fun toEntity(entityDTO: CollectionDTO): Collection {
+        return Collection(entityDTO.id, entityDTO.name, entityDTO.description, entityDTO.owner, entityDTO.parentId)
     }
 
     override fun toDTOList(entities: List<Collection>): List<CollectionDTO> {

@@ -6,7 +6,7 @@ class RequestDirectory(
     var id: String = UUID.randomUUID().toString(),
     var name: String,
     var description: String? = "",
-    var requests: MutableList<Request> = mutableListOf(),
+    var requests: MutableList<RequestItem> = mutableListOf(),
     var subgroups: MutableList<RequestDirectory> = mutableListOf(),
     override var parentId: String? = null
 ) : RequestGroup() {

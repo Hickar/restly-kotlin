@@ -4,8 +4,8 @@ import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.hickar.restly.repository.dao.CollectionDao
-import com.hickar.restly.repository.dao.RequestDao
 import com.hickar.restly.repository.dao.RequestGroupDao
+import com.hickar.restly.repository.dao.RequestItemDao
 import com.hickar.restly.repository.room.AppDatabase
 import dagger.Module
 import dagger.Provides
@@ -25,8 +25,8 @@ class DatabaseModule {
     }
 
     @Provides
-    fun provideRequestDao(database: AppDatabase): RequestDao {
-        return database.requestDao()
+    fun provideRequestDao(database: AppDatabase): RequestItemDao {
+        return database.requestItemDao()
     }
 
     @Provides

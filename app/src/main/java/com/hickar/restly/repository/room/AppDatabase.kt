@@ -5,21 +5,21 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.hickar.restly.repository.dao.CollectionDao
-import com.hickar.restly.repository.dao.RequestDao
 import com.hickar.restly.repository.dao.RequestGroupDao
+import com.hickar.restly.repository.dao.RequestItemDao
 import com.hickar.restly.repository.models.CollectionDTO
-import com.hickar.restly.repository.models.RequestDTO
 import com.hickar.restly.repository.models.RequestDirectoryDTO
+import com.hickar.restly.repository.models.RequestItemDTO
 
 @Database(
     entities = [
-        RequestDTO::class,
+        RequestItemDTO::class,
         CollectionDTO::class,
         RequestDirectoryDTO::class
-    ], version = 10
+    ], version = 12
 )
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun requestDao(database: AppDatabase = this): RequestDao
+    abstract fun requestItemDao(database: AppDatabase = this): RequestItemDao
     abstract fun collectionDao(database: AppDatabase = this): CollectionDao
     abstract fun requestGroupDao(database: AppDatabase = this): RequestGroupDao
 

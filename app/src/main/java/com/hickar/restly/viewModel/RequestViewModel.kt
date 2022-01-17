@@ -37,7 +37,8 @@ class RequestViewModel @AssistedInject constructor(
     @Inject lateinit var fileManager: FileService
     @Inject lateinit var networkService: NetworkService
 
-    private lateinit var currentRequest: Request
+    private lateinit var requestItem: RequestItem
+    private lateinit var request: Request
 
     val name: MutableLiveData<String> = MutableLiveData()
     val method: MutableLiveData<RequestMethod> = MutableLiveData()
@@ -62,10 +63,14 @@ class RequestViewModel @AssistedInject constructor(
     fun loadRequest(requestId: String) {
         runBlocking {
             try {
-                currentRequest = repository.getRequestById(requestId)
+                requestItem = repository.getRequestItemById(requestId)
+                request = requestItem.request
 
-                currentRequest.let {
+                requestItem.let {
                     name.value = it.name
+                }
+
+                request.let {
                     query = it.query
                     url.value = query.url
                     method.value = it.method
@@ -229,7 +234,7 @@ class RequestViewModel @AssistedInject constructor(
     fun sendRequest() {
         viewModelScope.launch {
             try {
-                val response = networkService.sendRequest(currentRequest)
+                val response = networkService.sendRequest(request)
                 onSuccess(response)
             } catch (e: IOException) {
                 error.postValue(getErrorEvent(e))
@@ -239,20 +244,17 @@ class RequestViewModel @AssistedInject constructor(
 
     fun saveRequest() {
         viewModelScope.launch {
-            try {
-                currentRequest.name = name.value!!
-                currentRequest.query = query
-                currentRequest.method = method.value!!
-                currentRequest.headers = headers.value!!
-                currentRequest.body.formData = formData.value!!
-                currentRequest.body.multipartData = multipartData.value!!
-                currentRequest.body.binaryData = binaryData.value!!
-                currentRequest.body.type = bodyType.value!!
-                repository.updateRequest(currentRequest)
-            } catch (exception: SQLiteException) {
-                Log.e("Unable to save request", exception.toString())
-                exception.printStackTrace()
-            }
+            request.query = query
+            request.method = method.value!!
+            request.headers = headers.value!!
+            request.body.formData = formData.value!!
+            request.body.multipartData = multipartData.value!!
+            request.body.binaryData = binaryData.value!!
+            request.body.type = bodyType.value!!
+
+            requestItem.name = name.value!!
+            requestItem.request = request
+            repository.updateRequestItem(requestItem)
         }
     }
 
@@ -305,7 +307,7 @@ class RequestViewModel @AssistedInject constructor(
 
             this.response.postValue(
                 Response(
-                    currentRequest.query.url,
+                    request.query.url,
                     response.headers,
                     response.code,
                     Date(response.sentRequestAtMillis),

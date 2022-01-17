@@ -1,6 +1,7 @@
 package com.hickar.restly.models
 
 import com.hickar.restly.extensions.indexOfDiff
+import java.net.MalformedURLException
 import java.net.URL
 
 class RequestQuery(
@@ -175,10 +176,21 @@ class RequestQuery(
     }
 
     private fun parseParts(url: String) {
-        val tmpUrl = URL(url)
-        protocol = tmpUrl.protocol
-        host = tmpUrl.authority.split(".")
-        path = tmpUrl.path.split("/")
-        port = tmpUrl.port
+        try {
+            val tmpUrl = URL(url)
+            protocol = tmpUrl.protocol
+
+            if (tmpUrl.authority != null) {
+                host = tmpUrl.authority.split(".")
+            }
+
+            if (tmpUrl.path != null) {
+                path = tmpUrl.path.split("/")
+            }
+
+            if (tmpUrl.port != 0) {
+                port = tmpUrl.port
+            }
+        } catch (e: MalformedURLException) {}
     }
 }

@@ -10,6 +10,13 @@ import com.hickar.restly.services.NetworkService
 import java.io.IOException
 import javax.inject.Inject
 
+class CollectionInfo(
+    val id: String,
+    val name: String,
+    val owner: String,
+    val uid: String
+)
+
 class CollectionRemoteSource @Inject constructor(
     private val gson: Gson,
     private val networkService: NetworkService
@@ -17,22 +24,39 @@ class CollectionRemoteSource @Inject constructor(
     suspend fun getCollections(
         token: String?,
     ): List<CollectionRemoteDTO> {
-        if (token == null) throw IllegalStateException("Jwt is null")
+        if (token == null) throw IllegalStateException("Postman API key is null")
 
-        val request = Request(
-            query = RequestQuery("$RESTLY_URL_DEV/api/collections"),
+        var request = Request(
+            query = RequestQuery(GET_COLLECTIONS_ENDPOINT),
             method = RequestMethod.GET,
-            headers = listOf(RequestHeader("Authorization", "Bearer $token"))
+            headers = listOf(RequestHeader(HEADER_API_KEY, token))
         )
 
-        var collections: List<CollectionRemoteDTO> = listOf()
+        var collections: MutableList<CollectionRemoteDTO> = mutableListOf()
+        var collectionInfoList: List<CollectionInfo> = listOf()
 
         try {
-            val response = networkService.sendRequest(request)
+            var response = networkService.sendRequest(request)
             if (response.code == 200) {
                 val body = response.body?.string()
-                val listType = object : TypeToken<List<CollectionRemoteDTO>>() {}.type
-                collections = gson.fromJson(body, listType)
+                val listType = object : TypeToken<List<CollectionInfo>>() {}.type
+                collectionInfoList = gson.fromJson(body, listType)
+            }
+
+            for (infoEntry in collectionInfoList) {
+                request = Request(
+                    query = RequestQuery(String.format(GET_COLLECTION_ENDPOINT, infoEntry.uid)),
+                    method = RequestMethod.GET,
+                    headers = listOf(RequestHeader(HEADER_API_KEY, token))
+                )
+
+                response = networkService.sendRequest(request)
+                if (response.code == 200) {
+                    val body = response.body?.string()
+                    val collection = gson.fromJson(body, CollectionRemoteDTO::class.java)
+
+
+                }
             }
         } catch (e: IOException) {
             return listOf()
@@ -62,5 +86,12 @@ class CollectionRemoteSource @Inject constructor(
         )
 
         networkService.sendRequest(request)
+    }
+
+    companion object {
+        private const val GET_COLLECTIONS_ENDPOINT = "https://api.getpostman.com/collections"
+        private const val GET_COLLECTION_ENDPOINT = "https://api.getpostman.com/collections/%s"
+
+        private const val HEADER_API_KEY = "X-Api-Key"
     }
 }

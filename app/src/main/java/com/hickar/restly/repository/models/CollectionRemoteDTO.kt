@@ -1,11 +1,11 @@
 package com.hickar.restly.repository.models
 
-import com.hickar.restly.models.Request
+import com.hickar.restly.models.RequestDirectory
 
 data class CollectionRemoteDTO(
-    val id: String,
-    val name: String,
-    val description: String,
-    val owner: String,
-    val items: List<Request>
+    var id: String = "",
+    var name: String = "",
+    val description: String = "",
+    val owner: String = "",
+    val root: RequestDirectory? = null
 )

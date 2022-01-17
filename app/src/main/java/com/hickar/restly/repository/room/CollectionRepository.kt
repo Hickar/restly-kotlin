@@ -2,16 +2,15 @@ package com.hickar.restly.repository.room
 
 import androidx.annotation.WorkerThread
 import com.hickar.restly.models.Collection
-import com.hickar.restly.models.Request
 import com.hickar.restly.models.RequestDirectory
+import com.hickar.restly.models.RequestItem
 import com.hickar.restly.repository.dao.CollectionDao
 import com.hickar.restly.repository.dao.CollectionRemoteSource
-import com.hickar.restly.repository.dao.RequestDao
 import com.hickar.restly.repository.dao.RequestGroupDao
+import com.hickar.restly.repository.dao.RequestItemDao
 import com.hickar.restly.repository.mappers.CollectionMapper
 import com.hickar.restly.repository.mappers.RequestGroupMapper
-import com.hickar.restly.repository.mappers.RequestMapper
-import com.hickar.restly.repository.models.CollectionDTO
+import com.hickar.restly.repository.mappers.RequestItemMapper
 import com.hickar.restly.repository.models.CollectionRemoteDTO
 import com.hickar.restly.services.SharedPreferencesHelper
 import javax.inject.Inject
@@ -20,10 +19,10 @@ import javax.inject.Singleton
 @Singleton
 class CollectionRepository @Inject constructor(
     private val collectionMapper: CollectionMapper,
-    private val requestMapper: RequestMapper,
+    private val requestItemMapper: RequestItemMapper,
     private val requestGroupMapper: RequestGroupMapper,
     private val collectionDao: CollectionDao,
-    private val requestDao: RequestDao,
+    private val requestItemDao: RequestItemDao,
     private val requestGroupDao: RequestGroupDao,
     private val collectionRemoteSource: CollectionRemoteSource,
     private val prefs: SharedPreferencesHelper,
@@ -40,21 +39,21 @@ class CollectionRepository @Inject constructor(
     }
 
     private suspend fun saveRemoteCollections(collections: List<CollectionRemoteDTO>) {
-        for (collection in collections) {
-            collectionDao.insert(
-                CollectionDTO(
-                    collection.id,
-                    collection.name,
-                    collection.description,
-                    collection.owner,
-                    null
-                )
-            )
-
-            for (request in collection.items) {
-                requestDao.insert(requestMapper.toDTO(request))
-            }
-        }
+//        for (collection in collections) {
+//            collectionDao.insert(
+//                CollectionDTO(
+//                    collection.id,
+//                    collection.name,
+//                    collection.description,
+//                    collection.owner,
+//                    null
+//                )
+//            )
+//
+//            for (request in collection.items) {
+//                requestDao.insert(requestItemMapper.toDTO(request))
+//            }
+//        }
     }
 
     @WorkerThread
@@ -88,7 +87,7 @@ class CollectionRepository @Inject constructor(
             if (subgroup != null) subgroups.add(subgroup)
         }
 
-        val requests = requestMapper.toEntityList(requestDao.getByGroupId(requestGroupDto.id))
+        val requests = requestItemMapper.toEntityList(requestItemDao.getByGroupId(requestGroupDto.id))
 
         return RequestDirectory(
             id = requestGroupDto.id,
@@ -114,35 +113,35 @@ class CollectionRepository @Inject constructor(
     suspend fun deleteRequestGroup(requestGroup: RequestDirectory) {
         requestGroupDao.deleteById(requestGroup.id)
         requestGroupDao.deleteGroupsByParentId(requestGroup.id)
-        requestDao.deleteRequestsByGroupId(requestGroup.id)
+        requestItemDao.deleteRequestsByGroupId(requestGroup.id)
         for (subgroup in requestGroup.subgroups) {
             deleteRequestGroup(subgroup)
         }
     }
 
     @WorkerThread
-    suspend fun getRequestById(id: String): Request {
-        return requestMapper.toEntity(requestDao.getById(id))
+    suspend fun getRequestItemById(id: String): RequestItem {
+        return requestItemMapper.toEntity(requestItemDao.getById(id))
     }
 
     @WorkerThread
-    suspend fun insertRequest(request: Request) {
-        return requestDao.insert(requestMapper.toDTO(request))
+    suspend fun insertRequestItem(request: RequestItem) {
+        return requestItemDao.insert(requestItemMapper.toDTO(request))
     }
 
     @WorkerThread
-    suspend fun updateRequest(request: Request) {
-        return requestDao.update(requestMapper.toDTO(request))
+    suspend fun updateRequestItem(request: RequestItem) {
+        return requestItemDao.update(requestItemMapper.toDTO(request))
     }
 
     @WorkerThread
-    suspend fun deleteRequest(request: Request) {
-        return requestDao.delete(requestMapper.toDTO(request))
+    suspend fun deleteRequestItem(request: RequestItem) {
+        return requestItemDao.delete(requestItemMapper.toDTO(request))
     }
 
     @WorkerThread
     suspend fun deleteRequestsByCollectionId(id: String) {
-        return requestDao.deleteRequestsByGroupId(id)
+        return requestItemDao.deleteRequestsByGroupId(id)
     }
 
     @WorkerThread

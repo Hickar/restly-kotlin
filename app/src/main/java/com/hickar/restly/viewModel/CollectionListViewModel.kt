@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.hickar.restly.models.Collection
 import com.hickar.restly.models.RequestDirectory
 import com.hickar.restly.repository.room.CollectionRepository
+import com.hickar.restly.services.SharedPreferencesHelper
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -16,6 +17,7 @@ import java.util.*
 class CollectionListViewModel @AssistedInject constructor(
     @Assisted private val handle: SavedStateHandle,
     private val collectionRepository: CollectionRepository,
+    private val prefs: SharedPreferencesHelper
 ) : ViewModel() {
     val collections: MutableLiveData<MutableList<Collection>> = MutableLiveData()
 
@@ -45,8 +47,8 @@ class CollectionListViewModel @AssistedInject constructor(
 
     fun refreshCollections() {
         viewModelScope.launch {
-            collections.value = collectionRepository.getAllCollections().toMutableList()
-            collectionRepository.saveAllToRemote()
+            val shouldPullPostmanCollections = prefs.getPostmanUserInfo() != null
+            collections.value = collectionRepository.getAllCollections(shouldPullPostmanCollections).toMutableList()
         }
     }
 

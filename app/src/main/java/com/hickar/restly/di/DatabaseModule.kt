@@ -3,10 +3,15 @@ package com.hickar.restly.di
 import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
 import com.hickar.restly.repository.dao.CollectionDao
+import com.hickar.restly.repository.dao.CollectionInfo
 import com.hickar.restly.repository.dao.RequestGroupDao
 import com.hickar.restly.repository.dao.RequestItemDao
+import com.hickar.restly.repository.models.CollectionRemoteDTO
 import com.hickar.restly.repository.room.AppDatabase
+import com.hickar.restly.utils.CollectionInfoJsonDesetializer
+import com.hickar.restly.utils.CollectionJsonDeserializer
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,6 +47,13 @@ class DatabaseModule {
     @Singleton
     @Provides
     fun provideGson(): Gson {
-        return GsonBuilder().disableHtmlEscaping().serializeNulls().create()
+        val collectionInfoListType = object : TypeToken<List<CollectionInfo>>() {}.type
+
+        return GsonBuilder()
+            .registerTypeAdapter(CollectionRemoteDTO::class.java, CollectionJsonDeserializer())
+            .registerTypeAdapter(collectionInfoListType, CollectionInfoJsonDesetializer())
+            .disableHtmlEscaping()
+            .serializeNulls()
+            .create()
     }
 }

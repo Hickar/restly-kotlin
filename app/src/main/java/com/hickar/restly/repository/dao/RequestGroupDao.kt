@@ -11,7 +11,7 @@ interface RequestGroupDao {
     @Query("SELECT * FROM request_groups WHERE parentId = :id")
     suspend fun getByParentId(id: String): List<RequestDirectoryDTO>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(requestDirectoryDTO: RequestDirectoryDTO)
 
     @Update

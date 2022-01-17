@@ -2,6 +2,7 @@ package com.hickar.restly.repository.room
 
 import androidx.annotation.WorkerThread
 import com.hickar.restly.models.Collection
+import com.hickar.restly.models.CollectionOrigin
 import com.hickar.restly.models.RequestDirectory
 import com.hickar.restly.models.RequestItem
 import com.hickar.restly.repository.dao.CollectionDao
@@ -11,6 +12,7 @@ import com.hickar.restly.repository.dao.RequestItemDao
 import com.hickar.restly.repository.mappers.CollectionMapper
 import com.hickar.restly.repository.mappers.RequestGroupMapper
 import com.hickar.restly.repository.mappers.RequestItemMapper
+import com.hickar.restly.repository.models.CollectionDTO
 import com.hickar.restly.repository.models.CollectionRemoteDTO
 import com.hickar.restly.services.SharedPreferencesHelper
 import javax.inject.Inject
@@ -39,21 +41,22 @@ class CollectionRepository @Inject constructor(
     }
 
     private suspend fun saveRemoteCollections(collections: List<CollectionRemoteDTO>) {
-//        for (collection in collections) {
-//            collectionDao.insert(
-//                CollectionDTO(
-//                    collection.id,
-//                    collection.name,
-//                    collection.description,
-//                    collection.owner,
-//                    null
-//                )
-//            )
-//
-//            for (request in collection.items) {
-//                requestDao.insert(requestItemMapper.toDTO(request))
-//            }
-//        }
+        for (collection in collections) {
+            collectionDao.insert(
+                CollectionDTO(
+                    collection.id,
+                    collection.name,
+                    collection.description,
+                    collection.owner,
+                    null,
+                    origin = CollectionOrigin.POSTMAN.origin
+                )
+            )
+
+            if (collection.root != null) {
+                insertRequestGroupAndAllChildren(collection.root!!)
+            }
+        }
     }
 
     @WorkerThread
@@ -102,6 +105,18 @@ class CollectionRepository @Inject constructor(
     @WorkerThread
     suspend fun insertRequestGroup(requestGroup: RequestDirectory) {
         requestGroupDao.insert(requestGroupMapper.toDTO(requestGroup))
+    }
+
+    @WorkerThread
+    suspend fun insertRequestGroupAndAllChildren(requestGroup: RequestDirectory) {
+        insertRequestGroup(requestGroup)
+        for (requestItem in requestGroup.requests) {
+            insertRequestItem(requestItem)
+        }
+
+        for (subgroup in requestGroup.subgroups) {
+            insertRequestGroupAndAllChildren(subgroup)
+        }
     }
 
     @WorkerThread

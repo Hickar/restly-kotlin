@@ -1,6 +1,8 @@
 package com.hickar.restly.repository.dao
 
+import android.util.Log
 import com.google.gson.Gson
+import com.google.gson.JsonParseException
 import com.google.gson.reflect.TypeToken
 import com.hickar.restly.consts.Paths.Companion.RESTLY_URL_DEV
 import com.hickar.restly.consts.RequestMethod
@@ -53,11 +55,19 @@ class CollectionRemoteSource @Inject constructor(
                 response = networkService.sendRequest(request)
                 if (response.code == 200) {
                     val body = response.body?.string()
-                    val collection = gson.fromJson(body, CollectionRemoteDTO::class.java)
-                    println(collection)
+                    try {
+                        val collection = gson.fromJson(body, CollectionRemoteDTO::class.java) ?: break
+                        collection.owner = infoEntry.owner
+
+                        collections.add(collection)
+                    } catch (e: JsonParseException) {
+                        Log.e("CollectionRemoteSource.getCollections", "Unexpected error during collection json parsing: ${e.message}", e)
+                    }
+                    response.body?.close()
                 }
             }
         } catch (e: IOException) {
+            Log.e("CollectionRemoteSource.getCollections", "Unexpected error: ${e.message}", e)
             return listOf()
         }
 

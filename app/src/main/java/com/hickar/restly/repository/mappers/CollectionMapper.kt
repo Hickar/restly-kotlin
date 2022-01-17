@@ -1,16 +1,24 @@
 package com.hickar.restly.repository.mappers
 
 import com.hickar.restly.models.Collection
+import com.hickar.restly.models.CollectionOrigin
 import com.hickar.restly.repository.models.CollectionDTO
 import javax.inject.Inject
 
 class CollectionMapper @Inject constructor() : Mapper<Collection, CollectionDTO> {
     override fun toDTO(entity: Collection): CollectionDTO {
-        return CollectionDTO(entity.id, entity.name, entity.description, entity.owner, entity.parentId)
+        return CollectionDTO(entity.id, entity.name, entity.description, entity.owner, entity.parentId, entity.owner)
     }
 
     override fun toEntity(entityDTO: CollectionDTO): Collection {
-        return Collection(entityDTO.id, entityDTO.name, entityDTO.description, entityDTO.owner, entityDTO.parentId)
+        return Collection(
+            entityDTO.id,
+            entityDTO.name,
+            entityDTO.description,
+            entityDTO.owner,
+            entityDTO.parentId,
+            CollectionOrigin.valueOf(entityDTO.origin.uppercase())
+        )
     }
 
     override fun toDTOList(entities: List<Collection>): List<CollectionDTO> {

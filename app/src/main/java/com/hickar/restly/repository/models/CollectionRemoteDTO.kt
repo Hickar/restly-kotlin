@@ -6,6 +6,6 @@ data class CollectionRemoteDTO(
     var id: String = "",
     var name: String = "",
     var description: String = "",
-    val owner: String = "",
+    var owner: String = "",
     var root: RequestDirectory? = null
 )

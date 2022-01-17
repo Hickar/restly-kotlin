@@ -11,5 +11,6 @@ data class CollectionDTO(
     val name: String,
     val description: String,
     val owner: String,
-    override var parentId: String?
+    override var parentId: String?,
+    val origin: String
 ) : RequestGroup()

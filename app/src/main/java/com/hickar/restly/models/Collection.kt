@@ -6,7 +6,7 @@ data class Collection(
     var description: String = "",
     var owner: String = "",
     override var parentId: String? = null
-): RequestGroup() {
+) : RequestGroup() {
     companion object {
         const val DEFAULT = "0000-00000000-00000000-0000-000000-000000"
     }

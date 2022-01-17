@@ -19,7 +19,8 @@ class CollectionEditFragment : Fragment() {
     private var _binding: CollectionEditBinding? = null
     private val binding get() = _binding!!
 
-    @Inject lateinit var factory: CollectionViewModel.Factory
+    @Inject
+    lateinit var factory: CollectionViewModel.Factory
     private val viewModel: CollectionViewModel by viewModels {
         LambdaFactory(this) { stateHandle ->
             factory.build(stateHandle)

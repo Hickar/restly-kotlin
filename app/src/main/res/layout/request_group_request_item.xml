@@ -45,7 +45,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAlignment="textStart"
-            android:maxLines="3"/>
+            android:maxLines="3" />
     </LinearLayout>
 
 

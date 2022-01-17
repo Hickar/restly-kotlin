@@ -20,7 +20,8 @@ class RequestGroupEditFragment : Fragment() {
     private var _binding: RequestGroupEditBinding? = null
     private val binding get() = _binding!!
 
-    @Inject lateinit var factory: RequestGroupViewModel.Factory
+    @Inject
+    lateinit var factory: RequestGroupViewModel.Factory
     private val viewModel: RequestGroupViewModel by viewModels {
         LambdaFactory(this) { stateHandle ->
             factory.build(stateHandle)

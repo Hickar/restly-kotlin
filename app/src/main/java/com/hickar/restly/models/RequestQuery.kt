@@ -191,6 +191,7 @@ class RequestQuery(
             if (tmpUrl.port != 0) {
                 port = tmpUrl.port
             }
-        } catch (e: MalformedURLException) {}
+        } catch (e: MalformedURLException) {
+        }
     }
 }

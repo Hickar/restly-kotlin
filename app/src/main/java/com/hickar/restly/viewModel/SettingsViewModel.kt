@@ -23,9 +23,11 @@ class SettingsViewModel @AssistedInject constructor(
     private val prefs: SharedPreferencesHelper,
     private val authService: AuthService
 ) : ViewModel() {
-    @Inject lateinit var networkService: NetworkService
+    @Inject
+    lateinit var networkService: NetworkService
 
-    @Inject lateinit var gson: Gson
+    @Inject
+    lateinit var gson: Gson
 
     val successfulRegistration: MutableLiveData<Boolean> = MutableLiveData(false)
 

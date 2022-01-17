@@ -5,7 +5,7 @@ import com.hickar.restly.models.RequestDirectory
 data class CollectionRemoteDTO(
     var id: String = "",
     var name: String = "",
-    val description: String = "",
+    var description: String = "",
     val owner: String = "",
-    val root: RequestDirectory? = null
+    var root: RequestDirectory? = null
 )

@@ -6,7 +6,7 @@ import com.google.gson.JsonElement
 import com.hickar.restly.repository.dao.CollectionInfo
 import java.lang.reflect.Type
 
-class CollectionInfoJsonDesetializer : JsonDeserializer<List<CollectionInfo>> {
+class CollectionInfoJsonDeserializer : JsonDeserializer<List<CollectionInfo>> {
     override fun deserialize(
         json: JsonElement?,
         typeOfT: Type?,

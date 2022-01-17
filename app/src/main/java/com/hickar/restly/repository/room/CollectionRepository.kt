@@ -144,8 +144,8 @@ class CollectionRepository @Inject constructor(
         return requestItemDao.deleteRequestsByGroupId(id)
     }
 
-    @WorkerThread
-    suspend fun saveAllToRemote() {
+//    @WorkerThread
+//    suspend fun saveAllToRemote() {
 //        if (prefs.getRestlyUserInfo() != null) {
 //            val token = prefs.getRestlyJwt()
 //            val collections = collectionDao.getAll()
@@ -167,5 +167,5 @@ class CollectionRepository @Inject constructor(
 //
 //            collectionRemoteSource.postCollections(token, collectionDTOs)
 //        }
-    }
+//    }
 }

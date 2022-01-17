@@ -24,7 +24,8 @@ suspend fun Call.await(): Response {
         continuation.invokeOnCancellation {
             try {
                 cancel()
-            } catch (ex: Throwable) {}
+            } catch (ex: Throwable) {
+            }
         }
     }
 }

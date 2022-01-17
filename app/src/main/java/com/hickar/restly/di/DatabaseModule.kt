@@ -10,7 +10,7 @@ import com.hickar.restly.repository.dao.RequestGroupDao
 import com.hickar.restly.repository.dao.RequestItemDao
 import com.hickar.restly.repository.models.CollectionRemoteDTO
 import com.hickar.restly.repository.room.AppDatabase
-import com.hickar.restly.utils.CollectionInfoJsonDesetializer
+import com.hickar.restly.utils.CollectionInfoJsonDeserializer
 import com.hickar.restly.utils.CollectionJsonDeserializer
 import dagger.Module
 import dagger.Provides
@@ -51,7 +51,7 @@ class DatabaseModule {
 
         return GsonBuilder()
             .registerTypeAdapter(CollectionRemoteDTO::class.java, CollectionJsonDeserializer())
-            .registerTypeAdapter(collectionInfoListType, CollectionInfoJsonDesetializer())
+            .registerTypeAdapter(collectionInfoListType, CollectionInfoJsonDeserializer())
             .disableHtmlEscaping()
             .serializeNulls()
             .create()

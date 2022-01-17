@@ -34,7 +34,8 @@ class RequestFragment : Fragment() {
 
     private lateinit var applicationScope: CoroutineScope
 
-    @Inject lateinit var factory: RequestViewModel.Factory
+    @Inject
+    lateinit var factory: RequestViewModel.Factory
     val viewModel: RequestViewModel by activityViewModels {
         LambdaFactory(this) { stateHandle ->
             factory.build(stateHandle)

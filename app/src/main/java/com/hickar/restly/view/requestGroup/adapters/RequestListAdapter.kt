@@ -66,7 +66,8 @@ class RequestListItemViewHolder(
 
         binding.requestGroupRequestItemMethodBox.setCardBackgroundColor(cardBackgroundColor)
         binding.requestGroupRequestItemMethodLabel.setTextColor(cardTextColor)
-        binding.requestGroupRequestItemMethodLabel.text = MethodCardViewUtil.getShortMethodName(item.request.method.value)
+        binding.requestGroupRequestItemMethodLabel.text =
+            MethodCardViewUtil.getShortMethodName(item.request.method.value)
         binding.requestGroupRequestItemNameLabel.text = item.name
         binding.requestGroupRequestItemUrlLabel.text = item.request.query.url
     }

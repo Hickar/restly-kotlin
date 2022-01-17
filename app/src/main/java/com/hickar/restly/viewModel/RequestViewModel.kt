@@ -34,8 +34,10 @@ class RequestViewModel @AssistedInject constructor(
     private val repository: CollectionRepository
 ) : ViewModel() {
 
-    @Inject lateinit var fileManager: FileService
-    @Inject lateinit var networkService: NetworkService
+    @Inject
+    lateinit var fileManager: FileService
+    @Inject
+    lateinit var networkService: NetworkService
 
     private lateinit var requestItem: RequestItem
     private lateinit var request: Request

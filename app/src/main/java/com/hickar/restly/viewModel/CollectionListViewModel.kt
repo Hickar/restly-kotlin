@@ -12,6 +12,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.util.*
 
 class CollectionListViewModel @AssistedInject constructor(
@@ -45,7 +46,7 @@ class CollectionListViewModel @AssistedInject constructor(
         }
     }
 
-    fun refreshCollections() {
+    private fun refreshCollections() {
         viewModelScope.launch {
             val shouldPullPostmanCollections = prefs.getPostmanUserInfo() != null
             collections.value = collectionRepository.getAllCollections(shouldPullPostmanCollections).toMutableList()

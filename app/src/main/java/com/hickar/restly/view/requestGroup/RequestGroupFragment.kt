@@ -229,11 +229,11 @@ class RequestGroupFragment : Fragment() {
         findNavController().navigate(action)
     }
 
-    override fun onResume() {
-        super.onResume()
-        requestGroupViewModel.refreshCurrentRequestGroup()
-        collectionViewModel.refreshCurrentCollection()
-    }
+//    override fun onResume() {
+//        super.onResume()
+//        requestGroupViewModel.refreshCurrentRequestGroup()
+//        collectionViewModel.refreshCurrentCollection()
+//    }
 
     override fun onDestroyView() {
         super.onDestroyView()

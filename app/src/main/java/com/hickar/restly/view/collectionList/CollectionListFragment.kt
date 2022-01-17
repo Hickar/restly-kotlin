@@ -115,9 +115,4 @@ class CollectionListFragment : Fragment() {
             else -> super.onOptionsItemSelected(item)
         }
     }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.refreshCollections()
-    }
 }

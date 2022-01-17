@@ -13,9 +13,9 @@
             app:argType="string"
             app:nullable="true" />
         <argument
-            android:name="collectionName"
-            android:defaultValue="Requests"
-            app:argType="string" />
+            android:name="groupId"
+            app:argType="string"
+            app:nullable="true" />
         <action
             android:id="@+id/action_requestGroupFragment_to_requestFragment"
             app:destination="@id/requestFragment"
@@ -26,6 +26,20 @@
         <action
             android:id="@+id/action_requestGroupFragment_to_collectionEditFragment"
             app:destination="@id/collectionEditFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_requestGroupFragment_self"
+            app:destination="@id/requestGroupFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_requestGroupFragment_to_requestGroupEditFragment"
+            app:destination="@id/requestGroupEditFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
@@ -61,7 +75,7 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
         <action
-            android:id="@+id/action_requestFragment_to_responseBodyInfoFragment"
+            android:id="@+id/action_requestFragmentt_to_responseBodyInfoFragment"
             app:destination="@id/responseBodyInfoFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
@@ -71,9 +85,18 @@
     <fragment
         android:id="@+id/collectionEditFragment"
         android:name="com.hickar.restly.view.collectionList.CollectionEditFragment"
-        android:label="@string/collection_list_edit_fragment_label">
+        android:label="@string/collection_edit_fragment_label">
         <argument
             android:name="collectionId"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/requestGroupEditFragment"
+        android:name="com.hickar.restly.view.requestGroup.RequestGroupEditFragment"
+        android:label="RequestGroupEditFragment">
+        <argument
+            android:name="groupId"
             app:argType="string"
             app:nullable="true" />
     </fragment>

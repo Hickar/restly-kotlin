@@ -7,21 +7,21 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.hickar.restly.databinding.RequestGroupItemBinding
-import com.hickar.restly.models.Request
+import com.hickar.restly.databinding.RequestGroupRequestItemBinding
+import com.hickar.restly.models.RequestItem
 import com.hickar.restly.utils.MethodCardViewUtil
 
-class RequestGroupAdapter(
-    private val onItemClicked: (Request) -> Unit
-) : ListAdapter<Request, RequestItemViewHolder>(DiffCallback) {
+class RequestListAdapter(
+    private val onItemClicked: (RequestItem) -> Unit
+) : ListAdapter<RequestItem, RequestListItemViewHolder>(DiffCallback) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RequestItemViewHolder {
-        val adapterLayout = RequestGroupItemBinding.inflate(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RequestListItemViewHolder {
+        val adapterLayout = RequestGroupRequestItemBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
         )
-        val viewHolder = RequestItemViewHolder(adapterLayout, parent.context)
+        val viewHolder = RequestListItemViewHolder(adapterLayout, parent.context)
 
         viewHolder.itemView.setOnClickListener {
             val position = viewHolder.bindingAdapterPosition
@@ -31,43 +31,44 @@ class RequestGroupAdapter(
         return viewHolder
     }
 
-    override fun onBindViewHolder(holder: RequestItemViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: RequestListItemViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    override fun submitList(list: MutableList<Request>?) {
+    override fun submitList(list: MutableList<RequestItem>?) {
         super.submitList(list?.let { ArrayList(list) })
     }
 
     companion object {
-        private val DiffCallback = object : DiffUtil.ItemCallback<Request>() {
-            override fun areItemsTheSame(oldItem: Request, newItem: Request): Boolean {
+        private val DiffCallback = object : DiffUtil.ItemCallback<RequestItem>() {
+            override fun areItemsTheSame(oldItem: RequestItem, newItem: RequestItem): Boolean {
                 return oldItem.id == newItem.id
             }
 
-            override fun areContentsTheSame(oldItem: Request, newItem: Request): Boolean {
+            override fun areContentsTheSame(oldItem: RequestItem, newItem: RequestItem): Boolean {
                 return oldItem == newItem
             }
         }
     }
 }
 
-class RequestItemViewHolder(
-    private var binding: RequestGroupItemBinding,
+class RequestListItemViewHolder(
+    private var binding: RequestGroupRequestItemBinding,
     private val context: Context
 ) : RecyclerView.ViewHolder(binding.root) {
-    fun bind(request: Request) {
-        val cardBackgroundColorId = MethodCardViewUtil.getBackgroundColorId(request.method.value)
-        val cardTextColorId = MethodCardViewUtil.getTextColorId(request.method.value)
+    fun bind(item: RequestItem) {
+        val cardBackgroundColorId = MethodCardViewUtil.getBackgroundColorId(item.request.method.value)
+        val cardTextColorId = MethodCardViewUtil.getTextColorId(item.request.method.value)
 
         val cardBackgroundColor =
             ResourcesCompat.getColor(context.resources, cardBackgroundColorId, null)
         val cardTextColor = ResourcesCompat.getColor(context.resources, cardTextColorId, null)
 
-        binding.requestGroupItemMethodBox.setCardBackgroundColor(cardBackgroundColor)
-        binding.requestGroupItemMethodLabel.setTextColor(cardTextColor)
-        binding.requestGroupItemMethodLabel.text = MethodCardViewUtil.getShortMethodName(request.method.value)
-        binding.requestGroupItemNameLabel.text = request.name
-        binding.requestGroupItemUrlLabel.text = request.query.url
+        binding.requestGroupRequestItemMethodBox.setCardBackgroundColor(cardBackgroundColor)
+        binding.requestGroupRequestItemMethodLabel.setTextColor(cardTextColor)
+        binding.requestGroupRequestItemMethodLabel.text =
+            MethodCardViewUtil.getShortMethodName(item.request.method.value)
+        binding.requestGroupRequestItemNameLabel.text = item.name
+        binding.requestGroupRequestItemUrlLabel.text = item.request.query.url
     }
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/request_group_item"
+    android:id="@+id/request_group_folder_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
@@ -8,44 +8,36 @@
     android:paddingVertical="8dp">
 
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/request_group_item_method_box"
-        style="@style/Restly.Request.MethodBox"
+    <RelativeLayout
         android:layout_width="40dp"
-        android:layout_height="20dp">
+        android:layout_height="40dp">
 
-        <RelativeLayout
+        <ImageView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/request_group_item_method_label"
-                style="@style/Restly.Request.MethodText"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </RelativeLayout>
-    </com.google.android.material.card.MaterialCardView>
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_folder_item" />
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginHorizontal="8dp">
+        android:layout_marginHorizontal="8dp"
+        android:orientation="vertical">
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/request_group_item_name_label"
+            android:id="@+id/request_group_folder_item_name_label"
             style="@style/Restly.Request.NameText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAlignment="textStart" />
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/request_group_item_url_label"
+            android:id="@+id/request_group_folder_item_description_label"
             style="@style/Restly.Request.UrlText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAlignment="textStart"
-            android:maxLines="3"/>
+            android:maxLines="3"
+            android:textAlignment="textStart" />
     </LinearLayout>
 
 

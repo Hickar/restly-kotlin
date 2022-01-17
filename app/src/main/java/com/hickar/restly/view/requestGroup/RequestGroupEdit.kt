@@ -1,27 +1,28 @@
-package com.hickar.restly.view.collectionList
+package com.hickar.restly.view.requestGroup
 
 import android.os.Bundle
 import android.view.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.hickar.restly.R
-import com.hickar.restly.databinding.CollectionEditBinding
+import com.hickar.restly.databinding.RequestGroupEditBinding
 import com.hickar.restly.extensions.observeOnce
 import com.hickar.restly.extensions.toEditable
-import com.hickar.restly.viewModel.CollectionViewModel
 import com.hickar.restly.viewModel.LambdaFactory
+import com.hickar.restly.viewModel.RequestGroupViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class CollectionEditFragment : Fragment() {
-    private var _binding: CollectionEditBinding? = null
+class RequestGroupEditFragment : Fragment() {
+    private var _binding: RequestGroupEditBinding? = null
     private val binding get() = _binding!!
 
     @Inject
-    lateinit var factory: CollectionViewModel.Factory
-    private val viewModel: CollectionViewModel by viewModels {
+    lateinit var factory: RequestGroupViewModel.Factory
+    private val viewModel: RequestGroupViewModel by viewModels {
         LambdaFactory(this) { stateHandle ->
             factory.build(stateHandle)
         }
@@ -29,13 +30,13 @@ class CollectionEditFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.loadCollection(arguments?.getString(COLLECTION_ID_KEY))
+        viewModel.loadRequestGroup(arguments?.getString(GROUP_ID_KEY))
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         setHasOptionsMenu(true)
 
-        _binding = CollectionEditBinding.inflate(inflater, container, false)
+        _binding = RequestGroupEditBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -47,22 +48,23 @@ class CollectionEditFragment : Fragment() {
     }
 
     private fun setupEventListeners() {
-        binding.collectionEditNameInput.doAfterTextChanged { newName ->
+        binding.requestGroupEditNameInput.doAfterTextChanged { newName ->
             viewModel.setName(newName.toString())
         }
 
-        binding.collectionEditDescriptionInput.doAfterTextChanged { newDescription ->
+        binding.requestGroupEditDescriptionInput.doAfterTextChanged { newDescription ->
             viewModel.setDescription(newDescription.toString())
         }
     }
 
     private fun setupObservers() {
         viewModel.name.observeOnce(viewLifecycleOwner) { name ->
-            binding.collectionEditNameInput.text = name.toEditable()
+            (requireActivity() as AppCompatActivity).supportActionBar?.title = name
+            binding.requestGroupEditNameInput.text = name.toEditable()
         }
 
         viewModel.description.observeOnce(viewLifecycleOwner) { description ->
-            binding.collectionEditDescriptionInput.text = description.toEditable()
+            binding.requestGroupEditDescriptionInput.text = description?.toEditable() ?: "".toEditable()
         }
     }
 
@@ -73,7 +75,7 @@ class CollectionEditFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.collection_edit_menu_save_option -> {
-                viewModel.saveCollection()
+                viewModel.saveRequestGroup()
                 requireActivity().onBackPressed()
                 true
             }
@@ -82,6 +84,6 @@ class CollectionEditFragment : Fragment() {
     }
 
     companion object {
-        const val COLLECTION_ID_KEY = "collectionId"
+        const val GROUP_ID_KEY = "groupId"
     }
 }

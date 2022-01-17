@@ -6,13 +6,11 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 
-@Entity(tableName = "requests")
-data class RequestDTO(
+@Entity(tableName = "request_items")
+data class RequestItemDTO(
     @PrimaryKey @NonNull val id: String,
-    @NonNull @ColumnInfo(defaultValue = "GET") val method: String,
     @NonNull @ColumnInfo(defaultValue = "New Request") val name: String,
-    val query: String,
-    val headers: String,
-    val body: String,
-    val collectionId: String
+    @NonNull @ColumnInfo(defaultValue = "") val description: String,
+    val request: String,
+    val parentId: String
 )

@@ -27,7 +27,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class SettingsFragment : Fragment() {
 
-    @Inject lateinit var factory: SettingsViewModel.Factory
+    @Inject
+    lateinit var factory: SettingsViewModel.Factory
     private val viewModel: SettingsViewModel by activityViewModels {
         LambdaFactory(this) { stateHandle ->
             factory.build(stateHandle)
@@ -129,7 +130,7 @@ class SettingsFragment : Fragment() {
         }
 
         viewModel.postmanUserInfo.observe(viewLifecycleOwner) { userInfo ->
-            if (userInfo != null)  {
+            if (userInfo != null) {
                 binding.settingsLoginPostmanFullnameLabel.text = userInfo.fullName.toEditable()
                 binding.settingsLoginPostmanEmailLabel.text = userInfo.email.toEditable()
             }

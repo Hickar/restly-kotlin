@@ -10,7 +10,6 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 class CollectionViewModel @AssistedInject constructor(
     @Assisted private val handle: SavedStateHandle,
@@ -22,33 +21,46 @@ class CollectionViewModel @AssistedInject constructor(
     var name: MutableLiveData<String> = MutableLiveData()
     var description: MutableLiveData<String> = MutableLiveData()
 
+    private var collectionId = Collection.DEFAULT
+
     fun loadCollection(collectionId: String?) {
-        runBlocking {
-            if (collectionId != Collection.DEFAULT && collectionId != null) {
-                viewModelScope.launch {
-                    collection = collectionRepository.getCollectionById(collectionId)
-                    collection.let {
-                        name.value = collection.name
-                        description.value = collection.description
-                    }
-                }
-            }
+        if (collectionId != null) {
+            this.collectionId = collectionId
         }
+
+        refreshCollection(this.collectionId)
     }
 
-    fun setName(newName: String) {
-        this.name.value = newName
+    fun setName(name: String) {
+        this.name.value = name
     }
 
-    fun setDescription(newDescription: String) {
-        description.value = newDescription
+    fun setDescription(description: String) {
+        this.description.value = description
     }
 
     fun saveCollection() {
         viewModelScope.launch {
             collection.name = name.value!!
             collection.description = description.value!!
+
             collectionRepository.updateCollection(collection)
+        }
+    }
+
+    fun refreshCurrentCollection() {
+        refreshCollection(this.collectionId)
+    }
+
+    private fun refreshCollection(id: String) {
+        viewModelScope.launch {
+            val queriedCollection = collectionRepository.getCollectionById(id)
+            if (queriedCollection != null) {
+                collection = queriedCollection
+            }
+
+            name.value = collection.name
+            description.value = collection.description
         }
     }
 

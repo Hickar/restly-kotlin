@@ -5,6 +5,7 @@ abstract class RequestKeyValueData {
     abstract var value: String
     abstract var enabled: Boolean
     abstract var uid: String
+    abstract var description: String?
 
     override fun equals(other: Any?): Boolean {
         return other is RequestKeyValueData

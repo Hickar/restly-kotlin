@@ -6,7 +6,8 @@ data class RequestQueryParameter(
     override var key: String = "",
     override var value: String = "",
     override var enabled: Boolean = true,
-    override var uid: String = UUID.randomUUID().toString()
+    override var uid: String = UUID.randomUUID().toString(),
+    override var description: String? = null
 ) : RequestKeyValueData() {
 
     override fun toString(): String {

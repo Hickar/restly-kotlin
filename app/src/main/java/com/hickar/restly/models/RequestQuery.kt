@@ -1,11 +1,17 @@
 package com.hickar.restly.models
 
 import com.hickar.restly.extensions.indexOfDiff
+import java.net.MalformedURLException
+import java.net.URL
 
 class RequestQuery(
     var url: String = ""
 ) {
     var domain: String = ""
+    var protocol: String = ""
+    var host: List<String> = listOf()
+    var path: List<String> = listOf()
+    var port: Int = 0
     var parameters: MutableList<RequestQueryParameter> = mutableListOf()
 
     init {
@@ -24,6 +30,8 @@ class RequestQuery(
                     domain = url
                 }
             }
+
+            parseParts(url)
         }
     }
 
@@ -78,6 +86,7 @@ class RequestQuery(
         }
 
         domain = parseDomain(newUrl)
+        parseParts(newUrl)
         this.url = buildQueryString(domain, parameters)
     }
 
@@ -163,6 +172,26 @@ class RequestQuery(
             url.substring(0, queryStartIndex)
         } else {
             url
+        }
+    }
+
+    private fun parseParts(url: String) {
+        try {
+            val tmpUrl = URL(url)
+            protocol = tmpUrl.protocol
+
+            if (tmpUrl.authority != null) {
+                host = tmpUrl.authority.split(".")
+            }
+
+            if (tmpUrl.path != null) {
+                path = tmpUrl.path.split("/")
+            }
+
+            if (tmpUrl.port != 0) {
+                port = tmpUrl.port
+            }
+        } catch (e: MalformedURLException) {
         }
     }
 }

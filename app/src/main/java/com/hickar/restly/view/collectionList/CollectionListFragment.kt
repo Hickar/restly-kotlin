@@ -2,19 +2,18 @@ package com.hickar.restly.view.collectionList
 
 import android.os.Bundle
 import android.view.*
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.hickar.restly.R
 import com.hickar.restly.databinding.CollectionListBinding
+import com.hickar.restly.extensions.reattachToRecyclerView
+import com.hickar.restly.utils.RecyclerViewDecoration
 import com.hickar.restly.utils.SwipeDeleteCallback
 import com.hickar.restly.view.collectionList.adapters.CollectionListAdapter
 import com.hickar.restly.view.dialogs.ConfirmationDialog
-import com.hickar.restly.view.requestGroup.RequestGroupFragment
 import com.hickar.restly.viewModel.CollectionListViewModel
 import com.hickar.restly.viewModel.LambdaFactory
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,7 +22,8 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class CollectionListFragment : Fragment() {
-    @Inject lateinit var factory: CollectionListViewModel.Factory
+    @Inject
+    lateinit var factory: CollectionListViewModel.Factory
     private val viewModel: CollectionListViewModel by activityViewModels {
         LambdaFactory(this) { stateHandle ->
             factory.build(stateHandle)
@@ -37,7 +37,11 @@ class CollectionListFragment : Fragment() {
     private var _binding: CollectionListBinding? = null
     private val binding get() = _binding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         setHasOptionsMenu(true)
 
         _binding = CollectionListBinding.inflate(inflater, container, false)
@@ -53,15 +57,8 @@ class CollectionListFragment : Fragment() {
     }
 
     private fun setupAdapters() {
-        val adapter = CollectionListAdapter {
-            val bundle = Bundle()
-            bundle.putString(RequestGroupFragment.COLLECTION_ID_KEY, it.id)
-            bundle.putString(RequestGroupFragment.COLLECTION_NAME_KEY, it.name)
-            findNavController().navigate(R.id.navigate_fromCollectionTab_toRequestGroup, bundle)
-        }
-
         recyclerView = binding.collectionList
-        recyclerView.adapter = adapter
+        recyclerView.adapter = CollectionListAdapter { navigateToCollection(it.id, it.id) }
 
         itemTouchHelper = ItemTouchHelper(SwipeDeleteCallback(requireContext()) { position ->
             val dialog = ConfirmationDialog(
@@ -70,10 +67,7 @@ class CollectionListFragment : Fragment() {
                 R.string.dialog_ok_confirm_delete_option,
                 { dialog, _ ->
                     dialog.cancel()
-// Hack from the official documentation
-// https://developer.android.com/reference/android/support/v7/widget/helper/ItemTouchHelper.html#attachToRecyclerView(android.support.v7.widget.RecyclerView)
-                    itemTouchHelper.attachToRecyclerView(null)
-                    itemTouchHelper.attachToRecyclerView(recyclerView)
+                    itemTouchHelper.reattachToRecyclerView(recyclerView)
                 },
                 { _, _ ->
                     viewModel.deleteCollection(position)
@@ -92,11 +86,16 @@ class CollectionListFragment : Fragment() {
     }
 
     private fun setupDecoration() {
-        val dividerDecoration = DividerItemDecoration(context, RecyclerView.VERTICAL)
-        val dividerDrawable =
-            ContextCompat.getDrawable(requireContext(), R.drawable.item_divider)
-        dividerDecoration.setDrawable(dividerDrawable!!)
-        recyclerView.addItemDecoration(dividerDecoration)
+        val decoration = RecyclerViewDecoration.vertical(requireContext(), R.drawable.item_divider)
+        recyclerView.addItemDecoration(decoration)
+    }
+
+    private fun navigateToCollection(collectionId: String, groupId: String) {
+        val action = CollectionListFragmentDirections.navigateFromCollectionTabToRequestGroup(
+            collectionId,
+            groupId
+        )
+        findNavController().navigate(action)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -108,21 +107,12 @@ class CollectionListFragment : Fragment() {
             R.id.collection_list_menu_add_button -> {
                 runBlocking coroutineScope@{
                     val newCollectionId = viewModel.createNewCollection()
-                    val bundle = Bundle()
-
-                    bundle.putString(RequestGroupFragment.COLLECTION_ID_KEY, newCollectionId)
-                    bundle.putString(RequestGroupFragment.COLLECTION_NAME_KEY, "New Collection")
-                    findNavController().navigate(R.id.navigate_fromCollectionTab_toRequestGroup, bundle)
+                    navigateToCollection(newCollectionId, newCollectionId)
 
                     return@coroutineScope true
                 }
             }
             else -> super.onOptionsItemSelected(item)
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.refreshCollections()
     }
 }

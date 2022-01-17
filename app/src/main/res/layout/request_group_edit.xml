@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/collection_list_edit_fragment"
+    android:id="@+id/request_group_edit_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="14sp"
-        android:text="@string/collection_list_edit_name_label"
+        android:text="@string/request_group_edit_name_label"
         android:layout_marginBottom="8dp"
         android:textStyle="bold"
         android:textColor="@color/black" />
@@ -24,10 +24,10 @@
         android:layout_marginBottom="24dp">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/collection_list_edit_name_input"
+            android:id="@+id/request_group_edit_name_input"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:hint="@string/collection_list_edit_name_input_hint"
+            android:hint="@string/request_group_edit_name_input_hint"
             android:maxLines="1"
             android:textAlignment="textStart"
             android:textSize="16sp"
@@ -40,7 +40,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="14sp"
-        android:text="@string/collection_list_edit_description_label"
+        android:text="@string/request_group_edit_description_label"
         android:layout_marginBottom="8dp"
         android:textStyle="bold"
         android:textColor="@color/black" />
@@ -51,12 +51,12 @@
         app:hintEnabled="false">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/collection_list_edit_description_input"
+            android:id="@+id/request_group_edit_description_input"
             android:layout_width="match_parent"
             android:gravity="top|start"
             android:minHeight="40dp"
             android:layout_height="wrap_content"
-            android:hint="@string/collection_list_edit_description_input_hint"
+            android:hint="@string/request_group_edit_description_input_hint"
             android:minLines="3"
             android:maxLines="7"
             android:textAlignment="textStart"

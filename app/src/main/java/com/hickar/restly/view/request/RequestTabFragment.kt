@@ -155,10 +155,10 @@ class RequestTabFragment : Fragment() {
             { text, position -> viewModel.setQueryParameterKey(text, position) },
             { text, position -> viewModel.setQueryParameterValue(text, position) }
         )
-        val paramsTouchHelper = ItemTouchHelper(SwipeDeleteCallback(requireContext()) { position ->
+
+        ItemTouchHelper(SwipeDeleteCallback(requireContext()) { position ->
             viewModel.deleteQueryParameter(position)
-        })
-        paramsTouchHelper.attachToRecyclerView(paramsRecyclerView)
+        }).attachToRecyclerView(paramsRecyclerView)
 
 
         headersRecyclerView = binding.requestTabSectionHeadersList
@@ -168,10 +168,9 @@ class RequestTabFragment : Fragment() {
             { text, position -> viewModel.setHeaderKey(position, text) },
             { text, position -> viewModel.setHeaderValue(position, text) }
         )
-        val headersTouchHelper = ItemTouchHelper(SwipeDeleteCallback(requireContext()) { position ->
+        ItemTouchHelper(SwipeDeleteCallback(requireContext()) { position ->
             viewModel.deleteHeader(position)
-        })
-        headersTouchHelper.attachToRecyclerView(headersRecyclerView)
+        }).attachToRecyclerView(headersRecyclerView)
     }
 
     private fun setupPopupMenus() {

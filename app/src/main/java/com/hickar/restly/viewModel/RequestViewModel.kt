@@ -18,7 +18,6 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import okhttp3.Call
 import okhttp3.Response
 import java.io.File
 import java.io.FileNotFoundException
@@ -33,12 +32,15 @@ import javax.inject.Inject
 class RequestViewModel @AssistedInject constructor(
     @Assisted private val handle: SavedStateHandle,
     private val repository: CollectionRepository
-) : ViewModel(), okhttp3.Callback {
+) : ViewModel() {
 
-    @Inject lateinit var fileManager: FileService
-    @Inject lateinit var networkService: NetworkService
+    @Inject
+    lateinit var fileManager: FileService
+    @Inject
+    lateinit var networkService: NetworkService
 
-    private lateinit var currentRequest: Request
+    private lateinit var requestItem: RequestItem
+    private lateinit var request: Request
 
     val name: MutableLiveData<String> = MutableLiveData()
     val method: MutableLiveData<RequestMethod> = MutableLiveData()
@@ -63,10 +65,14 @@ class RequestViewModel @AssistedInject constructor(
     fun loadRequest(requestId: String) {
         runBlocking {
             try {
-                currentRequest = repository.getRequestById(requestId)
+                requestItem = repository.getRequestItemById(requestId)
+                request = requestItem.request
 
-                currentRequest.let {
+                requestItem.let {
                     name.value = it.name
+                }
+
+                request.let {
                     query = it.query
                     url.value = query.url
                     method.value = it.method
@@ -230,29 +236,27 @@ class RequestViewModel @AssistedInject constructor(
     fun sendRequest() {
         viewModelScope.launch {
             try {
-                networkService.sendRequest(currentRequest, this@RequestViewModel)
-            } catch (e: IllegalArgumentException) {
-                error.postValue(ErrorEvent.UnexpectedUrlScheme)
+                val response = networkService.sendRequest(request)
+                onSuccess(response)
+            } catch (e: IOException) {
+                error.postValue(getErrorEvent(e))
             }
         }
     }
 
     fun saveRequest() {
         viewModelScope.launch {
-            try {
-                currentRequest.name = name.value!!
-                currentRequest.query = query
-                currentRequest.method = method.value!!
-                currentRequest.headers = headers.value!!
-                currentRequest.body.formData = formData.value!!
-                currentRequest.body.multipartData = multipartData.value!!
-                currentRequest.body.binaryData = binaryData.value!!
-                currentRequest.body.type = bodyType.value!!
-                repository.updateRequest(currentRequest)
-            } catch (exception: SQLiteException) {
-                Log.e("Unable to save request", exception.toString())
-                exception.printStackTrace()
-            }
+            request.query = query
+            request.method = method.value!!
+            request.headers = headers.value!!
+            request.body.formData = formData.value!!
+            request.body.multipartData = multipartData.value!!
+            request.body.binaryData = binaryData.value!!
+            request.body.type = bodyType.value!!
+
+            requestItem.name = name.value!!
+            requestItem.request = request
+            repository.updateRequestItem(requestItem)
         }
     }
 
@@ -261,8 +265,8 @@ class RequestViewModel @AssistedInject constructor(
         fileManager.deleteFile(response.value?.body?.file)
     }
 
-    override fun onFailure(call: Call, e: IOException) {
-        val newError = when (e) {
+    private fun getErrorEvent(e: IOException): ErrorEvent {
+        return when (e) {
             is SocketTimeoutException -> ErrorEvent.ConnectionTimeout
             is ConnectException -> ErrorEvent.ConnectionRefused
             is UnknownHostException -> {
@@ -276,10 +280,9 @@ class RequestViewModel @AssistedInject constructor(
             is FileNotFoundException -> ErrorEvent.SizeExceedsLimit
             else -> ErrorEvent.ConnectionUnexpected
         }
-        error.postValue(newError)
     }
 
-    override fun onResponse(call: Call, response: Response) {
+    private fun onSuccess(response: Response) {
         if (response.body != null) {
             val bodySize = if (response.body!!.contentLength() == -1L) 0L else response.body!!.contentLength()
             val contentType = response.body!!.contentType().toString()
@@ -306,7 +309,7 @@ class RequestViewModel @AssistedInject constructor(
 
             this.response.postValue(
                 Response(
-                    currentRequest.query.url,
+                    request.query.url,
                     response.headers,
                     response.code,
                     Date(response.sentRequestAtMillis),

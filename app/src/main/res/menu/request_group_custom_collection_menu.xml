@@ -12,4 +12,10 @@
         android:icon="@drawable/ic_edit_collection"
         android:title="@string/request_menu_add_button_text"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/request_group_add_folder_button"
+        android:title="@string/request_menu_add_folder_button_text"
+        android:icon="@drawable/ic_folder"
+        app:showAsAction="ifRoom" />
 </menu>

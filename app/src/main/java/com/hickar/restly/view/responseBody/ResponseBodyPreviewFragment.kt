@@ -23,7 +23,8 @@ class ResponseBodyPreviewFragment : Fragment() {
     private lateinit var webView: WebView
     private val viewModel: RequestViewModel by activityViewModels()
 
-    @Inject lateinit var prefs: SharedPreferencesHelper
+    @Inject
+    lateinit var prefs: SharedPreferencesHelper
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = ResponseBodyPreviewBinding.inflate(inflater, container, false)

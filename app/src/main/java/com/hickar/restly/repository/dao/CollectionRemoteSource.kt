@@ -9,6 +9,9 @@ import com.hickar.restly.consts.RequestMethod
 import com.hickar.restly.models.*
 import com.hickar.restly.repository.models.CollectionRemoteDTO
 import com.hickar.restly.services.NetworkService
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import java.io.IOException
 import javax.inject.Inject
 
@@ -34,7 +37,7 @@ class CollectionRemoteSource @Inject constructor(
             headers = listOf(RequestHeader(HEADER_API_KEY, token))
         )
 
-        var collections: MutableList<CollectionRemoteDTO> = mutableListOf()
+        val collections: MutableList<CollectionRemoteDTO> = mutableListOf()
         var collectionInfoList: List<CollectionInfo> = listOf()
 
         try {
@@ -45,26 +48,34 @@ class CollectionRemoteSource @Inject constructor(
                 collectionInfoList = gson.fromJson(body, listType)
             }
 
-            for (infoEntry in collectionInfoList) {
-                request = Request(
-                    query = RequestQuery(String.format(GET_COLLECTION_ENDPOINT, infoEntry.uid)),
-                    method = RequestMethod.GET,
-                    headers = listOf(RequestHeader(HEADER_API_KEY, token))
-                )
+            coroutineScope {
+                collectionInfoList.map { infoEntry ->
+                    async {
+                        request = Request(
+                            query = RequestQuery(String.format(GET_COLLECTION_ENDPOINT, infoEntry.uid)),
+                            method = RequestMethod.GET,
+                            headers = listOf(RequestHeader(HEADER_API_KEY, token))
+                        )
 
-                response = networkService.sendRequest(request)
-                if (response.code == 200) {
-                    val body = response.body?.string()
-                    try {
-                        val collection = gson.fromJson(body, CollectionRemoteDTO::class.java) ?: break
-                        collection.owner = infoEntry.owner
+                        response = networkService.sendRequest(request)
+                        if (response.code == 200) {
+                            val body = response.body?.string()
+                            try {
+                                val collection = gson.fromJson(body, CollectionRemoteDTO::class.java) ?: return@async
+                                collection.owner = infoEntry.owner
 
-                        collections.add(collection)
-                    } catch (e: JsonParseException) {
-                        Log.e("CollectionRemoteSource.getCollections", "Unexpected error during collection json parsing: ${e.message}", e)
+                                collections.add(collection)
+                            } catch (e: JsonParseException) {
+                                Log.e(
+                                    "CollectionRemoteSource.getCollections",
+                                    "Unexpected error during collection json parsing: ${e.message}",
+                                    e
+                                )
+                            }
+                            response.body?.close()
+                        }
                     }
-                    response.body?.close()
-                }
+                }.awaitAll()
             }
         } catch (e: IOException) {
             Log.e("CollectionRemoteSource.getCollections", "Unexpected error: ${e.message}", e)

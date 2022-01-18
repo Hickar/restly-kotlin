@@ -15,6 +15,10 @@ import com.hickar.restly.repository.mappers.RequestItemMapper
 import com.hickar.restly.repository.models.CollectionDTO
 import com.hickar.restly.repository.models.CollectionRemoteDTO
 import com.hickar.restly.services.SharedPreferencesHelper
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.transform
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -30,33 +34,38 @@ class CollectionRepository @Inject constructor(
     private val prefs: SharedPreferencesHelper,
 ) {
     @WorkerThread
-    suspend fun getAllCollections(forceUpdate: Boolean = false): List<Collection> {
-        if (forceUpdate && prefs.getPostmanUserInfo() != null) {
-            val token = prefs.getPostmanApiKey()
-            val collections = collectionRemoteSource.getCollections(token)
-            saveRemoteCollections(collections)
+    fun getAllCollections(): Flow<List<Collection>> {
+        return collectionDao.getAll().transform { dtos ->
+            emit(collectionMapper.toEntityList(dtos))
         }
-
-        return collectionMapper.toEntityList(collectionDao.getAll())
     }
 
-    private suspend fun saveRemoteCollections(collections: List<CollectionRemoteDTO>) {
-        for (collection in collections) {
-            collectionDao.insert(
-                CollectionDTO(
-                    collection.id,
-                    collection.name,
-                    collection.description,
-                    collection.owner,
-                    null,
-                    origin = CollectionOrigin.POSTMAN.origin
-                )
-            )
+    suspend fun saveRemoteCollections() {
+        println("Should get remote collections: ${prefs.getPostmanApiKey() != null}")
+        if (prefs.getPostmanUserInfo() != null) {
+            val token = prefs.getPostmanApiKey() ?: return
+            val collections = collectionRemoteSource.getCollections(token)
 
-            if (collection.root != null) {
-                insertRequestGroupAndAllChildren(collection.root!!)
+            for (collection in collections) {
+                if (collectionDao.exists(collection.id)) continue
+
+                collectionDao.insert(
+                    CollectionDTO(
+                        collection.id,
+                        collection.name,
+                        collection.description,
+                        collection.owner,
+                        null,
+                        origin = CollectionOrigin.POSTMAN.origin
+                    )
+                )
+
+                if (collection.root != null) {
+                    insertRequestGroupAndAllChildren(collection.root!!)
+                }
             }
         }
+
     }
 
     @WorkerThread
@@ -86,7 +95,6 @@ class CollectionRepository @Inject constructor(
 
     @WorkerThread
     suspend fun deleteRemoteCollections() {
-        val remoteCollections = collectionDao.getAllRemote()
         return collectionDao.getAllRemote().forEach { collection ->
             deleteCollection(collectionMapper.toEntity(collection))
         }

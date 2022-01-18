@@ -110,6 +110,8 @@ class SettingsViewModel @AssistedInject constructor(
 
     fun logoutFromPostman(shouldDeleteRemoteCollections: Boolean = false) {
         prefs.deletePostmanUserInfo()
+        prefs.deletePostmanApiKey()
+
         isLoggedInPostman.value = false
         postmanUserInfo.value = null
 

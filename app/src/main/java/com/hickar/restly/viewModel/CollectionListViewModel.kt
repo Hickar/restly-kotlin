@@ -1,9 +1,6 @@
 package com.hickar.restly.viewModel
 
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.hickar.restly.models.Collection
 import com.hickar.restly.models.RequestDirectory
 import com.hickar.restly.repository.room.CollectionRepository
@@ -11,6 +8,9 @@ import com.hickar.restly.services.SharedPreferencesHelper
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -19,10 +19,19 @@ class CollectionListViewModel @AssistedInject constructor(
     private val collectionRepository: CollectionRepository,
     private val prefs: SharedPreferencesHelper
 ) : ViewModel() {
-    val collections: MutableLiveData<MutableList<Collection>> = MutableLiveData()
+    private val collectionJob: Job
+    var collections: LiveData<List<Collection>> = MutableLiveData()
 
     init {
-        refreshCollections()
+        collectionJob = viewModelScope.launch {
+            collectionRepository.getAllCollections()
+            collections = collectionRepository
+                .getAllCollections()
+                .cancellable()
+                .asLiveData()
+        }
+
+        collectionJob.start()
     }
 
     suspend fun createNewCollection(): String {
@@ -32,7 +41,6 @@ class CollectionListViewModel @AssistedInject constructor(
         collectionRepository.insertRequestGroup(newRequestGroup)
         collectionRepository.insertCollection(newCollection)
 
-        refreshCollections()
         return newCollection.id
     }
 
@@ -40,15 +48,16 @@ class CollectionListViewModel @AssistedInject constructor(
         viewModelScope.launch {
             collectionRepository.deleteCollection(collections.value!![position])
             collectionRepository.deleteRequestsByCollectionId(collections.value!![position].id)
-            collections.value!!.removeAt(position)
-            collections.value = collections.value
         }
     }
 
-    fun refreshCollections() {
-        viewModelScope.launch {
-            val shouldPullPostmanCollections = prefs.getPostmanUserInfo() != null
-            collections.value = collectionRepository.getAllCollections(shouldPullPostmanCollections).toMutableList()
+    fun forceRemoteCollectionsDownload() {
+        viewModelScope.launch { collectionRepository.saveRemoteCollections() }
+    }
+
+    fun cancelCollectionsPolling() {
+        if (collectionJob.isActive) {
+            collectionJob.cancel()
         }
     }
 

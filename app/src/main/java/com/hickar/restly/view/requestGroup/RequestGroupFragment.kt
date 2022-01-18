@@ -207,12 +207,12 @@ class RequestGroupFragment : Fragment() {
 
     private fun navigateToRequest(id: String) {
         val action = RequestGroupFragmentDirections.actionRequestGroupFragmentToRequestFragment(id)
-        this.findNavController().navigate(action)
+        findNavController().navigate(action)
     }
 
     private fun navigateToFolder(collectionId: String, groupId: String) {
         val action = RequestGroupFragmentDirections.actionRequestGroupFragmentSelf(collectionId, groupId)
-        this.findNavController().navigate(action)
+        findNavController().navigate(action)
     }
 
     private fun navigateToCollectionEdit(collectionId: String) {

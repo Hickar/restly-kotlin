@@ -37,16 +37,12 @@ class CollectionListFragment : Fragment() {
     private var _binding: CollectionListBinding? = null
     private val binding get() = _binding!!
 
-    private var isInitialFragmentLaunch = true
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        isInitialFragmentLaunch = true
         setHasOptionsMenu(true)
-
         _binding = CollectionListBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -84,7 +80,7 @@ class CollectionListFragment : Fragment() {
 
     private fun setupObservers() {
         viewModel.collections.observe(viewLifecycleOwner) { collections ->
-            (recyclerView.adapter as CollectionListAdapter).submitList(collections)
+            (recyclerView.adapter as CollectionListAdapter).submitList(collections.toMutableList())
         }
     }
 
@@ -121,10 +117,6 @@ class CollectionListFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-
-//        if (!isInitialFragmentLaunch) {
-            viewModel.refreshCollections()
-//        }
-        isInitialFragmentLaunch = false
+        viewModel.forceRemoteCollectionsDownload()
     }
 }

@@ -69,6 +69,8 @@ class SharedPreferencesHelper @Inject constructor(
 
     fun setPostmanApiKey(key: String) = prefs.edit().putString(POSTMAN_KEY, key).apply()
 
+    fun deletePostmanApiKey() = prefs.edit().remove(POSTMAN_KEY).apply()
+
     fun getRequestPrefs(): RequestPrefs {
         val json = prefs.getString(REQUEST, null)
 

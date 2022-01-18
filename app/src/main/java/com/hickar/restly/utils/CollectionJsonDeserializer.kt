@@ -15,7 +15,7 @@ class CollectionJsonDeserializer : JsonDeserializer<CollectionRemoteDTO> {
         val jsonObject = json?.asJsonObject ?: return null
         val collectionObject = jsonObject.get("collection").asJsonObject
 
-        var collection = CollectionRemoteDTO()
+        val collection = CollectionRemoteDTO()
 
         collectionObject.get("info").asJsonObject.let {
             collection.id = it.get("_postman_id").asString
@@ -31,12 +31,12 @@ class CollectionJsonDeserializer : JsonDeserializer<CollectionRemoteDTO> {
         }
 
         val rootObject = collectionObject.get("item").asJsonArray
-        buildItemTree(rootObject, collection.root!!)
+        buildRequestGroup(rootObject, collection.root!!)
 
         return collection
     }
 
-    private fun buildItemTree(itemList: JsonArray, requestGroup: RequestDirectory) {
+    private fun buildRequestGroup(itemList: JsonArray, requestGroup: RequestDirectory) {
         if (itemList.isEmpty) return
 
         for (item in itemList) {
@@ -58,13 +58,14 @@ class CollectionJsonDeserializer : JsonDeserializer<CollectionRemoteDTO> {
                     )
 
                     val requestGroupsObject = get("item").asJsonArray
-                    buildItemTree(requestGroupsObject, newRequestGroup)
+                    buildRequestGroup(requestGroupsObject, newRequestGroup)
 
                     requestGroup.subgroups.add(newRequestGroup)
-                } else if (has("request")) {
+                }
+
+                if (has("request")) {
                     val newRequestItem = getRequestItem(itemObject, requestGroup)
                     requestGroup.requests.add(newRequestItem)
-                } else {
                 }
             }
         }
@@ -118,10 +119,6 @@ class CollectionJsonDeserializer : JsonDeserializer<CollectionRemoteDTO> {
                 parentId = requestGroup.id
             )
         }
-    }
-
-    private fun getRequestGroup(json: JsonObject) {
-
     }
 
     private fun getRequestUrl(urlObject: JsonObject): RequestQuery {

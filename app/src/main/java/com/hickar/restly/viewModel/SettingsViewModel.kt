@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.hickar.restly.models.*
+import com.hickar.restly.repository.room.CollectionRepository
 import com.hickar.restly.services.AuthService
 import com.hickar.restly.services.NetworkService
 import com.hickar.restly.services.SharedPreferencesHelper
@@ -21,6 +22,7 @@ import javax.inject.Inject
 class SettingsViewModel @AssistedInject constructor(
     @Assisted private val handle: SavedStateHandle,
     private val prefs: SharedPreferencesHelper,
+    private val collectionRepository: CollectionRepository,
     private val authService: AuthService
 ) : ViewModel() {
     @Inject
@@ -106,10 +108,14 @@ class SettingsViewModel @AssistedInject constructor(
         }
     }
 
-    fun logoutFromPostman() {
+    fun logoutFromPostman(shouldDeleteRemoteCollections: Boolean = false) {
         prefs.deletePostmanUserInfo()
         isLoggedInPostman.value = false
         postmanUserInfo.value = null
+
+        if (shouldDeleteRemoteCollections) {
+            viewModelScope.launch { collectionRepository.deleteRemoteCollections() }
+        }
     }
 
     fun setRequestSslVerificationEnabled(enabled: Boolean) {

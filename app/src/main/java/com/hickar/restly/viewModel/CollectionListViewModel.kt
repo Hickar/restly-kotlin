@@ -45,7 +45,7 @@ class CollectionListViewModel @AssistedInject constructor(
         }
     }
 
-    private fun refreshCollections() {
+    fun refreshCollections() {
         viewModelScope.launch {
             val shouldPullPostmanCollections = prefs.getPostmanUserInfo() != null
             collections.value = collectionRepository.getAllCollections(shouldPullPostmanCollections).toMutableList()

@@ -42,6 +42,7 @@
     <string name="request_more_menu_option_rename_text">Rename</string>
 
     <string name="dialog_cancel_option">Cancel</string>
+    <string name="dialog_confirm_option">Confirm</string>
     <string name="dialog_ok_option">OK</string>
     <string name="dialog_ok_confirm_delete_option">Delete</string>
     <string name="dialog_delete_collection_title">Delete collection</string>
@@ -52,6 +53,11 @@
     <string name="edit_text_dialog_title">Body Data</string>
     <string name="successful_sign_up_title">You\'ve successfully signed up</string>
     <string name="successful_sign_up_description">You can now log into your account.</string>
+
+    <string name="dialog_logout_delete_collections_title">Keep remote collections</string>
+    <string name="dialog_logout_delete_collections_description">Do you want to keep your remote postman collections?</string>
+    <string name="dialog_logout_delete_collections_keep_option">Keep</string>
+    <string name="dialog_logout_delete_collections_delete_option">Delete</string>
 
 
     <string name="edit_text_menu_done_button">Done</string>

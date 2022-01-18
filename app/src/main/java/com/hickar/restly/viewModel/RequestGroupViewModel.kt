@@ -59,6 +59,8 @@ class RequestGroupViewModel @AssistedInject constructor(
             val queriedGroup = repository.getRequestGroupById(id)
             if (queriedGroup != null) {
                 group = queriedGroup
+            } else {
+                repository.insertRequestGroup(group)
             }
 
             requests.value = group.requests

@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 class CollectionMapper @Inject constructor() : Mapper<Collection, CollectionDTO> {
     override fun toDTO(entity: Collection): CollectionDTO {
-        return CollectionDTO(entity.id, entity.name, entity.description, entity.owner, entity.parentId, entity.owner)
+        return CollectionDTO(entity.id, entity.name, entity.description, entity.owner, entity.parentId, entity.origin.origin)
     }
 
     override fun toEntity(entityDTO: CollectionDTO): Collection {

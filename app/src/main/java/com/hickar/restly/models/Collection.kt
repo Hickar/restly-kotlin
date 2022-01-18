@@ -20,9 +20,9 @@ data class Collection(
 }
 
 enum class CollectionOrigin(val origin: String) {
-    @SerializedName("LOCAL")
-    LOCAL("LOCAL"),
+    @SerializedName("Postman")
+    LOCAL("local"),
 
-    @SerializedName("POSTMAN")
-    POSTMAN("POSTMAN")
+    @SerializedName("Postman")
+    POSTMAN("postman")
 }

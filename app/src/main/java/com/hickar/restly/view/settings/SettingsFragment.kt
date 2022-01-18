@@ -17,6 +17,7 @@ import com.hickar.restly.extensions.show
 import com.hickar.restly.extensions.toEditable
 import com.hickar.restly.extensions.toLongSafely
 import com.hickar.restly.utils.NumberRangeInputFilter
+import com.hickar.restly.view.dialogs.ConfirmationDialog
 import com.hickar.restly.view.dialogs.EditTextDialog
 import com.hickar.restly.view.dialogs.WarningDialog
 import com.hickar.restly.viewModel.LambdaFactory
@@ -28,10 +29,10 @@ import javax.inject.Inject
 class SettingsFragment : Fragment() {
 
     @Inject
-    lateinit var factory: SettingsViewModel.Factory
-    private val viewModel: SettingsViewModel by activityViewModels {
+    lateinit var settingsFactory: SettingsViewModel.Factory
+    private val settingsViewModel: SettingsViewModel by activityViewModels {
         LambdaFactory(this) { stateHandle ->
-            factory.build(stateHandle)
+            settingsFactory.build(stateHandle)
         }
     }
 
@@ -66,50 +67,57 @@ class SettingsFragment : Fragment() {
         }
 
         binding.settingsLogoutRestlyButton.setOnClickListener {
-            viewModel.logoutFromRestly()
+            settingsViewModel.logoutFromRestly()
         }
 
         binding.settingsLoginPostmanButton.setOnClickListener {
             EditTextDialog(R.string.settings_login_postman_dialog_title, "") { apiKey ->
-                viewModel.loginToPostman(apiKey)
-            }.show(parentFragmentManager, "Postman Login")
+                settingsViewModel.loginToPostman(apiKey)
+            }.show(parentFragmentManager, "Postman_Login_Dialog")
         }
 
         binding.settingsLogoutPostmanButton.setOnClickListener {
-            viewModel.logoutFromPostman()
+            ConfirmationDialog(
+                titleId = R.string.dialog_logout_delete_collections_title,
+                messageId = R.string.dialog_logout_delete_collections_description,
+                cancelButtonTextId = R.string.dialog_logout_delete_collections_keep_option,
+                confirmButtonTextId = R.string.dialog_logout_delete_collections_delete_option,
+                onCancelCallback = { _, _ ->  settingsViewModel.logoutFromPostman(false) },
+                onConfirmCallback = { _, _ -> settingsViewModel.logoutFromPostman(true) }
+            ).show(parentFragmentManager, "Postman_Logout_Dialog")
         }
 
         binding.settingsRequestTimeoutInput.filters = arrayOf(NumberRangeInputFilter(Long.MIN_VALUE, Long.MAX_VALUE))
         binding.settingsRequestSslverificationSwitch.setOnClickListener {
-            viewModel.setRequestSslVerificationEnabled((it as SwitchCompat).isChecked)
+            settingsViewModel.setRequestSslVerificationEnabled((it as SwitchCompat).isChecked)
         }
 
         binding.settingsRequestMaxsizeInput.filters = arrayOf(NumberRangeInputFilter(Long.MIN_VALUE, Long.MAX_VALUE))
         binding.settingsRequestMaxsizeInput.doAfterTextChanged { text ->
             if (text.toString().isNotBlank()) {
-                viewModel.setRequestMaxSize(text.toString().toLongSafely())
+                settingsViewModel.setRequestMaxSize(text.toString().toLongSafely())
             }
         }
 
         binding.settingsRequestTimeoutInput.doAfterTextChanged { text ->
             if (text.toString().isNotBlank()) {
-                viewModel.setRequestTimeout(text.toString().toLongSafely())
+                settingsViewModel.setRequestTimeout(text.toString().toLongSafely())
             }
         }
 
         binding.settingsWebviewJavascriptenabledSwitch.setOnClickListener {
-            viewModel.setWebViewJavascriptEnabled((it as SwitchCompat).isChecked)
+            settingsViewModel.setWebViewJavascriptEnabled((it as SwitchCompat).isChecked)
         }
 
         binding.settingsWebviewTextsizeSlider.addOnChangeListener(object : Slider.OnChangeListener {
             override fun onValueChange(slider: Slider, value: Float, fromUser: Boolean) {
-                viewModel.setWebViewTextSize(value.toInt())
+                settingsViewModel.setWebViewTextSize(value.toInt())
             }
         })
     }
 
     private fun setupObservers() {
-        viewModel.isLoggedInPostman.observe(viewLifecycleOwner) { isLoggedIn ->
+        settingsViewModel.isLoggedInPostman.observe(viewLifecycleOwner) { isLoggedIn ->
             if (isLoggedIn) {
                 binding.settingsLoginPostmanLoggedinContainer.show()
                 binding.settingsLoginPostmanNotloggedinContainer.hide()
@@ -119,7 +127,7 @@ class SettingsFragment : Fragment() {
             }
         }
 
-        viewModel.isLoggedInRestly.observe(viewLifecycleOwner) { isLoggedIn ->
+        settingsViewModel.isLoggedInRestly.observe(viewLifecycleOwner) { isLoggedIn ->
             if (isLoggedIn) {
                 binding.settingsLoginRestlyLoggedinContainer.show()
                 binding.settingsLoginRestlyNotloggedinContainer.hide()
@@ -129,39 +137,39 @@ class SettingsFragment : Fragment() {
             }
         }
 
-        viewModel.postmanUserInfo.observe(viewLifecycleOwner) { userInfo ->
+        settingsViewModel.postmanUserInfo.observe(viewLifecycleOwner) { userInfo ->
             if (userInfo != null) {
                 binding.settingsLoginPostmanFullnameLabel.text = userInfo.fullName.toEditable()
                 binding.settingsLoginPostmanEmailLabel.text = userInfo.email.toEditable()
             }
         }
 
-        viewModel.restlyUserInfo.observe(viewLifecycleOwner) { userInfo ->
+        settingsViewModel.restlyUserInfo.observe(viewLifecycleOwner) { userInfo ->
             if (userInfo != null) {
                 binding.settingsLoginRestlyFullnameLabel.text = userInfo.username.toEditable()
                 binding.settingsLoginRestlyEmailLabel.text = userInfo.email.toEditable()
             }
         }
 
-        viewModel.requestPrefs.observe(viewLifecycleOwner) { requestPrefs ->
+        settingsViewModel.requestPrefs.observe(viewLifecycleOwner) { requestPrefs ->
             binding.settingsRequestSslverificationSwitch.isChecked = requestPrefs.sslVerificationEnabled
             binding.settingsRequestMaxsizeInput.text = requestPrefs.maxSize.toString().toEditable()
             binding.settingsRequestTimeoutInput.text = requestPrefs.timeout.toString().toEditable()
         }
 
-        viewModel.webViewPrefs.observe(viewLifecycleOwner) { webViewPrefs ->
+        settingsViewModel.webViewPrefs.observe(viewLifecycleOwner) { webViewPrefs ->
             binding.settingsWebviewJavascriptenabledSwitch.isChecked = webViewPrefs.javascriptEnabled
             binding.settingsWebviewTextsizeSlider.value = webViewPrefs.textSize.toFloat()
         }
 
-        viewModel.error.observe(viewLifecycleOwner) { error ->
+        settingsViewModel.error.observe(viewLifecycleOwner) { error ->
             if (error != null) {
                 WarningDialog(error.title, error.message).show(parentFragmentManager, "AuthError")
-                viewModel.error.value = null
+                settingsViewModel.error.value = null
             }
         }
 
-        viewModel.successfulRegistration.observe(viewLifecycleOwner) { signedUp ->
+        settingsViewModel.successfulRegistration.observe(viewLifecycleOwner) { signedUp ->
             if (signedUp == true) {
                 WarningDialog(R.string.successful_sign_up_title, R.string.successful_sign_up_description)
                     .show(parentFragmentManager, "SignUp")

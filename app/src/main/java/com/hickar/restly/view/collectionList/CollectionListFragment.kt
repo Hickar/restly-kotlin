@@ -37,11 +37,14 @@ class CollectionListFragment : Fragment() {
     private var _binding: CollectionListBinding? = null
     private val binding get() = _binding!!
 
+    private var isInitialFragmentLaunch = true
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        isInitialFragmentLaunch = true
         setHasOptionsMenu(true)
 
         _binding = CollectionListBinding.inflate(inflater, container, false)
@@ -62,14 +65,14 @@ class CollectionListFragment : Fragment() {
 
         itemTouchHelper = ItemTouchHelper(SwipeDeleteCallback(requireContext()) { position ->
             val dialog = ConfirmationDialog(
-                R.string.dialog_delete_collection_title,
-                R.string.dialog_delete_collection_message,
-                R.string.dialog_ok_confirm_delete_option,
-                { dialog, _ ->
+                titleId = R.string.dialog_delete_collection_title,
+                messageId = R.string.dialog_delete_collection_message,
+                confirmButtonTextId = R.string.dialog_ok_confirm_delete_option,
+                onCancelCallback = { dialog, _ ->
                     dialog.cancel()
                     itemTouchHelper.reattachToRecyclerView(recyclerView)
                 },
-                { _, _ ->
+                onConfirmCallback = { _, _ ->
                     viewModel.deleteCollection(position)
                 }
             )
@@ -114,5 +117,14 @@ class CollectionListFragment : Fragment() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+//        if (!isInitialFragmentLaunch) {
+            viewModel.refreshCollections()
+//        }
+        isInitialFragmentLaunch = false
     }
 }

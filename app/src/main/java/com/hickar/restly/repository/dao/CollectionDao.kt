@@ -8,6 +8,9 @@ interface CollectionDao {
     @Query("SELECT * FROM collections")
     suspend fun getAll(): List<CollectionDTO>
 
+    @Query("SELECT * FROM collections WHERE origin = \"postman\"")
+    suspend fun getAllRemote(): List<CollectionDTO>
+
     @Query("SELECT * FROM collections WHERE id = :id")
     suspend fun getById(id: String): CollectionDTO?
 

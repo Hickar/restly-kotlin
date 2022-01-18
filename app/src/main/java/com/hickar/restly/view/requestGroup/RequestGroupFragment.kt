@@ -122,14 +122,14 @@ class RequestGroupFragment : Fragment() {
 
         foldersItemTouchHelper = ItemTouchHelper(SwipeDeleteCallback(requireContext()) { position ->
             val dialog = ConfirmationDialog(
-                R.string.dialog_delete_group_title,
-                R.string.dialog_delete_group_message,
-                R.string.dialog_ok_confirm_delete_option,
-                { dialog, _ ->
+                titleId = R.string.dialog_delete_group_title,
+                messageId = R.string.dialog_delete_group_message,
+                confirmButtonTextId = R.string.dialog_ok_confirm_delete_option,
+                onCancelCallback = { dialog, _ ->
                     dialog.cancel()
                     foldersItemTouchHelper.reattachToRecyclerView(foldersRecyclerView)
                 },
-                { _, _ ->
+                onConfirmCallback = { _, _ ->
                     requestGroupViewModel.deleteFolder(position)
                 }
             )
@@ -229,11 +229,11 @@ class RequestGroupFragment : Fragment() {
         findNavController().navigate(action)
     }
 
-//    override fun onResume() {
-//        super.onResume()
-//        requestGroupViewModel.refreshCurrentRequestGroup()
-//        collectionViewModel.refreshCurrentCollection()
-//    }
+    override fun onResume() {
+        super.onResume()
+        requestGroupViewModel.refreshCurrentRequestGroup()
+        collectionViewModel.refreshCurrentCollection()
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

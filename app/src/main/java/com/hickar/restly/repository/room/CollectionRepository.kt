@@ -77,7 +77,19 @@ class CollectionRepository @Inject constructor(
 
     @WorkerThread
     suspend fun deleteCollection(collection: Collection) {
+        val rootGroup = getRequestGroupById(collection.id)
+        if (rootGroup != null) {
+            deleteRequestGroup(rootGroup)
+        }
         return collectionDao.delete(collectionMapper.toDTO(collection))
+    }
+
+    @WorkerThread
+    suspend fun deleteRemoteCollections() {
+        val remoteCollections = collectionDao.getAllRemote()
+        return collectionDao.getAllRemote().forEach { collection ->
+            deleteCollection(collectionMapper.toEntity(collection))
+        }
     }
 
     @WorkerThread

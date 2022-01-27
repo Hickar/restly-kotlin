@@ -6,13 +6,15 @@ buildscript {
     }
 
     ext {
-        appCompatVersion = '1.4.0'
+        appCompatVersion = '1.4.1'
         gsonVersion = '2.8.8'
         hiltVersion = '2.38.1'
         lifecycleVersion = '2.4.0'
-        materialVersion = '1.4.0'
-        navigationVersion = '2.3.5'
-        roomVersion = '2.4.0-beta02'
+        materialVersion = '1.5.0'
+        navigationVersion = '2.4.0'
+        roomVersion = '2.4.1'
+        mockkVersion = '1.12.2'
+        junitVersion = '5.8.2'
     }
 
     dependencies {

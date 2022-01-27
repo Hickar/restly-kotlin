@@ -25,15 +25,24 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
     buildFeatures {
         viewBinding true
+    }
+
+    testOptions {
+        unitTests.all {
+            useJUnitPlatform()
+        }
     }
 }
 
@@ -41,7 +50,7 @@ dependencies {
     implementation "androidx.core:core-ktx:1.7.0"
     implementation "androidx.appcompat:appcompat:$appCompatVersion"
     implementation "com.google.android.material:material:$materialVersion"
-    implementation "androidx.constraintlayout:constraintlayout:2.1.2"
+    implementation "androidx.constraintlayout:constraintlayout:2.1.3"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion"
     implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"
@@ -49,13 +58,17 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:1.2.1"
     implementation "androidx.recyclerview:recyclerview-selection:1.1.0"
     implementation "androidx.room:room-runtime:$roomVersion"
+    androidTestImplementation 'junit:junit:4.12'
     kapt "androidx.room:room-compiler:$roomVersion"
     implementation "androidx.room:room-ktx:$roomVersion"
     implementation "com.google.code.gson:gson:$gsonVersion"
 
-    testImplementation "junit:junit:4.+"
-    androidTestImplementation "androidx.test.ext:junit:1.1.3"
-    androidTestImplementation "androidx.test.espresso:espresso-core:3.4.0"
+    testImplementation "org.junit.platform:junit-platform-runner:1.8.2"
+    testImplementation "junit:junit:$junitVersion"
+    testImplementation "org.junit.jupiter:junit-jupiter:$junitVersion"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+    testImplementation "io.mockk:mockk:$mockkVersion"
 
     implementation(platform("com.squareup.okhttp3:okhttp-bom:4.9.0"))
     implementation "com.squareup.okhttp3:okhttp"
@@ -64,6 +77,8 @@ dependencies {
     implementation "com.google.dagger:hilt-android:$hiltVersion"
     kapt "com.google.dagger:hilt-android-compiler:$hiltVersion"
     implementation "androidx.hilt:hilt-navigation-fragment:1.0.0"
-
-
+}
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }

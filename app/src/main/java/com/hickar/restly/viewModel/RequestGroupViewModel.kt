@@ -39,7 +39,6 @@ class RequestGroupViewModel @AssistedInject constructor(
         val newRequest = RequestItem(parentId = groupId)
         repository.insertRequestItem(newRequest)
 
-//        refreshRequestGroup(groupId)
         return newRequest.id
     }
 
@@ -47,12 +46,7 @@ class RequestGroupViewModel @AssistedInject constructor(
         val newGroup = RequestDirectory(name = "New Folder", parentId = groupId)
         repository.insertRequestGroup(newGroup)
 
-//        refreshRequestGroup(groupId)
         return newGroup.id
-    }
-
-    fun refreshCurrentRequestGroup() {
-        refreshRequestGroup(groupId)
     }
 
     private fun refreshRequestGroup(id: String) {

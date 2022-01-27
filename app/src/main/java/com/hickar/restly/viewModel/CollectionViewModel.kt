@@ -9,6 +9,7 @@ import com.hickar.restly.repository.room.CollectionRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class CollectionViewModel @AssistedInject constructor(
@@ -54,13 +55,14 @@ class CollectionViewModel @AssistedInject constructor(
 
     private fun refreshCollection(id: String) {
         viewModelScope.launch {
-            val queriedCollection = collectionRepository.getCollectionById(id)
-            if (queriedCollection != null) {
-                collection = queriedCollection
-            }
+            collectionRepository.getCollectionById(id).collect { queriedCollection ->
+                if (queriedCollection != null) {
+                    collection = queriedCollection
+                }
 
-            name.value = collection.name
-            description.value = collection.description
+                name.value = collection.name
+                description.value = collection.description
+            }
         }
     }
 

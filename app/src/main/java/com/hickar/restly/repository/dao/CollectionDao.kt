@@ -13,7 +13,7 @@ interface CollectionDao {
     suspend fun getAllRemote(): List<CollectionDTO>
 
     @Query("SELECT * FROM collections WHERE id = :id")
-    suspend fun getById(id: String): CollectionDTO?
+    fun getById(id: String): Flow<CollectionDTO?>
 
     @Query ("SELECT EXISTS(SELECT * FROM collections WHERE id = :id)")
     suspend fun exists(id: String): Boolean

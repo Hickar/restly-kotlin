@@ -231,7 +231,7 @@ class RequestGroupFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        requestGroupViewModel.refreshCurrentRequestGroup()
+//        requestGroupViewModel.refreshCurrentRequestGroup()
         collectionViewModel.refreshCurrentCollection()
     }
 

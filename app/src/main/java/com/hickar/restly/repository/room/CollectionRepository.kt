@@ -13,12 +13,13 @@ import com.hickar.restly.repository.mappers.CollectionMapper
 import com.hickar.restly.repository.mappers.RequestGroupMapper
 import com.hickar.restly.repository.mappers.RequestItemMapper
 import com.hickar.restly.repository.models.CollectionDTO
-import com.hickar.restly.repository.models.CollectionRemoteDTO
 import com.hickar.restly.services.SharedPreferencesHelper
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.transform
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -41,7 +42,6 @@ class CollectionRepository @Inject constructor(
     }
 
     suspend fun saveRemoteCollections() {
-        println("Should get remote collections: ${prefs.getPostmanApiKey() != null}")
         if (prefs.getPostmanUserInfo() != null) {
             val token = prefs.getPostmanApiKey() ?: return
             val collections = collectionRemoteSource.getCollections(token)
@@ -86,7 +86,7 @@ class CollectionRepository @Inject constructor(
 
     @WorkerThread
     suspend fun deleteCollection(collection: Collection) {
-        val rootGroup = getRequestGroupById(collection.id)
+        val rootGroup = getRequestGroupAndChildrenById(collection.id)
         if (rootGroup != null) {
             deleteRequestGroup(rootGroup)
         }
@@ -101,12 +101,44 @@ class CollectionRepository @Inject constructor(
     }
 
     @WorkerThread
-    suspend fun getRequestGroupById(id: String): RequestDirectory? {
-        val requestGroupDto = requestGroupDao.getById(id) ?: return null
+    suspend fun getRequestGroupById(id: String): Flow<RequestDirectory?> {
+        return requestGroupDao.getById(id).transform { requestGroupDto ->
+            if (requestGroupDto == null) {
+                emit(null)
+            } else {
+                val requests = requestItemMapper.toEntityList(requestItemDao.getByGroupId(id))
+                val subgroups = mutableListOf<RequestDirectory>()
+
+                coroutineScope {
+                    withContext(Dispatchers.IO) {
+                        requestGroupDao.getByParentId(requestGroupDto.id).map { subgroupDto ->
+                            subgroups.add(requestGroupMapper.toEntity(subgroupDto))
+                        }
+                    }
+                }
+
+                emit(
+                    RequestDirectory(
+                        id = requestGroupDto.id,
+                        name = requestGroupDto.name,
+                        description = requestGroupDto.description,
+                        requests = requests.toMutableList(),
+                        subgroups = subgroups,
+                        parentId = requestGroupDto.parentId
+                    )
+                )
+            }
+
+        }
+    }
+
+    @WorkerThread
+    private suspend fun getRequestGroupAndChildrenById(id: String): RequestDirectory? {
+        val requestGroupDto = requestGroupDao.getById(id).firstOrNull() ?: return null
         val subgroups = mutableListOf<RequestDirectory>()
 
         requestGroupDao.getByParentId(requestGroupDto.id).forEach { subgroupDto ->
-            val subgroup = getRequestGroupById(subgroupDto.id)
+            val subgroup = getRequestGroupAndChildrenById(subgroupDto.id)
             if (subgroup != null) subgroups.add(subgroup)
         }
 

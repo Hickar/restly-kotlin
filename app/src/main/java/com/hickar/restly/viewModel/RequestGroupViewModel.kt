@@ -10,6 +10,7 @@ import com.hickar.restly.repository.room.CollectionRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class RequestGroupViewModel @AssistedInject constructor(
@@ -38,7 +39,7 @@ class RequestGroupViewModel @AssistedInject constructor(
         val newRequest = RequestItem(parentId = groupId)
         repository.insertRequestItem(newRequest)
 
-        refreshRequestGroup(groupId)
+//        refreshRequestGroup(groupId)
         return newRequest.id
     }
 
@@ -46,7 +47,7 @@ class RequestGroupViewModel @AssistedInject constructor(
         val newGroup = RequestDirectory(name = "New Folder", parentId = groupId)
         repository.insertRequestGroup(newGroup)
 
-        refreshRequestGroup(groupId)
+//        refreshRequestGroup(groupId)
         return newGroup.id
     }
 
@@ -56,17 +57,18 @@ class RequestGroupViewModel @AssistedInject constructor(
 
     private fun refreshRequestGroup(id: String) {
         viewModelScope.launch {
-            val queriedGroup = repository.getRequestGroupById(id)
-            if (queriedGroup != null) {
-                group = queriedGroup
-            } else {
-                repository.insertRequestGroup(group)
-            }
+            repository.getRequestGroupById(id).collect { requestGroup ->
+                if (requestGroup != null) {
+                    group = requestGroup
+                } else {
+                    repository.insertRequestGroup(group)
+                }
 
-            requests.value = group.requests
-            folders.value = group.subgroups
-            name.value = group.name
-            description.value = group.description
+                requests.value = group.requests
+                folders.value = group.subgroups
+                name.value = group.name
+                description.value = group.description
+            }
         }
     }
 

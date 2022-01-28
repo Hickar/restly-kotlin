@@ -31,11 +31,14 @@ class RequestDirectory(
     }
 
     companion object {
-        const val DEFAULT = "0000-00000000-00000000-0000-000000-000000"
+        const val DEFAULT_ID = "0000-00000000-00000000-0000-000000-000000"
+        fun getDefault(): RequestDirectory {
+            return RequestDirectory(id = DEFAULT_ID)
+        }
     }
 
     fun isDefault(): Boolean {
-        return id == DEFAULT
+        return id == DEFAULT_ID
     }
 
     fun isRoot(): Boolean {

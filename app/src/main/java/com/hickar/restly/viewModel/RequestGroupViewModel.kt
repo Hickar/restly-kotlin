@@ -19,29 +19,28 @@ class RequestGroupViewModel @AssistedInject constructor(
     private val repository: CollectionRepository,
 ) : ViewModel() {
 
-    private var groupId = RequestDirectory.DEFAULT
     private var job: Job = Job()
 
-    private val _group = MutableStateFlow(RequestDirectory(id = RequestDirectory.DEFAULT))
+    private val _group = MutableStateFlow(RequestDirectory.getDefault())
     val group get() = _group
 
     fun loadRequestGroup(groupId: String?) {
-        if (groupId != null) {
-            this.groupId = groupId
+        if (groupId == null) {
+            _group.value = RequestDirectory.getDefault()
         }
 
-        refreshRequestGroup(this.groupId)
+        refreshRequestGroup(groupId ?: RequestDirectory.DEFAULT_ID)
     }
 
     suspend fun createNewDefaultRequest(): String {
-        val newRequest = RequestItem(parentId = groupId)
+        val newRequest = RequestItem(parentId = _group.value.id)
         repository.insertRequestItem(newRequest)
 
         return newRequest.id
     }
 
     suspend fun createNewGroup(): String {
-        val newGroup = RequestDirectory(name = "New Folder", parentId = groupId)
+        val newGroup = RequestDirectory(name = "New Folder", parentId = _group.value.id)
         repository.insertRequestGroup(newGroup)
 
         return newGroup.id
@@ -55,20 +54,9 @@ class RequestGroupViewModel @AssistedInject constructor(
                     _group.value = it
                 } else {
                     repository.insertRequestGroup(_group.value)
-//                    _group.value = _group.value
                 }
             }
         }
-//                if (requestGroup != null) {
-//                    group = requestGroup
-//                } else {
-//                    repository.insertRequestGroup(group)
-//                }
-//
-//                requests.value = group.requests
-//                folders.value = group.subgroups
-//                name.value = group.name
-//                description.value = group.description
     }
 
     override fun onCleared() {

@@ -6,13 +6,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.hickar.restly.R
 import com.hickar.restly.databinding.RequestGroupEditBinding
-import com.hickar.restly.extensions.observeOnce
 import com.hickar.restly.extensions.toEditable
 import com.hickar.restly.viewModel.LambdaFactory
 import com.hickar.restly.viewModel.RequestGroupViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -58,14 +59,22 @@ class RequestGroupEditFragment : Fragment() {
     }
 
     private fun setupObservers() {
-        viewModel.name.observeOnce(viewLifecycleOwner) { name ->
-            (requireActivity() as AppCompatActivity).supportActionBar?.title = name
-            binding.requestGroupEditNameInput.text = name.toEditable()
-        }
+        lifecycleScope.launch {
+            viewModel.group.collect {
+                (requireActivity() as AppCompatActivity).supportActionBar?.title = it.name
+                binding.requestGroupEditNameInput.text = it.name.toEditable()
 
-        viewModel.description.observeOnce(viewLifecycleOwner) { description ->
-            binding.requestGroupEditDescriptionInput.text = description?.toEditable() ?: "".toEditable()
+                binding.requestGroupEditDescriptionInput.text = it.description?.toEditable() ?: "".toEditable()
+            }
         }
+//        viewModel.name.observeOnce(viewLifecycleOwner) { name ->
+//            (requireActivity() as AppCompatActivity).supportActionBar?.title = name
+//            binding.requestGroupEditNameInput.text = name.toEditable()
+//        }
+//
+//        viewModel.description.observeOnce(viewLifecycleOwner) { description ->
+//            binding.requestGroupEditDescriptionInput.text = description?.toEditable() ?: "".toEditable()
+//        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

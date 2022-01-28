@@ -1,6 +1,5 @@
 package com.hickar.restly.viewModel
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,7 +9,9 @@ import com.hickar.restly.repository.room.CollectionRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 class RequestGroupViewModel @AssistedInject constructor(
@@ -18,14 +19,11 @@ class RequestGroupViewModel @AssistedInject constructor(
     private val repository: CollectionRepository,
 ) : ViewModel() {
 
-    var group: RequestDirectory = RequestDirectory(id = RequestDirectory.DEFAULT, name = "New Folder")
-
-    val name: MutableLiveData<String> = MutableLiveData()
-    val description: MutableLiveData<String?> = MutableLiveData()
-    val requests: MutableLiveData<MutableList<RequestItem>> = MutableLiveData()
-    val folders: MutableLiveData<MutableList<RequestDirectory>> = MutableLiveData()
-
     private var groupId = RequestDirectory.DEFAULT
+    private var job: Job = Job()
+
+    private val _group = MutableStateFlow(RequestDirectory(id = RequestDirectory.DEFAULT))
+    val group get() = _group
 
     fun loadRequestGroup(groupId: String?) {
         if (groupId != null) {
@@ -50,54 +48,59 @@ class RequestGroupViewModel @AssistedInject constructor(
     }
 
     private fun refreshRequestGroup(id: String) {
-        viewModelScope.launch {
-            repository.getRequestGroupById(id).collect { requestGroup ->
-                if (requestGroup != null) {
-                    group = requestGroup
+        job = viewModelScope.launch {
+            ensureActive()
+            repository.getRequestGroupById(id).collect {
+                if (it != null) {
+                    _group.value = it
                 } else {
-                    repository.insertRequestGroup(group)
+                    repository.insertRequestGroup(_group.value)
+//                    _group.value = _group.value
                 }
-
-                requests.value = group.requests
-                folders.value = group.subgroups
-                name.value = group.name
-                description.value = group.description
             }
         }
+//                if (requestGroup != null) {
+//                    group = requestGroup
+//                } else {
+//                    repository.insertRequestGroup(group)
+//                }
+//
+//                requests.value = group.requests
+//                folders.value = group.subgroups
+//                name.value = group.name
+//                description.value = group.description
+    }
+
+    override fun onCleared() {
+        job.cancel()
+        super.onCleared()
     }
 
     fun deleteRequest(position: Int) {
         viewModelScope.launch {
-            repository.deleteRequestItem(requests.value!![position])
-            requests.value?.removeAt(position)
-            requests.value = requests.value
+            val requestItem = group.value.requests[position]
+            repository.deleteRequestItem(requestItem)
         }
     }
 
     fun deleteFolder(position: Int) {
         viewModelScope.launch {
-            repository.deleteRequestGroup(folders.value!![position])
-            folders.value?.removeAt(position)
-            folders.value = folders.value
+            val subfolder = group.value.subgroups[position]
+            repository.deleteRequestGroup(subfolder)
         }
     }
 
     fun setName(name: String) {
-        this.name.value = name
+        _group.value.name = name
     }
 
     fun setDescription(description: String) {
-        this.description.value = description
+        _group.value.description = description
     }
 
     fun saveRequestGroup() {
         viewModelScope.launch {
-            group.name = name.value!!
-            group.description = description.value
-            group.requests = requests.value!!
-            group.subgroups = folders.value!!
-
-            repository.updateRequestGroup(group)
+            repository.updateRequestGroup(_group.value)
         }
     }
 

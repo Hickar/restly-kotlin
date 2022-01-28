@@ -103,7 +103,7 @@ class CollectionRepository @Inject constructor(
         }
     }
 
-    @WorkerThread
+//    @WorkerThread
     suspend fun getRequestGroupById(id: String): Flow<RequestDirectory?> {
         val requestGroupFlow = requestGroupDao.getById(id)
         val requestItemFlow = requestItemDao.getByGroupId(id)

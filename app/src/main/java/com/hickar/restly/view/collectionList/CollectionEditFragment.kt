@@ -5,13 +5,15 @@ import android.view.*
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.whenStarted
 import com.hickar.restly.R
 import com.hickar.restly.databinding.CollectionEditBinding
-import com.hickar.restly.extensions.observeOnce
 import com.hickar.restly.extensions.toEditable
 import com.hickar.restly.viewModel.CollectionViewModel
 import com.hickar.restly.viewModel.LambdaFactory
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -57,12 +59,13 @@ class CollectionEditFragment : Fragment() {
     }
 
     private fun setupObservers() {
-        viewModel.name.observeOnce(viewLifecycleOwner) { name ->
-            binding.collectionEditNameInput.text = name.toEditable()
-        }
-
-        viewModel.description.observeOnce(viewLifecycleOwner) { description ->
-            binding.collectionEditDescriptionInput.text = description.toEditable()
+        lifecycleScope.launch {
+            lifecycle.whenStarted {
+                viewModel.collection.collect {
+                    binding.collectionEditNameInput.text = it.name.toEditable()
+                    binding.collectionEditDescriptionInput.text = it.description.toEditable()
+                }
+            }
         }
     }
 

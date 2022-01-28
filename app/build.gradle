@@ -4,6 +4,7 @@ plugins {
     id "kotlin-kapt"
     id "androidx.navigation.safeargs"
     id "dagger.hilt.android.plugin"
+    id "de.mannodermaus.android-junit5"
 }
 
 android {
@@ -17,6 +18,7 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArgument("runnerBuilder", "de.mannodermaus.junit5.AndroidJUnit5Builder")
     }
 
     buildTypes {
@@ -58,17 +60,33 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:1.2.1"
     implementation "androidx.recyclerview:recyclerview-selection:1.1.0"
     implementation "androidx.room:room-runtime:$roomVersion"
-    androidTestImplementation 'junit:junit:4.12'
     kapt "androidx.room:room-compiler:$roomVersion"
     implementation "androidx.room:room-ktx:$roomVersion"
     implementation "com.google.code.gson:gson:$gsonVersion"
 
-    testImplementation "org.junit.platform:junit-platform-runner:1.8.2"
-    testImplementation "junit:junit:$junitVersion"
-    testImplementation "org.junit.jupiter:junit-jupiter:$junitVersion"
-    testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
+
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0"
+//    implementation "org.jetbrains.kotlin:kotlinx-coroutines-test:$kotlinVersion"
+
+//    androidTestImplementation "io.kotest:kotest-runner-junit5:$kotestVersion"
+//    androidTestImplementation "io.kotest:kotest-assertions-core:$kotestVersion"
+//    androidTestImplementation "io.kotest:kotest-property:$kotestVersion"
+    testImplementation "io.kotest:kotest-assertions-core-jvm:$kotestVersion"
+    testImplementation "io.kotest:kotest-runner-junit5-jvm:$kotestVersion"
+
+    androidTestImplementation "androidx.test:runner:1.4.0"
+    androidTestImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
-    testImplementation "io.mockk:mockk:$mockkVersion"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
+
+    androidTestImplementation("de.mannodermaus.junit5:android-test-core:1.3.0")
+    androidTestRuntimeOnly("de.mannodermaus.junit5:android-test-runner:1.3.0")
+
+    androidTestImplementation "io.mockk:mockk:$mockkVersion"
+    androidTestImplementation "io.mockk:mockk-agent-jvm:$mockkVersion"
 
     implementation(platform("com.squareup.okhttp3:okhttp-bom:4.9.0"))
     implementation "com.squareup.okhttp3:okhttp"

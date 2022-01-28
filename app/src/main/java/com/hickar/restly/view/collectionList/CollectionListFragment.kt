@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.whenStarted
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -17,6 +19,7 @@ import com.hickar.restly.view.dialogs.ConfirmationDialog
 import com.hickar.restly.viewModel.CollectionListViewModel
 import com.hickar.restly.viewModel.LambdaFactory
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
@@ -41,7 +44,7 @@ class CollectionListFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         setHasOptionsMenu(true)
         _binding = CollectionListBinding.inflate(inflater, container, false)
         return binding.root
@@ -79,8 +82,12 @@ class CollectionListFragment : Fragment() {
     }
 
     private fun setupObservers() {
-        viewModel.collections.observe(viewLifecycleOwner) { collections ->
-            (recyclerView.adapter as CollectionListAdapter).submitList(collections.toMutableList())
+        lifecycleScope.launch {
+            lifecycle.whenStarted {
+                viewModel.collections.collect {
+                    (recyclerView.adapter as CollectionListAdapter).submitList(it.toMutableList())
+                }
+            }
         }
     }
 

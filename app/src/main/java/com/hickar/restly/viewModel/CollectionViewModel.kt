@@ -1,6 +1,5 @@
 package com.hickar.restly.viewModel
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,7 +8,9 @@ import com.hickar.restly.repository.room.CollectionRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 class CollectionViewModel @AssistedInject constructor(
@@ -17,12 +18,11 @@ class CollectionViewModel @AssistedInject constructor(
     private val collectionRepository: CollectionRepository,
 ) : ViewModel() {
 
-    var collection: Collection = Collection()
-
-    var name: MutableLiveData<String> = MutableLiveData()
-    var description: MutableLiveData<String> = MutableLiveData()
-
     private var collectionId = Collection.DEFAULT
+    private var job: Job = Job()
+
+    private var _collection = MutableStateFlow(Collection())
+    val collection get() = _collection
 
     fun loadCollection(collectionId: String?) {
         if (collectionId != null) {
@@ -33,19 +33,16 @@ class CollectionViewModel @AssistedInject constructor(
     }
 
     fun setName(name: String) {
-        this.name.value = name
+        _collection.value.name = name
     }
 
     fun setDescription(description: String) {
-        this.description.value = description
+        _collection.value.description = description
     }
 
     fun saveCollection() {
         viewModelScope.launch {
-            collection.name = name.value!!
-            collection.description = description.value!!
-
-            collectionRepository.updateCollection(collection)
+            collectionRepository.updateCollection(_collection.value)
         }
     }
 
@@ -54,16 +51,19 @@ class CollectionViewModel @AssistedInject constructor(
     }
 
     private fun refreshCollection(id: String) {
-        viewModelScope.launch {
-            collectionRepository.getCollectionById(id).collect { queriedCollection ->
-                if (queriedCollection != null) {
-                    collection = queriedCollection
+        job = viewModelScope.launch {
+            ensureActive()
+            collectionRepository.getCollectionById(id).collect {
+                if (it != null) {
+                    _collection.value = it
                 }
-
-                name.value = collection.name
-                description.value = collection.description
             }
         }
+    }
+
+    override fun onCleared() {
+        job.cancel()
+        super.onCleared()
     }
 
     @AssistedFactory

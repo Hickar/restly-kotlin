@@ -7,6 +7,7 @@ import androidx.appcompat.view.SupportMenuInflater
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.whenStarted
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,6 +17,8 @@ import com.hickar.restly.R
 import com.hickar.restly.databinding.RequestGroupBinding
 import com.hickar.restly.extensions.reattachToRecyclerView
 import com.hickar.restly.extensions.show
+import com.hickar.restly.models.Collection
+import com.hickar.restly.models.RequestDirectory
 import com.hickar.restly.utils.RecyclerViewDecoration
 import com.hickar.restly.utils.SwipeDeleteCallback
 import com.hickar.restly.view.dialogs.ConfirmationDialog
@@ -25,6 +28,7 @@ import com.hickar.restly.viewModel.CollectionViewModel
 import com.hickar.restly.viewModel.LambdaFactory
 import com.hickar.restly.viewModel.RequestGroupViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -86,8 +90,8 @@ class RequestGroupFragment : Fragment() {
         val menuId: Int
         val backButtonEnabled: Boolean
 
-        val collection = collectionViewModel.collection
-        val group = requestGroupViewModel.group
+        val collection = collectionViewModel.collection.value
+        val group = requestGroupViewModel.group.value
 
         if (collection.isDefault() && group.isRoot()) {
             menuId = R.menu.request_group_default_collection_menu
@@ -116,7 +120,7 @@ class RequestGroupFragment : Fragment() {
         foldersRecyclerView = binding.requestGroupFolders
         foldersRecyclerView.layoutManager = LinearLayoutManager(context)
         foldersRecyclerView.adapter = FolderListAdapter {
-            val collectionId = this@RequestGroupFragment.collectionViewModel.collection.id
+            val collectionId = this@RequestGroupFragment.collectionViewModel.collection.value.id
             navigateToFolder(collectionId, it.id)
         }
 
@@ -147,24 +151,36 @@ class RequestGroupFragment : Fragment() {
     }
 
     private fun setupObservers() {
-        requestGroupViewModel.requests.observe(viewLifecycleOwner, { requests ->
-            if (requests.size > 0) binding.requestGroupRequests.show()
-            (requestsRecyclerView.adapter as RequestListAdapter).submitList(requests)
-        })
+        lifecycleScope.launch {
+            lifecycle.whenStarted {
+                val requestGroupFlow = requestGroupViewModel.group
+                val collectionFlow = collectionViewModel.collection
 
-        requestGroupViewModel.folders.observe(viewLifecycleOwner, { folders ->
-            if (folders.size > 0) binding.requestGroupFolders.show()
-            (foldersRecyclerView.adapter as FolderListAdapter).submitList(folders)
-        })
-
-        requestGroupViewModel.name.observe(viewLifecycleOwner) { name ->
-            val group = requestGroupViewModel.group
-            requireActivity().invalidateOptionsMenu()
-            (requireActivity() as MainActivity).supportActionBar?.title = when {
-                group.isDefault() -> getString(R.string.default_collection_title)
-                group.isRoot() -> collectionViewModel.collection.name
-                else -> name
+                combine(requestGroupFlow, collectionFlow) { requestGroup, collection ->
+                    Pair(requestGroup, collection)
+                }.collect {
+                    setTitle(it.first, it.second)
+                }
             }
+        }
+    }
+
+    private fun setTitle(requestGroup: RequestDirectory, collection: Collection) {
+        if (requestGroup.requests.size > 0) binding.requestGroupRequests.show()
+        (requestsRecyclerView.adapter as RequestListAdapter).submitList(requestGroup.requests)
+
+        if (requestGroup.subgroups.size > 0) binding.requestGroupFolders.show()
+        (foldersRecyclerView.adapter as FolderListAdapter).submitList(requestGroup.subgroups)
+
+        requireActivity().invalidateOptionsMenu()
+
+        if (requestGroup.isRoot()) {
+            (requireActivity() as MainActivity).supportActionBar?.title = when {
+                collection.isDefault() -> getString(R.string.default_collection_title)
+                else -> collection.name
+            }
+        } else {
+            (requireActivity() as MainActivity).supportActionBar?.title = requestGroup.name
         }
     }
 
@@ -186,16 +202,16 @@ class RequestGroupFragment : Fragment() {
                 true
             }
             R.id.request_group_collection_menu_edit_button -> {
-                if (requestGroupViewModel.group.isRoot()) {
-                    navigateToCollectionEdit(collectionViewModel.collection.id)
+                if (requestGroupViewModel.group.value.isRoot()) {
+                    navigateToCollectionEdit(collectionViewModel.collection.value.id)
                 } else {
-                    navigateToRequestGroupEdit(requestGroupViewModel.group.id)
+                    navigateToRequestGroupEdit(requestGroupViewModel.group.value.id)
                 }
                 true
             }
             R.id.request_group_add_folder_button -> {
                 lifecycleScope.launch {
-                    val collectionId = collectionViewModel.collection.id
+                    val collectionId = collectionViewModel.collection.value.id
                     val newGroupId = requestGroupViewModel.createNewGroup()
                     navigateToFolder(collectionId, newGroupId)
                 }
@@ -229,11 +245,11 @@ class RequestGroupFragment : Fragment() {
         findNavController().navigate(action)
     }
 
-    override fun onResume() {
-        super.onResume()
+//    override fun onResume() {
+//        super.onResume()
 //        requestGroupViewModel.refreshCurrentRequestGroup()
-        collectionViewModel.refreshCurrentCollection()
-    }
+//        collectionViewModel.refreshCurrentCollection()
+//    }
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -4,7 +4,7 @@ import java.util.*
 
 class RequestDirectory(
     var id: String = UUID.randomUUID().toString(),
-    var name: String,
+    var name: String = "",
     var description: String? = "",
     var requests: MutableList<RequestItem> = mutableListOf(),
     var subgroups: MutableList<RequestDirectory> = mutableListOf(),

@@ -6,6 +6,9 @@ buildscript {
     }
 
     ext {
+        kotlinVersion = '1.5.31'
+        gradleVersion = '7.0.4'
+
         appCompatVersion = '1.4.1'
         gsonVersion = '2.8.8'
         hiltVersion = '2.38.1'
@@ -13,15 +16,17 @@ buildscript {
         materialVersion = '1.5.0'
         navigationVersion = '2.4.0'
         roomVersion = '2.4.1'
-        mockkVersion = '1.12.2'
+        kotestVersion = '5.1.0'
         junitVersion = '5.8.2'
+        mockkVersion = '1.12.2'
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.4'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.31"
+        classpath "com.android.tools.build:gradle:$gradleVersion"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$navigationVersion"
         classpath "com.google.dagger:hilt-android-gradle-plugin:$hiltVersion"
+        classpath "de.mannodermaus.gradle.plugins:android-junit5:1.8.2.0"
     }
 }
 

@@ -1,6 +1,8 @@
 package com.hickar.restly.viewModel
 
-import androidx.lifecycle.*
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.hickar.restly.models.Collection
 import com.hickar.restly.models.RequestDirectory
 import com.hickar.restly.repository.room.CollectionRepository
@@ -9,7 +11,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.cancellable
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -18,19 +20,17 @@ class CollectionListViewModel @AssistedInject constructor(
     private val collectionRepository: CollectionRepository,
     private val prefs: SharedPreferencesHelper
 ) : ViewModel() {
-    private val collectionJob: Job
-    var collections: LiveData<List<Collection>> = MutableLiveData()
+    private var job: Job = Job()
+
+    private var _collections = MutableStateFlow(listOf<Collection>())
+    val collections get() = _collections
 
     init {
-        collectionJob = viewModelScope.launch {
-            collectionRepository.getAllCollections()
-            collections = collectionRepository
-                .getAllCollections()
-                .cancellable()
-                .asLiveData()
+        job = viewModelScope.launch {
+            collectionRepository.getAllCollections().collect {
+                _collections.value = it
+            }
         }
-
-        collectionJob.start()
     }
 
     suspend fun createNewCollection(): String {
@@ -45,8 +45,7 @@ class CollectionListViewModel @AssistedInject constructor(
 
     fun deleteCollection(position: Int) {
         viewModelScope.launch {
-            collectionRepository.deleteCollection(collections.value!![position])
-            collectionRepository.deleteRequestsByCollectionId(collections.value!![position].id)
+            collectionRepository.deleteCollection(collections.value[position])
         }
     }
 
@@ -54,10 +53,9 @@ class CollectionListViewModel @AssistedInject constructor(
         viewModelScope.launch { collectionRepository.saveRemoteCollections() }
     }
 
-    fun cancelCollectionsPolling() {
-        if (collectionJob.isActive) {
-            collectionJob.cancel()
-        }
+    override fun onCleared() {
+        job.cancel()
+        super.onCleared()
     }
 
     @AssistedFactory

@@ -32,11 +32,11 @@ class AccountRegisterFragment : Fragment() {
 
     private fun setupEventListeners() {
         binding.accountRegisterSubmitButton.setOnClickListener {
-            val email = binding.accountRegisterEmailInput.text.toString()
-            val username = binding.accountRegisterUsernameInput.text.toString()
-            val password = binding.accountRegisterPasswordInput.text.toString()
-
-            viewModel.signUpInRestly(email, username, password)
+//            val email = binding.accountRegisterEmailInput.text.toString()
+//            val username = binding.accountRegisterUsernameInput.text.toString()
+//            val password = binding.accountRegisterPasswordInput.text.toString()
+//
+//            viewModel.signUpInRestly(email, username, password)
         }
     }
 

@@ -8,6 +8,7 @@ import androidx.appcompat.widget.SwitchCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.slider.Slider
 import com.hickar.restly.R
@@ -23,16 +24,18 @@ import com.hickar.restly.view.dialogs.WarningDialog
 import com.hickar.restly.viewModel.LambdaFactory
 import com.hickar.restly.viewModel.SettingsViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import javax.inject.Inject
 
+@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class SettingsFragment : Fragment() {
 
     @Inject
-    lateinit var settingsFactory: SettingsViewModel.Factory
-    private val settingsViewModel: SettingsViewModel by activityViewModels {
+    lateinit var factory: SettingsViewModel.Factory
+    private val viewModel: SettingsViewModel by activityViewModels {
         LambdaFactory(this) { stateHandle ->
-            settingsFactory.build(stateHandle)
+            factory.build(stateHandle)
         }
     }
 
@@ -66,13 +69,13 @@ class SettingsFragment : Fragment() {
             findNavController().navigate(action)
         }
 
-        binding.settingsLogoutRestlyButton.setOnClickListener {
-            settingsViewModel.logoutFromRestly()
-        }
+//        binding.settingsLogoutRestlyButton.setOnClickListener {
+//            settingsViewModel.logoutFromRestly()
+//        }
 
         binding.settingsLoginPostmanButton.setOnClickListener {
             EditTextDialog(R.string.settings_login_postman_dialog_title, "") { apiKey ->
-                settingsViewModel.loginToPostman(apiKey)
+                viewModel.loginToPostman(apiKey)
             }.show(parentFragmentManager, "Postman_Login_Dialog")
         }
 
@@ -82,94 +85,123 @@ class SettingsFragment : Fragment() {
                 messageId = R.string.dialog_logout_delete_collections_description,
                 cancelButtonTextId = R.string.dialog_logout_delete_collections_keep_option,
                 confirmButtonTextId = R.string.dialog_logout_delete_collections_delete_option,
-                onCancelCallback = { _, _ ->  settingsViewModel.logoutFromPostman(false) },
-                onConfirmCallback = { _, _ -> settingsViewModel.logoutFromPostman(true) }
+                onCancelCallback = { _, _ ->  viewModel.logoutFromPostman(false) },
+                onConfirmCallback = { _, _ -> viewModel.logoutFromPostman(true) }
             ).show(parentFragmentManager, "Postman_Logout_Dialog")
         }
 
         binding.settingsRequestTimeoutInput.filters = arrayOf(NumberRangeInputFilter(Long.MIN_VALUE, Long.MAX_VALUE))
         binding.settingsRequestSslverificationSwitch.setOnClickListener {
-            settingsViewModel.setRequestSslVerificationEnabled((it as SwitchCompat).isChecked)
+            viewModel.setRequestSslVerificationEnabled((it as SwitchCompat).isChecked)
         }
 
         binding.settingsRequestMaxsizeInput.filters = arrayOf(NumberRangeInputFilter(Long.MIN_VALUE, Long.MAX_VALUE))
         binding.settingsRequestMaxsizeInput.doAfterTextChanged { text ->
             if (text.toString().isNotBlank()) {
-                settingsViewModel.setRequestMaxSize(text.toString().toLongSafely())
+                viewModel.setRequestMaxSize(text.toString().toLongSafely())
             }
         }
 
         binding.settingsRequestTimeoutInput.doAfterTextChanged { text ->
             if (text.toString().isNotBlank()) {
-                settingsViewModel.setRequestTimeout(text.toString().toLongSafely())
+                viewModel.setRequestTimeout(text.toString().toLongSafely())
             }
         }
 
         binding.settingsWebviewJavascriptenabledSwitch.setOnClickListener {
-            settingsViewModel.setWebViewJavascriptEnabled((it as SwitchCompat).isChecked)
+            viewModel.setWebViewJavascriptEnabled((it as SwitchCompat).isChecked)
         }
 
         binding.settingsWebviewTextsizeSlider.addOnChangeListener(object : Slider.OnChangeListener {
             override fun onValueChange(slider: Slider, value: Float, fromUser: Boolean) {
-                settingsViewModel.setWebViewTextSize(value.toInt())
+                viewModel.setWebViewTextSize(value.toInt())
             }
         })
     }
 
     private fun setupObservers() {
-        settingsViewModel.isLoggedInPostman.observe(viewLifecycleOwner) { isLoggedIn ->
-            if (isLoggedIn) {
-                binding.settingsLoginPostmanLoggedinContainer.show()
-                binding.settingsLoginPostmanNotloggedinContainer.hide()
-            } else {
-                binding.settingsLoginPostmanLoggedinContainer.hide()
-                binding.settingsLoginPostmanNotloggedinContainer.show()
+        lifecycleScope.launchWhenStarted {
+            viewModel.postmanUserInfo.collect {
+                if (it != null) {
+                    binding.settingsLoginPostmanLoggedinContainer.show()
+                    binding.settingsLoginPostmanNotloggedinContainer.hide()
+                    binding.settingsLoginPostmanFullnameLabel.text = it.fullName.toEditable()
+                    binding.settingsLoginPostmanEmailLabel.text = it.email.toEditable()
+                } else {
+                    binding.settingsLoginPostmanLoggedinContainer.hide()
+                    binding.settingsLoginPostmanNotloggedinContainer.show()
+                }
             }
         }
 
-        settingsViewModel.isLoggedInRestly.observe(viewLifecycleOwner) { isLoggedIn ->
-            if (isLoggedIn) {
-                binding.settingsLoginRestlyLoggedinContainer.show()
-                binding.settingsLoginRestlyNotloggedinContainer.hide()
-            } else {
-                binding.settingsLoginRestlyLoggedinContainer.hide()
-                binding.settingsLoginRestlyNotloggedinContainer.show()
+        lifecycleScope.launchWhenStarted {
+            viewModel.requestPrefs.collect {
+                binding.settingsRequestSslverificationSwitch.isChecked = it.sslVerificationEnabled
+                binding.settingsRequestMaxsizeInput.text = it.maxSize.toString().toEditable()
+                binding.settingsRequestTimeoutInput.text = it.timeout.toString().toEditable()
             }
         }
 
-        settingsViewModel.postmanUserInfo.observe(viewLifecycleOwner) { userInfo ->
-            if (userInfo != null) {
-                binding.settingsLoginPostmanFullnameLabel.text = userInfo.fullName.toEditable()
-                binding.settingsLoginPostmanEmailLabel.text = userInfo.email.toEditable()
+        lifecycleScope.launchWhenStarted {
+            viewModel.webViewPrefs.collect {
+                binding.settingsWebviewJavascriptenabledSwitch.isChecked = it.javascriptEnabled
+                binding.settingsWebviewTextsizeSlider.value = it.textSize.toFloat()
             }
         }
 
-        settingsViewModel.restlyUserInfo.observe(viewLifecycleOwner) { userInfo ->
-            if (userInfo != null) {
-                binding.settingsLoginRestlyFullnameLabel.text = userInfo.username.toEditable()
-                binding.settingsLoginRestlyEmailLabel.text = userInfo.email.toEditable()
-            }
-        }
+//        viewModel.isLoggedInPostman.observe(viewLifecycleOwner) { isLoggedIn ->
+//            if (isLoggedIn) {
+//                binding.settingsLoginPostmanLoggedinContainer.show()
+//                binding.settingsLoginPostmanNotloggedinContainer.hide()
+//            } else {
+//                binding.settingsLoginPostmanLoggedinContainer.hide()
+//                binding.settingsLoginPostmanNotloggedinContainer.show()
+//            }
+//        }
 
-        settingsViewModel.requestPrefs.observe(viewLifecycleOwner) { requestPrefs ->
-            binding.settingsRequestSslverificationSwitch.isChecked = requestPrefs.sslVerificationEnabled
-            binding.settingsRequestMaxsizeInput.text = requestPrefs.maxSize.toString().toEditable()
-            binding.settingsRequestTimeoutInput.text = requestPrefs.timeout.toString().toEditable()
-        }
+//        settingsViewModel.isLoggedInRestly.observe(viewLifecycleOwner) { isLoggedIn ->
+//            if (isLoggedIn) {
+//                binding.settingsLoginRestlyLoggedinContainer.show()
+//                binding.settingsLoginRestlyNotloggedinContainer.hide()
+//            } else {
+//                binding.settingsLoginRestlyLoggedinContainer.hide()
+//                binding.settingsLoginRestlyNotloggedinContainer.show()
+//            }
+//        }
 
-        settingsViewModel.webViewPrefs.observe(viewLifecycleOwner) { webViewPrefs ->
-            binding.settingsWebviewJavascriptenabledSwitch.isChecked = webViewPrefs.javascriptEnabled
-            binding.settingsWebviewTextsizeSlider.value = webViewPrefs.textSize.toFloat()
-        }
+//        viewModel.postmanUserInfo.observe(viewLifecycleOwner) { userInfo ->
+//            if (userInfo != null) {
+//                binding.settingsLoginPostmanFullnameLabel.text = userInfo.fullName.toEditable()
+//                binding.settingsLoginPostmanEmailLabel.text = userInfo.email.toEditable()
+//            }
+//        }
 
-        settingsViewModel.error.observe(viewLifecycleOwner) { error ->
+//        settingsViewModel.restlyUserInfo.observe(viewLifecycleOwner) { userInfo ->
+//            if (userInfo != null) {
+//                binding.settingsLoginRestlyFullnameLabel.text = userInfo.username.toEditable()
+//                binding.settingsLoginRestlyEmailLabel.text = userInfo.email.toEditable()
+//            }
+//        }
+
+//        viewModel.requestPrefs.observe(viewLifecycleOwner) { requestPrefs ->
+//            binding.settingsRequestSslverificationSwitch.isChecked = requestPrefs.sslVerificationEnabled
+//            binding.settingsRequestMaxsizeInput.text = requestPrefs.maxSize.toString().toEditable()
+//            binding.settingsRequestTimeoutInput.text = requestPrefs.timeout.toString().toEditable()
+//        }
+//
+//        viewModel.webViewPrefs.observe(viewLifecycleOwner) { webViewPrefs ->
+//            binding.settingsWebviewJavascriptenabledSwitch.isChecked = webViewPrefs.javascriptEnabled
+//            binding.settingsWebviewTextsizeSlider.value = webViewPrefs.textSize.toFloat()
+//        }
+
+        viewModel.error.observe(viewLifecycleOwner) { error ->
             if (error != null) {
                 WarningDialog(error.title, error.message).show(parentFragmentManager, "AuthError")
-                settingsViewModel.error.value = null
+                viewModel.error.value = null
             }
         }
 
-        settingsViewModel.successfulRegistration.observe(viewLifecycleOwner) { signedUp ->
+        viewModel.successfulRegistration.observe(viewLifecycleOwner) { signedUp ->
             if (signedUp == true) {
                 WarningDialog(R.string.successful_sign_up_title, R.string.successful_sign_up_description)
                     .show(parentFragmentManager, "SignUp")

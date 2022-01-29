@@ -3,6 +3,7 @@ package com.hickar.restly.services
 import com.google.gson.Gson
 import com.hickar.restly.consts.RequestMethod
 import com.hickar.restly.models.*
+import java.io.IOException
 import javax.inject.Inject
 
 class AuthService @Inject constructor(

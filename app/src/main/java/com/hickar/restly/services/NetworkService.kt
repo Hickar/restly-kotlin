@@ -11,6 +11,9 @@ import com.hickar.restly.extensions.await
 import com.hickar.restly.extensions.toMb
 import com.hickar.restly.models.*
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.last
+import kotlinx.coroutines.flow.lastOrNull
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Request
@@ -20,6 +23,7 @@ import okhttp3.Response
 import okio.BufferedSink
 import okio.source
 import java.io.IOException
+import java.net.UnknownHostException
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
 import java.util.concurrent.TimeUnit
@@ -28,10 +32,12 @@ import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
 
+    @ExperimentalCoroutinesApi
 class NetworkService @Inject constructor(
     @ApplicationContext private val context: Context,
     private val prefs: SharedPreferencesHelper
 ) {
+    private var prefsFlow = prefs.getRequestPrefs()
     private val contentResolver = context.contentResolver
 
     suspend fun requestRaw(
@@ -40,6 +46,7 @@ class NetworkService @Inject constructor(
         headers: List<RequestHeader>,
         body: RequestBody?,
     ): Response {
+        val requestPrefs = prefsFlow.last()
         val builder = Request.Builder()
             .url(url)
             .method(method, body)
@@ -51,22 +58,30 @@ class NetworkService @Inject constructor(
         }
 
         val request = builder.build()
-        val client = if (prefs.getRequestPrefs().sslVerificationEnabled) {
+        val client = if (requestPrefs.sslVerificationEnabled) {
             OkHttpClient.Builder()
-                .callTimeout(prefs.getRequestPrefs().timeout, TimeUnit.MILLISECONDS)
+                .callTimeout(requestPrefs.timeout, TimeUnit.MILLISECONDS)
                 .build()
         } else {
             getUnsafeHttpClient()
         }
 
-        val remoteFileSizeResponse = getRemoteFileSize(url)
-        val fileSize = remoteFileSizeResponse.body?.contentLength()!!.toMb()
-        remoteFileSizeResponse.close()
+        try {
+            val remoteFileSizeResponse = getRemoteFileSize(url)
+            val fileSize = remoteFileSizeResponse.body?.contentLength()!!.toMb()
+            remoteFileSizeResponse.close()
 
-        if (fileSize < prefs.getRequestPrefs().maxSize || prefs.getRequestPrefs().maxSize == 0L) {
-            return client.newCall(request).await()
-        } else {
-            throw java.io.FileNotFoundException("File size exceeds maximum limit")
+            if (fileSize < requestPrefs.maxSize || requestPrefs.maxSize == 0L) {
+                return client.newCall(request).await()
+            } else {
+                throw java.io.FileNotFoundException("File size exceeds maximum limit")
+            }
+        } catch (e: IOException) {
+            if (e is UnknownHostException && !isNetworkAvailable()) {
+                throw NetworkUnavailableException("Network is unavailable")
+            }
+
+            throw e
         }
     }
 
@@ -76,6 +91,8 @@ class NetworkService @Inject constructor(
         headers: List<RequestHeader>,
         body: RequestBody?,
     ): Response {
+        val requestPrefs = prefsFlow.lastOrNull() ?: RequestPrefs()
+
         val builder = Request.Builder()
             .url(url)
             .method(method, body)
@@ -91,7 +108,7 @@ class NetworkService @Inject constructor(
         val fileSize = remoteFileSizeResponse.body?.contentLength()!!.toMb()
         remoteFileSizeResponse.close()
 
-        if (fileSize < prefs.getRequestPrefs().maxSize || prefs.getRequestPrefs().maxSize == 0L) {
+        if (fileSize < requestPrefs.maxSize || requestPrefs.maxSize == 0L) {
             return client.newCall(request).await()
         } else {
             throw java.io.FileNotFoundException("File size exceeds maximum limit")
@@ -104,6 +121,8 @@ class NetworkService @Inject constructor(
         headers: List<RequestHeader>,
         body: RequestBody?,
     ): Response? {
+        val requestPrefs = prefsFlow.lastOrNull() ?: RequestPrefs()
+
         val builder = Request.Builder()
             .url(url)
             .method(method, body)
@@ -113,9 +132,9 @@ class NetworkService @Inject constructor(
         }
 
         val request = builder.build()
-        val client = if (prefs.getRequestPrefs().sslVerificationEnabled) {
+        val client = if (requestPrefs.sslVerificationEnabled) {
             OkHttpClient.Builder()
-                .callTimeout(prefs.getRequestPrefs().timeout, TimeUnit.MILLISECONDS)
+                .callTimeout(requestPrefs.timeout, TimeUnit.MILLISECONDS)
                 .build()
         } else {
             getUnsafeHttpClient()
@@ -260,7 +279,9 @@ class NetworkService @Inject constructor(
     }
 
     //    https://stackoverflow.com/a/25992879
-    private fun getUnsafeHttpClient(): OkHttpClient {
+    private suspend fun getUnsafeHttpClient(): OkHttpClient {
+        val requestPrefs = prefsFlow.last()
+
         val trustAllCerts = arrayOf<TrustManager>(
             @SuppressLint("CustomX509TrustManager")
             object : X509TrustManager {
@@ -284,15 +305,17 @@ class NetworkService @Inject constructor(
         return OkHttpClient.Builder()
             .sslSocketFactory(sslContext.socketFactory, trustAllCerts[0] as X509TrustManager)
             .hostnameVerifier { _, _ -> true }
-            .callTimeout(prefs.getRequestPrefs().timeout, TimeUnit.MILLISECONDS)
+            .callTimeout(requestPrefs.timeout, TimeUnit.MILLISECONDS)
             .build()
     }
 
     private suspend fun getRemoteFileSize(url: String): Response {
+        val requestPrefs = prefsFlow.lastOrNull() ?: RequestPrefs()
         val request = Request.Builder().url(url).method("HEAD", null).build()
-        val client = if (prefs.getRequestPrefs().sslVerificationEnabled) {
+
+        val client = if (requestPrefs.sslVerificationEnabled) {
             OkHttpClient.Builder()
-                .callTimeout(prefs.getRequestPrefs().timeout, TimeUnit.MILLISECONDS)
+                .callTimeout(requestPrefs.timeout, TimeUnit.MILLISECONDS)
                 .build()
         } else {
             getUnsafeHttpClient()

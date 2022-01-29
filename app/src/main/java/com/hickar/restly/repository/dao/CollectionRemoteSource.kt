@@ -9,11 +9,11 @@ import com.hickar.restly.consts.RequestMethod
 import com.hickar.restly.models.*
 import com.hickar.restly.repository.models.CollectionRemoteDTO
 import com.hickar.restly.services.NetworkService
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import java.io.IOException
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
 class CollectionInfo(
     val id: String,
@@ -24,13 +24,12 @@ class CollectionInfo(
 
 class CollectionRemoteSource @Inject constructor(
     private val gson: Gson,
-    private val networkService: NetworkService
+    private val networkService: NetworkService,
+    private val tokenFlow: Flow<String?> = flowOf(null),
+    private val coroutineContext: CoroutineContext = Dispatchers.IO
 ) {
-    suspend fun getCollections(
-        token: String?,
-    ): List<CollectionRemoteDTO> {
-        if (token == null) throw IllegalStateException("Postman API key is null")
-
+    suspend fun getCollections(): List<CollectionRemoteDTO> {
+        val token = tokenFlow.last() ?: throw IllegalStateException("Postman API key is null")
         var request = Request(
             query = RequestQuery(GET_COLLECTIONS_ENDPOINT),
             method = RequestMethod.GET,

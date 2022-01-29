@@ -1,5 +1,6 @@
 package com.hickar.restly.repository.room
 
+import android.util.Log
 import androidx.annotation.WorkerThread
 import com.hickar.restly.models.Collection
 import com.hickar.restly.models.CollectionOrigin
@@ -18,6 +19,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
+import java.io.IOException
+import java.lang.IllegalStateException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -30,7 +33,6 @@ class CollectionRepository @Inject constructor(
     private val requestItemDao: RequestItemDao,
     private val requestGroupDao: RequestGroupDao,
     private val collectionRemoteSource: CollectionRemoteSource,
-    private val prefs: SharedPreferencesHelper,
 ) {
     @WorkerThread
     fun getAllCollections(): Flow<List<Collection>> {
@@ -40,10 +42,8 @@ class CollectionRepository @Inject constructor(
     }
 
     suspend fun saveRemoteCollections() {
-        if (prefs.getPostmanUserInfo() != null) {
-            val token = prefs.getPostmanApiKey() ?: return
-            val collections = collectionRemoteSource.getCollections(token)
-
+        try {
+            val collections = collectionRemoteSource.getCollections()
             for (collection in collections) {
                 if (collectionDao.exists(collection.id)) continue
 
@@ -62,8 +62,9 @@ class CollectionRepository @Inject constructor(
                     insertRequestGroupAndAllChildren(collection.root!!)
                 }
             }
+        } catch (e: IllegalStateException) {
+            Log.e("CollectionRepository.saveRemoteCollections", "Is not authorized in Postman")
         }
-
     }
 
     @WorkerThread
@@ -103,7 +104,7 @@ class CollectionRepository @Inject constructor(
         }
     }
 
-//    @WorkerThread
+    //    @WorkerThread
     suspend fun getRequestGroupById(id: String): Flow<RequestDirectory?> {
         val requestGroupFlow = requestGroupDao.getById(id)
         val requestItemFlow = requestItemDao.getByGroupId(id)

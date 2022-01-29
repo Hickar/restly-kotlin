@@ -16,7 +16,7 @@ import kotlinx.coroutines.test.setMain
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Test
-import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.TestInstance
 
 @ExperimentalCoroutinesApi
@@ -29,54 +29,45 @@ class RequestGroupViewModelTest {
         Dispatchers.setMain(UnconfinedTestDispatcher())
     }
 
-    @AfterAll
+    @AfterEach
     fun afterAll() {
         clearMocks(repository)
     }
 
     @Test
     fun testLoadExistingGroup() = runTest {
-        val id = "test-group-uuid"
-        val group = RequestDirectory(
+        val expectedGroup = RequestDirectory(
             id = "test-group-uuid",
             name = "test group",
             description = null
         )
 
-        coEvery { repository.getRequestGroupById(id) } returns flowOf<RequestDirectory?>(group)
+        coEvery { repository.getRequestGroupById(expectedGroup.id) } returns flowOf<RequestDirectory?>(expectedGroup)
 
-        viewModel.loadRequestGroup(id)
+        viewModel.loadRequestGroup(expectedGroup.id)
 
-        assertEquals(group.id, viewModel.group.value.id)
-        assertEquals(group.name, viewModel.group.value.name)
-        assertEquals(group.description, viewModel.group.value.description)
-        assertEquals(group.requests, viewModel.group.value.requests)
-        assertEquals(group.subgroups, viewModel.group.value.subgroups)
+        assertEquals(expectedGroup.id, viewModel.group.value.id)
+        assertEquals(expectedGroup.name, viewModel.group.value.name)
+        assertEquals(expectedGroup.description, viewModel.group.value.description)
+        assertEquals(expectedGroup.requests, viewModel.group.value.requests)
+        assertEquals(expectedGroup.subgroups, viewModel.group.value.subgroups)
 
-        coVerifyAll {
-            repository.getRequestGroupById(id)
-        }
+        coVerify(exactly = 1) { repository.getRequestGroupById(expectedGroup.id) }
     }
 
     @Test
     fun testLoadNonExistingGroup() = runTest {
-        val defaultGroup = RequestDirectory.getDefault()
+        val expectedDefaultGroup = RequestDirectory.getDefault()
 
         coEvery { repository.getRequestGroupById(RequestDirectory.DEFAULT_ID) } returns flowOf<RequestDirectory?>(null)
         coEvery { repository.insertRequestGroup(RequestDirectory.getDefault()) } just Runs
 
         viewModel.loadRequestGroup(null)
 
-        assertEquals(viewModel.group.value.id, defaultGroup.id)
-        assertEquals(viewModel.group.value.name, defaultGroup.name)
-        assertEquals(viewModel.group.value.description, defaultGroup.description)
-        assertEquals(viewModel.group.value.requests, defaultGroup.requests)
-        assertEquals(viewModel.group.value.subgroups, defaultGroup.subgroups)
+        assertEquals(viewModel.group.value, expectedDefaultGroup)
 
-        coVerifyAll {
-            repository.getRequestGroupById(RequestDirectory.DEFAULT_ID)
-            repository.insertRequestGroup(RequestDirectory.getDefault())
-        }
+        coVerify(exactly = 1) { repository.insertRequestGroup(RequestDirectory.getDefault()) }
+        coVerify(exactly = 1) { repository.getRequestGroupById(RequestDirectory.DEFAULT_ID) }
     }
 
     @Test
@@ -111,10 +102,8 @@ class RequestGroupViewModelTest {
         groupChannel.send(changedGroup)
         assertEquals(viewModel.group.value, changedGroup)
 
-        coVerifyAll {
-            repository.getRequestGroupById(initialGroup.id)
-            repository.deleteRequestItem(initialGroup.requests[deleteAtPosition])
-        }
+        coVerify(exactly = 1) { repository.deleteRequestItem(initialGroup.requests[deleteAtPosition]) }
+        coVerify(exactly = 1) { repository.getRequestGroupById(initialGroup.id) }
     }
 
     @Test
@@ -149,10 +138,8 @@ class RequestGroupViewModelTest {
 
         assertEquals(viewModel.group.value, changedGroup)
 
-        coVerifyAll {
-            repository.getRequestGroupById(initialGroup.id)
-            repository.deleteRequestGroup(initialGroup.subgroups[deleteAtPosition])
-        }
+        coVerify(exactly = 1) { repository.getRequestGroupById(initialGroup.id) }
+        coVerify(exactly = 1) { repository.deleteRequestGroup(initialGroup.subgroups[deleteAtPosition]) }
     }
 
     @Test
@@ -180,9 +167,7 @@ class RequestGroupViewModelTest {
         assertEquals(viewModel.group.value.requests[0].id, newRequestItem.captured.id)
         assertEquals(viewModel.group.value.requests[0].parentId, initialGroup.id)
 
-        coVerifyAll {
-            repository.getRequestGroupById(initialGroup.id)
-            repository.insertRequestItem(newRequestItem.captured)
-        }
+        coVerify(exactly = 1) { repository.getRequestGroupById(initialGroup.id) }
+        coVerify(exactly = 1) { repository.insertRequestItem(newRequestItem.captured) }
     }
 }

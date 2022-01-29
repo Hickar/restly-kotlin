@@ -18,18 +18,18 @@ class CollectionViewModel @AssistedInject constructor(
     private val collectionRepository: CollectionRepository,
 ) : ViewModel() {
 
-    private var collectionId = Collection.DEFAULT
+    private var collectionId = Collection.DEFAULT_ID
     private var job: Job = Job()
 
-    private var _collection = MutableStateFlow(Collection())
+    private var _collection = MutableStateFlow(Collection.getDefault())
     val collection get() = _collection
 
     fun loadCollection(collectionId: String?) {
-        if (collectionId != null) {
-            this.collectionId = collectionId
+        if (collectionId != null && collectionId != Collection.DEFAULT_ID) {
+            refreshCollection(collectionId)
+        } else {
+            _collection.value = Collection.getDefault()
         }
-
-        refreshCollection(this.collectionId)
     }
 
     fun setName(name: String) {

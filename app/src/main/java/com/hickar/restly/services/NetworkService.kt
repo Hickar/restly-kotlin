@@ -11,9 +11,11 @@ import com.hickar.restly.extensions.await
 import com.hickar.restly.extensions.toMb
 import com.hickar.restly.models.*
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.lastOrNull
+import kotlinx.coroutines.flow.single
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Request
@@ -32,21 +34,29 @@ import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
 
-    @ExperimentalCoroutinesApi
+@ExperimentalCoroutinesApi
 class NetworkService @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val prefs: SharedPreferencesHelper
+    private val prefs: SharedPreferencesHelper,
+    private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 ) {
-    private var prefsFlow = prefs.getRequestPrefs()
     private val contentResolver = context.contentResolver
+    private var requestPrefs = RequestPrefs()
+
+    init {
+        coroutineScope.launch {
+            prefs.getRequestPrefs().collect {
+                requestPrefs = it
+            }
+        }
+    }
 
     suspend fun requestRaw(
         url: String,
         method: String,
         headers: List<RequestHeader>,
         body: RequestBody?,
-    ): Response {
-        val requestPrefs = prefsFlow.last()
+    ): Response = withContext(Dispatchers.IO) {
         val builder = Request.Builder()
             .url(url)
             .method(method, body)
@@ -72,7 +82,7 @@ class NetworkService @Inject constructor(
             remoteFileSizeResponse.close()
 
             if (fileSize < requestPrefs.maxSize || requestPrefs.maxSize == 0L) {
-                return client.newCall(request).await()
+                client.newCall(request).await()
             } else {
                 throw java.io.FileNotFoundException("File size exceeds maximum limit")
             }
@@ -91,8 +101,6 @@ class NetworkService @Inject constructor(
         headers: List<RequestHeader>,
         body: RequestBody?,
     ): Response {
-        val requestPrefs = prefsFlow.lastOrNull() ?: RequestPrefs()
-
         val builder = Request.Builder()
             .url(url)
             .method(method, body)
@@ -115,39 +123,6 @@ class NetworkService @Inject constructor(
         }
     }
 
-    suspend private fun requestSync(
-        url: String,
-        method: String,
-        headers: List<RequestHeader>,
-        body: RequestBody?,
-    ): Response? {
-        val requestPrefs = prefsFlow.lastOrNull() ?: RequestPrefs()
-
-        val builder = Request.Builder()
-            .url(url)
-            .method(method, body)
-
-        for (header in headers) {
-            if (header.enabled && !header.isEmpty()) builder.addHeader(header.key, header.value)
-        }
-
-        val request = builder.build()
-        val client = if (requestPrefs.sslVerificationEnabled) {
-            OkHttpClient.Builder()
-                .callTimeout(requestPrefs.timeout, TimeUnit.MILLISECONDS)
-                .build()
-        } else {
-            getUnsafeHttpClient()
-        }
-
-        return try {
-            client.newCall(request).execute()
-        } catch (e: IOException) {
-            Log.e("NetworkService.requestSync", e.localizedMessage)
-            null
-        }
-    }
-
     suspend fun sendRequest(
         request: com.hickar.restly.models.Request,
         unsafe: Boolean = false
@@ -163,19 +138,6 @@ class NetworkService @Inject constructor(
         } else {
             requestRaw(request.query.url, request.method.value, request.headers, requestBody)
         }
-    }
-
-    suspend fun sendRequestSync(
-        request: com.hickar.restly.models.Request,
-        unsafe: Boolean = false
-    ): Response? {
-        val requestBody = if (request.shouldHaveBody()) {
-            createRequestBody(request.body)
-        } else {
-            null
-        }
-
-        return requestSync(request.query.url, request.method.value, request.headers, requestBody)
     }
 
     private fun createRequestBody(body: com.hickar.restly.models.RequestBody?): RequestBody? {
@@ -279,9 +241,7 @@ class NetworkService @Inject constructor(
     }
 
     //    https://stackoverflow.com/a/25992879
-    private suspend fun getUnsafeHttpClient(): OkHttpClient {
-        val requestPrefs = prefsFlow.last()
-
+    private fun getUnsafeHttpClient(): OkHttpClient {
         val trustAllCerts = arrayOf<TrustManager>(
             @SuppressLint("CustomX509TrustManager")
             object : X509TrustManager {
@@ -310,7 +270,6 @@ class NetworkService @Inject constructor(
     }
 
     private suspend fun getRemoteFileSize(url: String): Response {
-        val requestPrefs = prefsFlow.lastOrNull() ?: RequestPrefs()
         val request = Request.Builder().url(url).method("HEAD", null).build()
 
         val client = if (requestPrefs.sslVerificationEnabled) {
@@ -320,6 +279,7 @@ class NetworkService @Inject constructor(
         } else {
             getUnsafeHttpClient()
         }
+
         return client.newCall(request).await()
     }
 }

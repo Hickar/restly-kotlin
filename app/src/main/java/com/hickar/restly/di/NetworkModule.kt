@@ -42,6 +42,6 @@ object NetworkModule {
         networkService: NetworkService,
         prefs: SharedPreferencesHelper
     ): CollectionRemoteSource {
-        return CollectionRemoteSource(gson, networkService, prefs.getPostmanApiKey())
+        return CollectionRemoteSource(gson, networkService, prefs)
     }
 }

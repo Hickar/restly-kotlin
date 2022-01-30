@@ -90,11 +90,11 @@ class SharedPreferencesHelper @Inject constructor(
     fun getRequestPrefs(): Flow<RequestPrefs> {
         return requestPrefs.asFlow().transform {
             if (it == null) emit(RequestPrefs())
-            else gson.fromJson(it, RequestPrefs::class.java)
+            else emit(gson.fromJson(it, RequestPrefs::class.java))
         }
     }
 
-    suspend fun setRequestPrefs(requestPrefsObj: RequestPrefs) = withContext(coroutineContext) {
+    suspend fun setRequestPrefs(requestPrefsObj: RequestPrefs) {
         val json = gson.toJson(requestPrefsObj, RequestPrefs::class.java)
         requestPrefs.setAndCommit(json)
     }
@@ -102,7 +102,7 @@ class SharedPreferencesHelper @Inject constructor(
     fun getWebViewPrefs(): Flow<WebViewPrefs> {
         return webViewPrefs.asFlow().transform {
             if (it == null) emit(WebViewPrefs())
-            else gson.fromJson(it, WebViewPrefs::class.java)
+            else emit(gson.fromJson(it, WebViewPrefs::class.java))
         }
     }
 

@@ -9,6 +9,7 @@ import com.hickar.restly.consts.RequestMethod
 import com.hickar.restly.models.*
 import com.hickar.restly.repository.models.CollectionRemoteDTO
 import com.hickar.restly.services.NetworkService
+import com.hickar.restly.services.SharedPreferencesHelper
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import java.io.IOException
@@ -22,12 +23,16 @@ class CollectionInfo(
     val uid: String
 )
 
-class CollectionRemoteSource @Inject constructor(
+@ExperimentalCoroutinesApi
+class CollectionRemoteSource
+@Inject constructor(
     private val gson: Gson,
     private val networkService: NetworkService,
-    private val tokenFlow: Flow<String?> = flowOf(null),
+    private val prefs: SharedPreferencesHelper,
     private val coroutineContext: CoroutineContext = Dispatchers.IO
 ) {
+    private val tokenFlow = prefs.getPostmanApiKey()
+
     suspend fun getCollections(): List<CollectionRemoteDTO> {
         val token = tokenFlow.last() ?: throw IllegalStateException("Postman API key is null")
         var request = Request(

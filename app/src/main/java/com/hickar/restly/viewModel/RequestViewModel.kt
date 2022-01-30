@@ -269,13 +269,8 @@ class RequestViewModel @AssistedInject constructor(
         return when (e) {
             is SocketTimeoutException -> ErrorEvent.ConnectionTimeout
             is ConnectException -> ErrorEvent.ConnectionRefused
-            is UnknownHostException -> {
-                if (networkService.isNetworkAvailable()) {
-                    ErrorEvent.UnknownHostError
-                } else {
-                    ErrorEvent.NoInternetConnectionError
-                }
-            }
+            is UnknownHostException -> ErrorEvent.UnknownHostError
+            is NetworkUnavailableException -> ErrorEvent.NoInternetConnectionError
             is InterruptedIOException -> ErrorEvent.RequestCallTimeout
             is FileNotFoundException -> ErrorEvent.SizeExceedsLimit
             else -> ErrorEvent.ConnectionUnexpected

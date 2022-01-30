@@ -8,13 +8,18 @@ import android.view.ViewGroup
 import android.webkit.WebView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.whenStarted
 import com.hickar.restly.databinding.ResponseBodyPreviewBinding
 import com.hickar.restly.extensions.show
 import com.hickar.restly.services.SharedPreferencesHelper
 import com.hickar.restly.viewModel.RequestViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.last
 import javax.inject.Inject
 
+@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class ResponseBodyPreviewFragment : Fragment() {
     private var _binding: ResponseBodyPreviewBinding? = null
@@ -38,10 +43,12 @@ class ResponseBodyPreviewFragment : Fragment() {
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun setupWebView() {
-        val webViewPrefs = prefs.getWebViewPrefs()
         webView = binding.responseBodyPreviewWebView
-        webView.settings.javaScriptEnabled = webViewPrefs.javascriptEnabled
-        webView.settings.minimumFontSize = webViewPrefs.textSize
+        lifecycleScope.launchWhenStarted {
+            val webViewPrefs = prefs.getWebViewPrefs().last()
+            webView.settings.javaScriptEnabled = webViewPrefs.javascriptEnabled
+            webView.settings.minimumFontSize = webViewPrefs.textSize
+        }
     }
 
     private fun setupObservers() {

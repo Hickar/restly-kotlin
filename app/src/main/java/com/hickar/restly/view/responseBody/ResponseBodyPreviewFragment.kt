@@ -9,7 +9,6 @@ import android.webkit.WebView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.whenStarted
 import com.hickar.restly.databinding.ResponseBodyPreviewBinding
 import com.hickar.restly.extensions.show
 import com.hickar.restly.services.SharedPreferencesHelper

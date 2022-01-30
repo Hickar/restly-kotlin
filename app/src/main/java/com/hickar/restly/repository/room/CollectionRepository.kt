@@ -14,13 +14,10 @@ import com.hickar.restly.repository.mappers.CollectionMapper
 import com.hickar.restly.repository.mappers.RequestGroupMapper
 import com.hickar.restly.repository.mappers.RequestItemMapper
 import com.hickar.restly.repository.models.CollectionDTO
-import com.hickar.restly.services.SharedPreferencesHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
-import java.io.IOException
-import java.lang.IllegalStateException
 import javax.inject.Inject
 import javax.inject.Singleton
 

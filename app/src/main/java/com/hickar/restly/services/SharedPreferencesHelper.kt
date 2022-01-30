@@ -9,7 +9,8 @@ import com.hickar.restly.models.WebViewPrefs
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
@@ -25,39 +26,11 @@ class SharedPreferencesHelper @Inject constructor(
         coroutineContext
     )
 
-//    private val restlyUserPrefs = prefs.getNullableString(RESTLY_USER, null)
     private val postmanUserPrefs = prefs.getNullableString(POSTMAN_USER, null)
     private val postmanKeyPrefs = prefs.getNullableString(POSTMAN_KEY, null)
 
     private val requestPrefs = prefs.getNullableString(REQUEST, null)
     private val webViewPrefs = prefs.getNullableString(WEBVIEW, null)
-//    fun getRestlyUserInfo(): Flow<RestlyUserInfo?> {
-//        return prefs.getNullableString(RESTLY_USER, null).asFlow().transform { value ->
-//            if (value == null) emit(null)
-//            else gson.fromJson(value, RestlyUserInfo::class.java)
-//        }
-//    }
-//
-//    suspend fun setRestlyUserInfo(userInfo: RestlyUserInfo?) = withContext(coroutineContext) {
-//        val json = gson.toJson(userInfo, RestlyUserInfo::class.java)
-//        restlyUserPrefs.setAndCommit(json)
-//    }
-//
-//    suspend fun deleteRestlyUserInfo() = withContext(coroutineContext) {
-//        restlyUserPrefs.deleteAndCommit()
-//    }
-//
-//    fun getRestlyJwt(): String? {
-//        return prefs.getString(RESTLY_JWT, null)
-//    }
-//
-//    fun setRestlyJwt(token: String?) {
-//        prefs.edit().putString(RESTLY_JWT, token).apply()
-//    }
-//
-//    fun deleteRestlyJwt() {
-//        prefs.edit().remove(RESTLY_JWT).apply()
-//    }
 
     fun getPostmanUserInfo(): Flow<PostmanUserInfo?> {
         return postmanUserPrefs.asFlow().transform {
@@ -113,8 +86,6 @@ class SharedPreferencesHelper @Inject constructor(
 
     companion object {
         private const val PREFS_NAME = "com.restly.hickar.preferences"
-//        private const val RESTLY_USER = "restly_user"
-//        private const val RESTLY_JWT = "restly_jwt"
         private const val POSTMAN_USER = "postman_user"
         private const val POSTMAN_KEY = "postman_api_key"
         private const val REQUEST = "request"

@@ -6,16 +6,11 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Build
-import android.util.Log
 import com.hickar.restly.extensions.await
 import com.hickar.restly.extensions.toMb
 import com.hickar.restly.models.*
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.last
-import kotlinx.coroutines.flow.lastOrNull
-import kotlinx.coroutines.flow.single
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Request

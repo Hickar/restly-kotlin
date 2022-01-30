@@ -26,13 +26,6 @@ class SettingsViewModel @AssistedInject constructor(
     private val collectionRepository: CollectionRepository,
     private val authService: AuthService
 ) : ViewModel() {
-    val successfulRegistration: MutableLiveData<Boolean> = MutableLiveData(false)
-
-//    val isLoggedInRestly: MutableLiveData<Boolean> = MutableLiveData(false)
-//    val restlyUserInfo: MutableLiveData<RestlyUserInfo?> = MutableLiveData()
-
-    val isLoggedInPostman: MutableLiveData<Boolean> = MutableLiveData(false)
-
     private var _postmanUserInfo = MutableStateFlow<PostmanUserInfo?>(null)
     val postmanUserInfo: StateFlow<PostmanUserInfo?> get() = _postmanUserInfo
 
@@ -58,44 +51,7 @@ class SettingsViewModel @AssistedInject constructor(
                 _postmanUserInfo.value = it
             }
         }
-//        val savedRestlyUserInfo = prefs.getRestlyUserInfo()
-//        if (savedRestlyUserInfo != null) {
-//            restlyUserInfo.value = savedRestlyUserInfo
-//            isLoggedInRestly.value = true
-//        }
     }
-
-//    fun loginToRestly(username: String, password: String) {
-//        viewModelScope.launch {
-//            try {
-//                val credentials = RestlyLoginCredentials(username, password)
-//                val userInfo = authService.loginToReslty(credentials)
-//                if (userInfo != null) {
-//                    prefs.setRestlyUserInfo(userInfo)
-//                    prefs.setRestlyJwt(userInfo.token)
-//                }
-//            } catch (e: IOException) {
-//                error.postValue(getErrorEvent(e))
-//            }
-//        }
-//    }
-//
-//    fun logoutFromRestly() {
-//        prefs.deleteRestlyUserInfo()
-//        isLoggedInRestly.value = false
-//        restlyUserInfo.value = null
-//    }
-//
-//    fun signUpInRestly(email: String, username: String, password: String) {
-//        viewModelScope.launch {
-//            try {
-//                val token = authService.signUpInRestly(RestlySignupCredentials(email, username, password))
-//                if (token != null) prefs.setRestlyJwt(token)
-//            } catch (e: IOException) {
-//                error.postValue(getErrorEvent(e))
-//            }
-//        }
-//    }
 
     fun loginToPostman(apiKey: String) {
         viewModelScope.launch {
@@ -104,7 +60,6 @@ class SettingsViewModel @AssistedInject constructor(
                 if (userInfo != null) {
                     prefs.setPostmanApiKey(apiKey)
                     prefs.setPostmanUserInfo(userInfo)
-                    isLoggedInPostman.postValue(true)
                 }
             } catch (e: IOException) {
                 error.postValue(getErrorEvent(e))

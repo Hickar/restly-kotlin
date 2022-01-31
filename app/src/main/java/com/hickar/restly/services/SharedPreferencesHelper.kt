@@ -11,7 +11,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.transform
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
@@ -39,25 +38,25 @@ class SharedPreferencesHelper @Inject constructor(
         }
     }
 
-    suspend fun setPostmanUserInfo(userInfo: PostmanUserInfo?) = withContext(coroutineContext) {
+    suspend fun setPostmanUserInfo(userInfo: PostmanUserInfo?): Boolean {
         val json = gson.toJson(userInfo, PostmanUserInfo::class.java)
-        postmanUserPrefs.setAndCommit(json)
+        return postmanUserPrefs.setAndCommit(json)
     }
 
-    suspend fun deletePostmanUserInfo() = withContext(coroutineContext) {
-        postmanUserPrefs.deleteAndCommit()
+    suspend fun deletePostmanUserInfo(): Boolean {
+        return postmanUserPrefs.deleteAndCommit()
     }
 
     fun getPostmanApiKey(): Flow<String?> {
         return postmanKeyPrefs.asFlow()
     }
 
-    suspend fun setPostmanApiKey(key: String) = withContext(coroutineContext) {
-        postmanKeyPrefs.setAndCommit(key)
+    suspend fun setPostmanApiKey(key: String): Boolean {
+        return postmanKeyPrefs.setAndCommit(key)
     }
 
-    suspend fun deletePostmanApiKey() = withContext(coroutineContext) {
-        postmanKeyPrefs.deleteAndCommit()
+    suspend fun deletePostmanApiKey(): Boolean {
+        return postmanKeyPrefs.deleteAndCommit()
     }
 
     fun getRequestPrefs(): Flow<RequestPrefs> {
@@ -67,9 +66,9 @@ class SharedPreferencesHelper @Inject constructor(
         }
     }
 
-    suspend fun setRequestPrefs(requestPrefsObj: RequestPrefs) {
+    suspend fun setRequestPrefs(requestPrefsObj: RequestPrefs): Boolean {
         val json = gson.toJson(requestPrefsObj, RequestPrefs::class.java)
-        requestPrefs.setAndCommit(json)
+        return requestPrefs.setAndCommit(json)
     }
 
     fun getWebViewPrefs(): Flow<WebViewPrefs> {
@@ -79,9 +78,9 @@ class SharedPreferencesHelper @Inject constructor(
         }
     }
 
-    suspend fun setWebViewPrefs(webViewPrefsObj: WebViewPrefs) = withContext(coroutineContext) {
+    suspend fun setWebViewPrefs(webViewPrefsObj: WebViewPrefs): Boolean {
         val json = gson.toJson(webViewPrefsObj, WebViewPrefs::class.java)
-        webViewPrefs.setAndCommit(json)
+        return webViewPrefs.setAndCommit(json)
     }
 
     companion object {

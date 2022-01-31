@@ -14,7 +14,6 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import java.io.IOException
 import javax.inject.Inject
-import kotlin.coroutines.CoroutineContext
 
 class CollectionInfo(
     val id: String,
@@ -29,27 +28,39 @@ class CollectionRemoteSource
     private val gson: Gson,
     private val networkService: NetworkService,
     private val prefs: SharedPreferencesHelper,
-    private val coroutineContext: CoroutineContext = Dispatchers.IO
+    private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 ) {
-    private val tokenFlow = prefs.getPostmanApiKey()
+    private var token: String? = null
+
+    init {
+        coroutineScope.launch {
+            prefs.getPostmanApiKey().collect {
+                token = it
+            }
+        }
+    }
 
     suspend fun getCollections(): List<CollectionRemoteDTO> {
-        val token = tokenFlow.last() ?: throw IllegalStateException("Postman API key is null")
+        if (token == null) throw IllegalStateException("Jwt is null")
         var request = Request(
             query = RequestQuery(GET_COLLECTIONS_ENDPOINT),
             method = RequestMethod.GET,
-            headers = listOf(RequestHeader(HEADER_API_KEY, token))
+            headers = listOf(RequestHeader(HEADER_API_KEY, token!!))
         )
 
         val collections: MutableList<CollectionRemoteDTO> = mutableListOf()
         var collectionInfoList: List<CollectionInfo> = listOf()
 
         try {
-            var response = networkService.sendRequest(request)
-            if (response.code == 200) {
-                val body = response.body?.string()
-                val listType = object : TypeToken<List<CollectionInfo>>() {}.type
-                collectionInfoList = gson.fromJson(body, listType)
+            var response = networkService.sendRequest(request, shouldGetSize = false)
+            when (response.code) {
+                200 -> {
+                    val body = response.body?.string()
+                    response.body?.close()
+                    val listType = object : TypeToken<List<CollectionInfo>>() {}.type
+                    collectionInfoList = gson.fromJson(body, listType)
+                }
+                429 -> throw PostmanApiLimitExceeded("Postman API call limit exceeded")
             }
 
             coroutineScope {
@@ -58,12 +69,13 @@ class CollectionRemoteSource
                         request = Request(
                             query = RequestQuery(String.format(GET_COLLECTION_ENDPOINT, infoEntry.uid)),
                             method = RequestMethod.GET,
-                            headers = listOf(RequestHeader(HEADER_API_KEY, token))
+                            headers = listOf(RequestHeader(HEADER_API_KEY, token!!))
                         )
 
-                        response = networkService.sendRequest(request)
+                        response = networkService.sendRequest(request, shouldGetSize = false)
                         if (response.code == 200) {
                             val body = response.body?.string()
+                            response.body?.close()
                             try {
                                 val collection = gson.fromJson(body, CollectionRemoteDTO::class.java) ?: return@async
                                 collection.owner = infoEntry.owner
@@ -76,7 +88,6 @@ class CollectionRemoteSource
                                     e
                                 )
                             }
-                            response.body?.close()
                         }
                     }
                 }.awaitAll()

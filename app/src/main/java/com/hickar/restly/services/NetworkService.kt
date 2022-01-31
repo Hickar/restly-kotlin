@@ -29,6 +29,8 @@ import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
 
+typealias RequestModel = com.hickar.restly.models.Request
+
 @ExperimentalCoroutinesApi
 class NetworkService @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -46,36 +48,17 @@ class NetworkService @Inject constructor(
         }
     }
 
-    suspend fun requestRaw(
-        url: String,
-        method: String,
-        headers: List<RequestHeader>,
-        body: RequestBody?,
-    ): Response = withContext(Dispatchers.IO) {
-        val builder = Request.Builder()
-            .url(url)
-            .method(method, body)
+    suspend fun sendRequest(requestModel: RequestModel, safe: Boolean = true, shouldGetSize: Boolean = true): Response = withContext(Dispatchers.IO) {
+        val url = requestModel.query.url
+        val method = requestModel.method.value
+        val headers = requestModel.headers
+        val body = if (requestModel.shouldHaveBody()) createRequestBody(requestModel.body) else null
 
-        for (header in headers) {
-            if (header.enabled && !header.isEmpty()) {
-                builder.addHeader(header.key, header.value)
-            }
-        }
-
-        val request = builder.build()
-        val client = if (requestPrefs.sslVerificationEnabled) {
-            OkHttpClient.Builder()
-                .callTimeout(requestPrefs.timeout, TimeUnit.MILLISECONDS)
-                .build()
-        } else {
-            getUnsafeHttpClient()
-        }
+        val request = buildRequest(url, method, headers, body)
+        val client = getClient(safe && requestPrefs.sslVerificationEnabled, requestPrefs.timeout)
 
         try {
-            val remoteFileSizeResponse = getRemoteFileSize(url)
-            val fileSize = remoteFileSizeResponse.body?.contentLength()!!.toMb()
-            remoteFileSizeResponse.close()
-
+            val fileSize = if (shouldGetSize) getRemoteFileSize(url, headers) else 0L
             if (fileSize < requestPrefs.maxSize || requestPrefs.maxSize == 0L) {
                 client.newCall(request).await()
             } else {
@@ -90,49 +73,28 @@ class NetworkService @Inject constructor(
         }
     }
 
-    suspend fun requestRawUnsafe(
-        url: String,
-        method: String,
-        headers: List<RequestHeader>,
-        body: RequestBody?,
-    ): Response {
+    private fun getClient(safe: Boolean = false, timeout: Long = 0): OkHttpClient {
+        return if (safe) {
+            OkHttpClient.Builder()
+                .callTimeout(timeout, TimeUnit.MILLISECONDS)
+                .build()
+        } else {
+            getUnsafeHttpClient()
+        }
+    }
+
+    private fun buildRequest(url: String, method: String, headers: List<RequestHeader>, body: RequestBody?): Request {
         val builder = Request.Builder()
             .url(url)
             .method(method, body)
 
         for (header in headers) {
-            if (header.enabled && !header.isEmpty()) builder.addHeader(header.key, header.value)
+            if (header.enabled && !header.isEmpty()) {
+                builder.addHeader(header.key, header.value)
+            }
         }
 
-        val request = builder.build()
-        val client = getUnsafeHttpClient()
-
-        val remoteFileSizeResponse = getRemoteFileSize(url)
-        val fileSize = remoteFileSizeResponse.body?.contentLength()!!.toMb()
-        remoteFileSizeResponse.close()
-
-        if (fileSize < requestPrefs.maxSize || requestPrefs.maxSize == 0L) {
-            return client.newCall(request).await()
-        } else {
-            throw java.io.FileNotFoundException("File size exceeds maximum limit")
-        }
-    }
-
-    suspend fun sendRequest(
-        request: com.hickar.restly.models.Request,
-        unsafe: Boolean = false
-    ): Response {
-        val requestBody = if (request.shouldHaveBody()) {
-            createRequestBody(request.body)
-        } else {
-            null
-        }
-
-        return if (unsafe) {
-            requestRawUnsafe(request.query.url, request.method.value, request.headers, requestBody)
-        } else {
-            requestRaw(request.query.url, request.method.value, request.headers, requestBody)
-        }
+        return builder.build()
     }
 
     private fun createRequestBody(body: com.hickar.restly.models.RequestBody?): RequestBody? {
@@ -165,8 +127,6 @@ class NetworkService @Inject constructor(
                     item.type == RequestMultipartData.FILE && item.valueFile != null -> {
                         builder.addFormDataPart("file", item.key, createFileBody(item.valueFile)!!)
                     }
-                    else -> {
-                    }
                 }
             }
         }
@@ -190,10 +150,8 @@ class NetworkService @Inject constructor(
             override fun writeTo(sink: BufferedSink) {
                 val source = inputStream!!.source()
 
-                try {
-                    sink.writeAll(source)
-                } finally {
-                    source.close()
+                source.use {
+                    sink.writeAll(it)
                 }
             }
 
@@ -264,17 +222,14 @@ class NetworkService @Inject constructor(
             .build()
     }
 
-    private suspend fun getRemoteFileSize(url: String): Response {
-        val request = Request.Builder().url(url).method("HEAD", null).build()
+    private suspend fun getRemoteFileSize(url: String, headers: List<RequestHeader>): Long {
+        val request = buildRequest(url, "HEAD", headers, null)
+        val client = getClient(requestPrefs.sslVerificationEnabled, requestPrefs.timeout)
 
-        val client = if (requestPrefs.sslVerificationEnabled) {
-            OkHttpClient.Builder()
-                .callTimeout(requestPrefs.timeout, TimeUnit.MILLISECONDS)
-                .build()
-        } else {
-            getUnsafeHttpClient()
-        }
+        val response = client.newCall(request).await()
+        val fileSize = response.body?.contentLength()!!.toMb()
+        response.close()
 
-        return client.newCall(request).await()
+        return fileSize
     }
 }

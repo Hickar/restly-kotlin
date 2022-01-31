@@ -12,6 +12,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -23,7 +24,7 @@ class CollectionListViewModel @AssistedInject constructor(
     private var job: Job = Job()
 
     private var _collections = MutableStateFlow(listOf<Collection>())
-    val collections get() = _collections
+    val collections get(): StateFlow<List<Collection>> = _collections
 
     init {
         job = viewModelScope.launch {

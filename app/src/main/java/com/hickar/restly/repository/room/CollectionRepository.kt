@@ -15,12 +15,14 @@ import com.hickar.restly.repository.mappers.RequestGroupMapper
 import com.hickar.restly.repository.mappers.RequestItemMapper
 import com.hickar.restly.repository.models.CollectionDTO
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
+@ExperimentalCoroutinesApi
 @Singleton
 class CollectionRepository @Inject constructor(
     private val collectionMapper: CollectionMapper,
@@ -131,35 +133,6 @@ class CollectionRepository @Inject constructor(
                 )
             }
         }
-
-//        return requestGroupDao.getById(id).transform { requestGroupDto ->
-//            if (requestGroupDto == null) {
-//                emit(null)
-//            } else {
-//                val requests = requestItemMapper.toEntityList(requestItemDao.getByGroupId(id))
-//                val subgroups = mutableListOf<RequestDirectory>()
-//
-//                coroutineScope {
-//                    withContext(Dispatchers.IO) {
-//                        requestGroupDao.getByParentId(requestGroupDto.id).map { subgroupDto ->
-//                            subgroups.add(requestGroupMapper.toEntity(subgroupDto))
-//                        }
-//                    }
-//                }
-//
-//                emit(
-//                    RequestDirectory(
-//                        id = requestGroupDto.id,
-//                        name = requestGroupDto.name,
-//                        description = requestGroupDto.description,
-//                        requests = requests.toMutableList(),
-//                        subgroups = subgroups,
-//                        parentId = requestGroupDto.parentId
-//                    )
-//                )
-//            }
-//
-//        }
     }
 
     @WorkerThread

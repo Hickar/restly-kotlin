@@ -70,7 +70,7 @@ class SettingsFragment : Fragment() {
                 messageId = R.string.dialog_logout_delete_collections_description,
                 cancelButtonTextId = R.string.dialog_logout_delete_collections_keep_option,
                 confirmButtonTextId = R.string.dialog_logout_delete_collections_delete_option,
-                onCancelCallback = { _, _ ->  viewModel.logoutFromPostman(false) },
+                onCancelCallback = { _, _ -> viewModel.logoutFromPostman(false) },
                 onConfirmCallback = { _, _ -> viewModel.logoutFromPostman(true) }
             ).show(parentFragmentManager, "Postman_Logout_Dialog")
         }
@@ -97,11 +97,9 @@ class SettingsFragment : Fragment() {
             viewModel.setWebViewJavascriptEnabled((it as SwitchCompat).isChecked)
         }
 
-        binding.settingsWebviewTextsizeSlider.addOnChangeListener(object : Slider.OnChangeListener {
-            override fun onValueChange(slider: Slider, value: Float, fromUser: Boolean) {
-                viewModel.setWebViewTextSize(value.toInt())
-            }
-        })
+        binding.settingsWebviewTextsizeSlider.addOnChangeListener(
+            Slider.OnChangeListener { _, value, _ -> viewModel.setWebViewTextSize(value.toInt()) }
+        )
     }
 
     private fun setupObservers() {
@@ -134,10 +132,11 @@ class SettingsFragment : Fragment() {
             }
         }
 
-        viewModel.error.observe(viewLifecycleOwner) { error ->
-            if (error != null) {
-                WarningDialog(error.title, error.message).show(parentFragmentManager, "AuthError")
-                viewModel.error.value = null
+        lifecycleScope.launchWhenStarted {
+            viewModel.error.collect {
+                if (it != null) {
+                    WarningDialog(it.title, it.message).show(parentFragmentManager, "AuthError")
+                }
             }
         }
     }

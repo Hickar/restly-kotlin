@@ -1,6 +1,5 @@
 package com.hickar.restly.viewModel
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -35,45 +34,47 @@ class SettingsViewModel @AssistedInject constructor(
     private var _webViewPrefs = MutableStateFlow(WebViewPrefs())
     val webViewPrefs: StateFlow<WebViewPrefs> get() = _webViewPrefs
 
-    val error: MutableLiveData<ErrorEvent?> = MutableLiveData()
+    val error: MutableStateFlow<ErrorEvent?> = MutableStateFlow(null)
 
     init {
-        viewModelScope.launch {
-            prefs.getRequestPrefs().collect {
-                _requestPrefs.value = it
-            }
-
-            prefs.getWebViewPrefs().collect {
-                _webViewPrefs.value = it
-            }
-
-            prefs.getPostmanUserInfo().collect {
-                _postmanUserInfo.value = it
-            }
-        }
-    }
-
-    fun loginToPostman(apiKey: String) {
-        viewModelScope.launch {
-            try {
-                val userInfo = authService.loginToPostman(apiKey)
-                if (userInfo != null) {
-                    prefs.setPostmanApiKey(apiKey)
-                    prefs.setPostmanUserInfo(userInfo)
+        viewModelScope.run {
+            launch {
+                prefs.getRequestPrefs().collect {
+                    _requestPrefs.value = it
                 }
-            } catch (e: IOException) {
-                error.postValue(getErrorEvent(e))
+            }
+
+            launch {
+                prefs.getWebViewPrefs().collect {
+                    _webViewPrefs.value = it
+                }
+            }
+
+            launch {
+                prefs.getPostmanUserInfo().collect {
+                    _postmanUserInfo.value = it
+                }
             }
         }
     }
 
-    fun logoutFromPostman(shouldDeleteRemoteCollections: Boolean = false) {
-        viewModelScope.launch {
-            prefs.deletePostmanUserInfo()
-            prefs.deletePostmanApiKey()
-            if (shouldDeleteRemoteCollections) {
-                collectionRepository.deleteRemoteCollections()
+    fun loginToPostman(apiKey: String) = viewModelScope.launch {
+        try {
+            val userInfo = authService.loginToPostman(apiKey)
+            if (userInfo != null) {
+                prefs.setPostmanApiKey(apiKey)
+                prefs.setPostmanUserInfo(userInfo)
             }
+        } catch (e: IOException) {
+            error.value = getErrorEvent(e)
+        }
+    }
+
+    fun logoutFromPostman(shouldDeleteRemoteCollections: Boolean = false) = viewModelScope.launch {
+        prefs.deletePostmanUserInfo()
+        prefs.deletePostmanApiKey()
+        if (shouldDeleteRemoteCollections) {
+            collectionRepository.deleteRemoteCollections()
         }
     }
 

@@ -10,3 +10,4 @@ class EmptyAuthResponseBodyException(message: String? = null) : IOException(mess
 class InvalidCredentialsException(message: String? = null) : IOException(message)
 class WrongApiKeyException(message: String? = null) : IOException(message)
 class NetworkUnavailableException(message: String? = null) : IOException(message)
+class PostmanApiLimitExceeded(message: String? = null) : IOException(message)

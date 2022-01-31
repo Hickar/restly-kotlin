@@ -37,26 +37,25 @@ class SettingsViewModel @AssistedInject constructor(
     val error: MutableStateFlow<ErrorEvent?> = MutableStateFlow(null)
 
     init {
-        viewModelScope.run {
-            launch {
-                prefs.getRequestPrefs().collect {
-                    _requestPrefs.value = it
-                }
+        viewModelScope.launch {
+            prefs.getRequestPrefs().collect {
+                _requestPrefs.value = it
             }
+        }
 
-            launch {
-                prefs.getWebViewPrefs().collect {
-                    _webViewPrefs.value = it
-                }
+        viewModelScope.launch {
+            prefs.getWebViewPrefs().collect {
+                _webViewPrefs.value = it
             }
+        }
 
-            launch {
-                prefs.getPostmanUserInfo().collect {
-                    _postmanUserInfo.value = it
-                }
+        viewModelScope.launch {
+            prefs.getPostmanUserInfo().collect {
+                _postmanUserInfo.value = it
             }
         }
     }
+
 
     fun loginToPostman(apiKey: String) = viewModelScope.launch {
         try {
@@ -79,28 +78,23 @@ class SettingsViewModel @AssistedInject constructor(
     }
 
     fun setRequestSslVerificationEnabled(enabled: Boolean) = viewModelScope.launch {
-        _requestPrefs.value.sslVerificationEnabled = enabled
-        prefs.setRequestPrefs(_requestPrefs.value)
+        prefs.setRequestPrefs(_requestPrefs.value.copy(sslVerificationEnabled = enabled))
     }
 
     fun setRequestMaxSize(maxSize: Long) = viewModelScope.launch {
-        _requestPrefs.value.maxSize = maxSize
-        prefs.setRequestPrefs(_requestPrefs.value)
+        prefs.setRequestPrefs(_requestPrefs.value.copy(maxSize = maxSize))
     }
 
     fun setRequestTimeout(timeout: Long) = viewModelScope.launch {
-        _requestPrefs.value.timeout = timeout
-        prefs.setRequestPrefs(_requestPrefs.value)
+        prefs.setRequestPrefs(_requestPrefs.value.copy(timeout = timeout))
     }
 
     fun setWebViewJavascriptEnabled(enabled: Boolean) = viewModelScope.launch {
-        _webViewPrefs.value.javascriptEnabled = enabled
-        prefs.setWebViewPrefs(_webViewPrefs.value)
+        prefs.setWebViewPrefs(_webViewPrefs.value.copy(javascriptEnabled = enabled))
     }
 
     fun setWebViewTextSize(textSize: Int) = viewModelScope.launch {
-        _webViewPrefs.value.textSize = textSize
-        prefs.setWebViewPrefs(_webViewPrefs.value)
+        prefs.setWebViewPrefs(_webViewPrefs.value.copy(textSize = textSize))
     }
 
     private fun getErrorEvent(e: IOException): ErrorEvent {

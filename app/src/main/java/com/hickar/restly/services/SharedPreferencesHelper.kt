@@ -7,24 +7,19 @@ import com.hickar.restly.models.PostmanUserInfo
 import com.hickar.restly.models.RequestPrefs
 import com.hickar.restly.models.WebViewPrefs
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.transform
 import javax.inject.Inject
-import kotlin.coroutines.CoroutineContext
+import javax.inject.Singleton
 
 @ExperimentalCoroutinesApi
+@Singleton
 class SharedPreferencesHelper @Inject constructor(
     @ApplicationContext private val context: Context,
     private val gson: Gson,
-    private val coroutineContext: CoroutineContext = Dispatchers.IO
+    private val prefs: FlowSharedPreferences
 ) {
-    private val prefs = FlowSharedPreferences(
-        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE),
-        coroutineContext
-    )
-
     private val postmanUserPrefs = prefs.getNullableString(POSTMAN_USER, null)
     private val postmanKeyPrefs = prefs.getNullableString(POSTMAN_KEY, null)
 

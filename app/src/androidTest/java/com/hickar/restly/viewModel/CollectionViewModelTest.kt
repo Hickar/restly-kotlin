@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.hickar.restly.models.Collection
 import com.hickar.restly.models.CollectionOrigin
 import com.hickar.restly.repository.room.CollectionRepository
+import com.hickar.restly.testUtils.random
 import io.mockk.*
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.Dispatchers
@@ -134,19 +135,13 @@ class CollectionViewModelTest {
     ): Collection {
         return Collection(
             id = if (id.isEmpty()) UUID.randomUUID().toString() else id,
-            name = if (name.isEmpty()) randomString() else name,
-            description = if (description.isEmpty()) randomString() else description,
-            owner = if (owner.isEmpty()) randomString() else owner,
-            parentId = parentId ?: randomString(),
+            name = if (name.isEmpty()) "".random() else name,
+            description = if (description.isEmpty()) "".random() else description,
+            owner = if (owner.isEmpty()) "".random() else owner,
+            parentId = parentId ?: "".random(),
             origin = origin
         )
     }
 
-    private fun randomString(length: Int = 20): String {
-        val charPool = "abcdefghijklmnopqrstuvwxyz1234567890"
-        return (1..length)
-            .map { kotlin.random.Random.nextInt(0, charPool.length) }
-            .map { charPool[it] }
-            .joinToString("")
-    }
+
 }

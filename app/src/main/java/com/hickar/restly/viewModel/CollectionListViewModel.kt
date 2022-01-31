@@ -6,20 +6,20 @@ import androidx.lifecycle.viewModelScope
 import com.hickar.restly.models.Collection
 import com.hickar.restly.models.RequestDirectory
 import com.hickar.restly.repository.room.CollectionRepository
-import com.hickar.restly.services.SharedPreferencesHelper
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.util.*
 
+@ExperimentalCoroutinesApi
 class CollectionListViewModel @AssistedInject constructor(
     @Assisted private val handle: SavedStateHandle,
     private val collectionRepository: CollectionRepository,
-    private val prefs: SharedPreferencesHelper
 ) : ViewModel() {
     private var job: Job = Job()
 

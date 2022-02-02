@@ -2,10 +2,9 @@ package com.hickar.restly.repository.room
 
 import android.util.Log
 import androidx.annotation.WorkerThread
+import com.google.gson.Gson
+import com.hickar.restly.models.*
 import com.hickar.restly.models.Collection
-import com.hickar.restly.models.CollectionOrigin
-import com.hickar.restly.models.RequestDirectory
-import com.hickar.restly.models.RequestItem
 import com.hickar.restly.repository.dao.CollectionDao
 import com.hickar.restly.repository.dao.CollectionRemoteSource
 import com.hickar.restly.repository.dao.RequestGroupDao
@@ -32,6 +31,7 @@ class CollectionRepository @Inject constructor(
     private val requestItemDao: RequestItemDao,
     private val requestGroupDao: RequestGroupDao,
     private val collectionRemoteSource: CollectionRemoteSource,
+    private val gson: Gson
 ) {
     @WorkerThread
     fun getAllCollections(): Flow<List<Collection>> {
@@ -103,7 +103,7 @@ class CollectionRepository @Inject constructor(
         }
     }
 
-    //    @WorkerThread
+    @WorkerThread
     suspend fun getRequestGroupById(id: String): Flow<RequestDirectory?> {
         val requestGroupFlow = requestGroupDao.getById(id)
         val requestItemFlow = requestItemDao.getByGroupId(id)
@@ -129,7 +129,8 @@ class CollectionRepository @Inject constructor(
                     description = requestGroupDto.description,
                     requests = requests.toMutableList(),
                     subgroups = subgroups,
-                    parentId = requestGroupDto.parentId
+                    parentId = requestGroupDto.parentId,
+                    auth = gson.fromJson(requestGroupDto.auth, RequestAuth::class.java)
                 )
             }
         }

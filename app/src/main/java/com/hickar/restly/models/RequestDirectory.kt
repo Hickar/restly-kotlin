@@ -8,7 +8,8 @@ class RequestDirectory(
     var description: String? = "",
     var requests: MutableList<RequestItem> = mutableListOf(),
     var subgroups: MutableList<RequestDirectory> = mutableListOf(),
-    override var parentId: String? = null
+    override var parentId: String? = null,
+    var auth: RequestAuth = RequestAuth()
 ) : RequestGroup() {
     override fun equals(other: Any?): Boolean {
         return other is RequestDirectory

@@ -10,5 +10,6 @@ data class RequestDirectoryDTO(
     @PrimaryKey @NotNull val id: String,
     val name: String,
     val description: String?,
-    override var parentId: String?
+    override var parentId: String?,
+    val auth: String?
 ) : RequestGroup()

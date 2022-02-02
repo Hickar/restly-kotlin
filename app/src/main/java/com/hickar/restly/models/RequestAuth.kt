@@ -2,16 +2,16 @@ package com.hickar.restly.models
 
 data class RequestAuth(
     var type: String = "",
-    var basic: RequestAuthBasic,
-    var awsv4: RequestAuthAWS,
-    var apiKey: RequestAuthApiKey,
-    var bearer: String = "",
-    var digest: RequestAuthDigest,
-    var edgegrid: RequestAuthEdgegrid,
-    var hawk: RequestAuthHawk,
-    var ntlm: RequestAuthNTLM,
-    var oauth1: RequestAuthOAuth1,
-    var oauth2: RequestAuthOAuth2
+    var basic: RequestAuthBasic? = null,
+    var awsv4: RequestAuthAWS? = null,
+    var apiKey: RequestAuthApiKey? = null,
+    var bearer: String? = null,
+    var digest: RequestAuthDigest? = null,
+    var edgegrid: RequestAuthEdgegrid? = null,
+    var hawk: RequestAuthHawk? = null,
+    var ntlm: RequestAuthNTLM? = null,
+    var oauth1: RequestAuthOAuth1? = null,
+    var oauth2: RequestAuthOAuth2? = null
 )
 
 data class RequestAuthApiKey(

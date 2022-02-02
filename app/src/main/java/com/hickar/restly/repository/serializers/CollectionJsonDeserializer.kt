@@ -1,4 +1,4 @@
-package com.hickar.restly.utils
+package com.hickar.restly.repository.serializers
 
 import com.google.gson.*
 import com.hickar.restly.consts.RequestMethod

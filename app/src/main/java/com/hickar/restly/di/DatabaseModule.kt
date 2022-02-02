@@ -10,8 +10,8 @@ import com.hickar.restly.repository.dao.RequestGroupDao
 import com.hickar.restly.repository.dao.RequestItemDao
 import com.hickar.restly.repository.models.CollectionRemoteDTO
 import com.hickar.restly.repository.room.AppDatabase
-import com.hickar.restly.utils.CollectionInfoJsonDeserializer
-import com.hickar.restly.utils.CollectionJsonDeserializer
+import com.hickar.restly.repository.serializers.CollectionInfoJsonDeserializer
+import com.hickar.restly.repository.serializers.CollectionJsonDeserializer
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

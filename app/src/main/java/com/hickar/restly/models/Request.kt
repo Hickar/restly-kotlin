@@ -7,6 +7,10 @@ data class Request(
     var query: RequestQuery = RequestQuery(),
     var headers: List<RequestHeader> = mutableListOf(),
     var body: RequestBody = RequestBody(),
+    var auth: RequestAuth? = null,
+    var variables: List<CollectionVariable> = listOf(),
+    var certificate: RequestCertificate? = null,
+    var proxy: RequestProxyConfig? = null
 ) {
     fun shouldHaveBody(): Boolean {
         return when (method) {

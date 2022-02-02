@@ -7,7 +7,9 @@ class RequestItem(
     var name: String = "New Request",
     var description: String = "",
     var request: Request = Request(),
-    var parentId: String
+    var parentId: String,
+    var variables: List<CollectionVariable> = listOf(),
+    var events: List<CollectionEvent> = listOf()
 ) {
     override fun equals(other: Any?): Boolean {
         return other is RequestItem && other.id == id && other.request == request

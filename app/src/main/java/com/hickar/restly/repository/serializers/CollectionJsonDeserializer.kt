@@ -42,7 +42,7 @@ class CollectionJsonDeserializer : JsonDeserializer<CollectionRemoteDTO> {
         for (item in itemList) {
             val itemObject = item.asJsonObject
 
-            itemObject.run {
+            itemObject.apply {
                 if (has("item")) {
                     val description = if (has("description")) {
                         get("description").asString
@@ -67,12 +67,17 @@ class CollectionJsonDeserializer : JsonDeserializer<CollectionRemoteDTO> {
                     val newRequestItem = getRequestItem(itemObject, requestGroup)
                     requestGroup.requests.add(newRequestItem)
                 }
+
+                if (has("auth")) {
+                    val authObject = get("auth").asJsonObject
+                    requestGroup.auth = buildAuth(authObject) ?: RequestAuth()
+                }
             }
         }
     }
 
     private fun getRequestItem(requestItemObject: JsonObject, requestGroup: RequestDirectory): RequestItem {
-        requestItemObject.run {
+        requestItemObject.apply {
             if (!has("request")) {
                 throw JsonParseException("Invalid requestItem object: should contain \"request\" key")
             }
@@ -104,11 +109,17 @@ class CollectionJsonDeserializer : JsonDeserializer<CollectionRemoteDTO> {
                 body = getRequestBody(requestObject.get("body").asJsonObject)
             }
 
+            var auth: RequestAuth? = null
+            if (requestObject.has("auth")) {
+                auth = buildAuth(requestObject.get("auth").asJsonObject)
+            }
+
             val newRequest = Request(
                 method = RequestMethod.valueOf(requestObject.get("method").asString),
                 query = query,
                 headers = headers,
-                body = body
+                body = body,
+                auth = auth
             )
 
             return RequestItem(
@@ -122,7 +133,7 @@ class CollectionJsonDeserializer : JsonDeserializer<CollectionRemoteDTO> {
     }
 
     private fun getRequestUrl(urlObject: JsonObject): RequestQuery {
-        urlObject.run {
+        urlObject.apply {
             return if (has("raw")) {
                 RequestQuery(get("raw").asString)
             } else {
@@ -160,7 +171,7 @@ class CollectionJsonDeserializer : JsonDeserializer<CollectionRemoteDTO> {
     }
 
     private fun getRequestBody(bodyObject: JsonObject): RequestBody {
-        bodyObject.run {
+        bodyObject.apply {
             if (!has("mode")) {
                 return RequestBody(type = BodyType.NONE)
             }
@@ -175,7 +186,7 @@ class CollectionJsonDeserializer : JsonDeserializer<CollectionRemoteDTO> {
                         for (formData in formDataJsonObjects) {
                             val formDataObject = formData.asJsonObject
 
-                            formDataObject.run {
+                            formDataObject.apply {
                                 val key = get("key").asString
                                 val value = get("value").asString
 
@@ -261,5 +272,203 @@ class CollectionJsonDeserializer : JsonDeserializer<CollectionRemoteDTO> {
         }
 
         return RequestBody(type = BodyType.NONE)
+    }
+
+    private fun buildAuth(authObj: JsonObject): RequestAuth? {
+        authObj.run {
+            if (!has("type")) return null
+
+
+            val authType = get("type").asString
+            if (authType == "noAuth") {
+                return RequestAuth(type = RequestAuthType.NO_AUTH)
+            }
+
+            val authEntryFields = authObj.get(authType).asJsonArray
+
+            return when (authType) {
+                "basic" -> return buildBasicAuth(authEntryFields)
+                "awsv4" -> return buildAwsAuth(authEntryFields)
+                "apiKey" -> return buildApiKeyAuth(authEntryFields)
+                "bearer" -> return buildBearerAuth(authEntryFields)
+                "digest" -> return buildDigestAuth(authEntryFields)
+                "edgegrid" -> return buildEdgegrid(authEntryFields)
+                "hawk" -> return buildHawkAuth(authEntryFields)
+                "ntlm" -> return buildNtlmAuth(authEntryFields)
+                "oauth1" -> return buildOAuth1Auth(authEntryFields)
+                "oauth2" -> return buildOAuth2Auth(authEntryFields)
+                else -> null
+            }
+        }
+    }
+
+//  TODO: somehow generalize all underlying methods
+    private fun buildBasicAuth(authFields: JsonArray): RequestAuth {
+        val fields = buildAuthFieldsMap(authFields)
+        return RequestAuth(
+            type = RequestAuthType.BASIC,
+            basic = RequestAuthBasic(
+                username = fields["username"] ?: "",
+                password = fields["password"] ?: ""
+            )
+        )
+    }
+
+    private fun buildAwsAuth(authFields: JsonArray): RequestAuth {
+        val fields = buildAuthFieldsMap(authFields)
+        return RequestAuth(
+            type = RequestAuthType.AWS,
+            awsv4 = RequestAuthAWS(
+                accessKey = fields["accessKey"] ?: "",
+                secretKey = fields["secretKey"] ?: "",
+                region = fields["region"] ?: "",
+                serviceName = fields["service"] ?: "",
+                sessionToken = fields["sessionToken"] ?: ""
+            )
+        )
+    }
+
+    private fun buildApiKeyAuth(authFields: JsonArray): RequestAuth {
+        val fields = buildAuthFieldsMap(authFields)
+        return RequestAuth(
+            type = RequestAuthType.API_KEY,
+            apiKey = RequestAuthApiKey(
+                key = fields["key"] ?: "",
+                value = fields["value"] ?: ""
+            )
+        )
+    }
+
+    private fun buildBearerAuth(authFields: JsonArray): RequestAuth {
+        val fields = buildAuthFieldsMap(authFields)
+        return RequestAuth(
+            type = RequestAuthType.BEARER,
+            bearer = fields["token"]
+        )
+    }
+
+    private fun buildDigestAuth(authFields: JsonArray): RequestAuth {
+        val fields = buildAuthFieldsMap(authFields)
+        return RequestAuth(
+            type = RequestAuthType.DIGEST,
+            digest = RequestAuthDigest(
+                username = fields["username"] ?: "",
+                password = fields["password"] ?: "",
+                realm = fields["realm"] ?: "",
+                nonce = fields["nonce"] ?: "",
+                nonceCount = fields["nonceCount"] ?: "",
+                algorithm = fields["algorithm"] ?: "",
+                qop = fields["qop"] ?: "",
+                clientNonce = fields["clientNonce"] ?: "",
+                opaque = fields["opaque"] ?: ""
+            )
+        )
+    }
+
+    private fun buildEdgegrid(authFields: JsonArray): RequestAuth {
+        val fields = buildAuthFieldsMap(authFields)
+        return RequestAuth(
+            type = RequestAuthType.EDGEGRID,
+            edgegrid = RequestAuthEdgegrid(
+                accessToken = fields["accessToken"] ?: "",
+                clientToken = fields["clientToken"] ?: "",
+                clientSecret = fields["clientSecret"] ?: "",
+                nonce = fields["nonce"] ?: "",
+                timestamp = fields["timestamp"] ?: "",
+                baseUrl = fields["baseURL"] ?: "",
+                headersToSign = fields["headersToSign"] ?: ""
+            )
+        )
+    }
+
+    private fun buildOAuth1Auth(authFields: JsonArray): RequestAuth {
+        val fields = buildAuthFieldsMap(authFields)
+        return RequestAuth(
+            type = RequestAuthType.OAUTH1,
+            oauth1 = RequestAuthOAuth1(
+                signatureMethod = fields["signature"] ?: "",
+                consumerKey = fields["consumerKey"] ?: "",
+                consumerSecret = fields["consumerSecret"] ?: "",
+                accessToken = fields["token"] ?: "",
+                tokenSecret = fields["tokenSecret"] ?: "",
+                realm = fields["realm"] ?: "",
+                nonce = fields["nonce"] ?: "",
+                timestamp = fields["timestamp"] ?: "",
+                verifier = fields["verifier"] ?: "",
+                callbackUrl = fields["callback"] ?: "",
+                version = fields["version"] ?: "",
+                addParamsToHeader = fields["addParamsToHeader"].toBoolean(),
+                includeBodyHash = fields["includeBodyHash"].toBoolean(),
+                addEmptyParamsToSignature = fields["addEmptyParamsToSign"].toBoolean()
+            )
+        )
+    }
+
+//  TODO: Deserialize "resources" and "audience" lists to corresponding properties
+    private fun buildOAuth2Auth(authFields: JsonArray): RequestAuth {
+        val fields = buildAuthFieldsMap(authFields)
+        return RequestAuth(
+            type = RequestAuthType.OAUTH2,
+            oauth2 = RequestAuthOAuth2(
+                accessToken = fields["accessToken"] ?: "",
+                headerPrefix = fields["headerPrefix"] ?: "",
+                tokenName = fields["tokenName"] ?: "",
+                grantType = fields["grant_type"] ?: "",
+                callbackUrl = fields["redirect_uri"] ?: "",
+                authUrl = fields["authUrl"] ?: "",
+                authTokenUrl = fields["authTokenUrl"] ?: "",
+                clientId = fields["clientId"] ?: "",
+                clientSecret = fields["clientSecret"] ?: "",
+                scope = fields["scope"] ?: "",
+                state = fields["state"] ?: "",
+                clientAuth = fields["client_authentication"] ?: "",
+                addAuthTo = fields["addTokenTo"] ?: "",
+            )
+        )
+    }
+
+    private fun buildHawkAuth(authFields: JsonArray): RequestAuth {
+        val fields = buildAuthFieldsMap(authFields)
+        return RequestAuth(
+            type = RequestAuthType.HAWK,
+            hawk = RequestAuthHawk(
+                authId = fields["authId"] ?: "",
+                authKey = fields["authKey"] ?: "",
+                user = fields["user"] ?: "",
+                algorithm = fields["algorithm"] ?: "",
+                nonce = fields["nonce"] ?: "",
+                ext = fields["extraData"] ?: "",
+                app = fields["app"] ?: "",
+                dlg = fields["delegation"] ?: "",
+                timestamp = fields["timestamp"] ?: "",
+                includePayloadHash = fields["includePayloadHash"].toBoolean()
+            )
+        )
+    }
+
+    private fun buildNtlmAuth(authFields: JsonArray): RequestAuth {
+        val fields = buildAuthFieldsMap(authFields)
+        return RequestAuth(
+            type = RequestAuthType.NTLM,
+            ntlm = RequestAuthNTLM(
+                username = fields["username"] ?: "",
+                password = fields["password"] ?: "",
+                domain = fields["domain"] ?: "",
+                workstation = fields["workstation"] ?: ""
+            )
+        )
+    }
+
+    private fun buildAuthFieldsMap(authFields: JsonArray): Map<String, String> {
+        val fieldsMap = mutableMapOf<String, String>()
+        for (authField in authFields) {
+            authField.asJsonObject.apply {
+                if (has("key") && has("value")) {
+                    fieldsMap[get("key").asString] = get("value").asString
+                }
+            }
+        }
+
+        return fieldsMap
     }
 }

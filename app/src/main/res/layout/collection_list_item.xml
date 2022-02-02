@@ -3,25 +3,46 @@
     android:id="@+id/request_group_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:paddingHorizontal="16dp"
     android:paddingVertical="8dp">
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/collection_list_item_name_label"
-        style="@style/Restly.Request.NameText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:maxLines="1"
-        android:textAlignment="textStart" />
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/collection_list_item_badge"
+        style="@style/Restly.Collection.OriginBox"
+        android:layout_width="40dp"
+        android:layout_height="20dp">
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/collection_list_item_description"
-        style="@style/Restly.Request.UrlText"
-        android:layout_width="match_parent"
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/collection_list_item_badge_text"
+            style="@style/Restly.Collection.OriginText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <LinearLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:maxLines="3"
-        android:textAlignment="textStart" />
+        android:layout_marginStart="8dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/collection_list_item_name_label"
+            style="@style/Restly.Request.NameText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:textAlignment="textStart" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/collection_list_item_description"
+            style="@style/Restly.Request.UrlText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="3"
+            android:textAlignment="textStart" />
+    </LinearLayout>
 
 
 </LinearLayout>

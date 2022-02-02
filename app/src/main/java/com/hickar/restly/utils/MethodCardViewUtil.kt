@@ -1,35 +1,61 @@
 package com.hickar.restly.utils
 
 import com.hickar.restly.R
+import com.hickar.restly.consts.RequestMethod
+import com.hickar.restly.models.CollectionOrigin
 
 object MethodCardViewUtil {
-    fun getTextColorId(method: String): Int {
+    fun getMethodTextColorId(method: RequestMethod): Int {
         return when (method) {
-            "GET", "HEAD" -> R.color.light_blue_700
-            "POST" -> R.color.green_700
-            "PUT", "PATCH", "OPTIONS" -> R.color.yellow_700
-            "DELETE" -> R.color.red_700
+            RequestMethod.GET, RequestMethod.HEAD -> R.color.light_blue_700
+            RequestMethod.POST -> R.color.green_700
+            RequestMethod.PUT, RequestMethod.PATCH, RequestMethod.OPTIONS -> R.color.yellow_700
+            RequestMethod.DELETE -> R.color.red_700
             else -> R.color.light_blue_700
         }
     }
 
-    fun getBackgroundColorId(method: String): Int {
+    fun getMethodBackgroundColorId(method: RequestMethod): Int {
         return when (method) {
-            "GET", "HEAD" -> R.color.light_blue_200
-            "POST" -> R.color.green_200
-            "PUT", "PATCH", "OPTIONS" -> R.color.yellow_200
-            "DELETE" -> R.color.red_200
+            RequestMethod.GET, RequestMethod.HEAD -> R.color.light_blue_200
+            RequestMethod.POST -> R.color.green_200
+            RequestMethod.PUT, RequestMethod.PATCH, RequestMethod.OPTIONS -> R.color.yellow_200
+            RequestMethod.DELETE -> R.color.red_200
             else -> R.color.light_blue_200
         }
     }
 
-    fun getShortMethodName(method: String): String {
+    fun getMethodShortMethodName(method: RequestMethod): String {
         return when (method) {
-            "GET", "HEAD", "POST", "PUT" -> method
-            "PATCH" -> "PTCH"
-            "OPTIONS" -> "OPT"
-            "DELETE" -> "DEL"
-            else -> method
+            RequestMethod.GET, RequestMethod.HEAD, RequestMethod.POST, RequestMethod.PUT -> method.value
+            RequestMethod.PATCH -> "PTCH"
+            RequestMethod.OPTIONS -> "OPT"
+            RequestMethod.DELETE -> "DEL"
+            else -> method.value
+        }
+    }
+
+    fun getCollectionOriginTextColor(origin: CollectionOrigin): Int {
+        return when (origin) {
+            CollectionOrigin.LOCAL -> R.color.light_blue_700
+            CollectionOrigin.POSTMAN -> R.color.orange_700
+            else -> R.color.gray_700
+        }
+    }
+
+    fun getCollectionOriginBackgroundColorId(origin: CollectionOrigin): Int {
+        return when (origin) {
+            CollectionOrigin.LOCAL -> R.color.light_blue_200
+            CollectionOrigin.POSTMAN -> R.color.orange_200
+            else -> R.color.gray_200
+        }
+    }
+
+    fun getCollectionOriginShortName(origin: CollectionOrigin): String {
+        return when (origin) {
+            CollectionOrigin.LOCAL -> "LCL"
+            CollectionOrigin.POSTMAN -> "PSTN"
+            else -> "UKWN"
         }
     }
 }

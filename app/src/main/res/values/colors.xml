@@ -9,6 +9,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="gray_200">#FFD9D9D9</color>
     <color name="gray_400">#FFAEAEAE</color>
+    <color name="gray_700">#8E8E8E</color>
     <color name="light_blue_200">#FF8CD6FF</color>
     <color name="light_blue_500">#FF2E8EFF</color>
     <color name="light_blue_700">#FF007EC5</color>
@@ -20,4 +21,6 @@
     <color name="red_200">#FFFF938C</color>
     <color name="red_500">#DD1717</color>
     <color name="red_700">#FFDB2A1F</color>
+    <color name="orange_200">#FFCD82</color>
+    <color name="orange_700">#CA771F</color>
 </resources>

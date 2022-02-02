@@ -14,35 +14,31 @@
         android:layout_width="40dp"
         android:layout_height="20dp">
 
-        <RelativeLayout
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/request_group_request_item_method_label"
+            style="@style/Restly.Request.MethodText"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/request_group_request_item_method_label"
-                style="@style/Restly.Request.MethodText"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </RelativeLayout>
+            android:layout_height="match_parent" />
     </com.google.android.material.card.MaterialCardView>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginHorizontal="8dp">
+        android:layout_marginStart="8dp"
+        android:layout_weight="1">
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/request_group_request_item_name_label"
             style="@style/Restly.Request.NameText"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="textStart" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/request_group_request_item_url_label"
             style="@style/Restly.Request.UrlText"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="textStart"
             android:maxLines="3" />

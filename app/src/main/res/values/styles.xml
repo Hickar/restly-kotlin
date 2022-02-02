@@ -98,4 +98,21 @@
         <item name="android:textSize">16sp</item>
         <item name="android:gravity">center_vertical</item>
     </style>
+
+    <style name="Restly.Collection.OriginBox" parent="Widget.MaterialComponents.CardView">
+        <item name="cardCornerRadius">4dp</item>
+        <item name="cardBackgroundColor">@color/light_blue_200</item>
+        <item name="android:gravity">center</item>
+        <item name="android:minHeight">18dp</item>
+        <item name="android:minWidth">36dp</item>
+    </style>
+
+    <style name="Restly.Collection.OriginText" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/light_blue_700</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:gravity">center</item>
+    </style>
+
 </resources>

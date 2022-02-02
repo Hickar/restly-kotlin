@@ -57,8 +57,8 @@ class RequestListItemViewHolder(
     private val context: Context
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(item: RequestItem) {
-        val cardBackgroundColorId = MethodCardViewUtil.getBackgroundColorId(item.request.method.value)
-        val cardTextColorId = MethodCardViewUtil.getTextColorId(item.request.method.value)
+        val cardBackgroundColorId = MethodCardViewUtil.getMethodBackgroundColorId(item.request.method)
+        val cardTextColorId = MethodCardViewUtil.getMethodTextColorId(item.request.method)
 
         val cardBackgroundColor =
             ResourcesCompat.getColor(context.resources, cardBackgroundColorId, null)
@@ -67,7 +67,7 @@ class RequestListItemViewHolder(
         binding.requestGroupRequestItemMethodBox.setCardBackgroundColor(cardBackgroundColor)
         binding.requestGroupRequestItemMethodLabel.setTextColor(cardTextColor)
         binding.requestGroupRequestItemMethodLabel.text =
-            MethodCardViewUtil.getShortMethodName(item.request.method.value)
+            MethodCardViewUtil.getMethodShortMethodName(item.request.method)
         binding.requestGroupRequestItemNameLabel.text = item.name
         binding.requestGroupRequestItemUrlLabel.text = item.request.query.url
     }

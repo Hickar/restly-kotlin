@@ -3,11 +3,14 @@ package com.hickar.restly.view.collectionList.adapters
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.hickar.restly.databinding.CollectionListItemBinding
+import com.hickar.restly.extensions.toEditable
 import com.hickar.restly.models.Collection
+import com.hickar.restly.utils.MethodCardViewUtil
 
 class CollectionListAdapter(
     private val onItemClicked: (Collection) -> Unit
@@ -57,5 +60,16 @@ class CollectionItemViewHolder(
     fun bind(collection: Collection) {
         binding.collectionListItemNameLabel.text = collection.name
         binding.collectionListItemDescription.text = collection.description
+
+        val backgroundColorId = MethodCardViewUtil.getCollectionOriginBackgroundColorId(collection.origin)
+        val textColorId = MethodCardViewUtil.getCollectionOriginTextColor(collection.origin)
+        val originText = MethodCardViewUtil.getCollectionOriginShortName(collection.origin)
+
+        val backgroundColor = ResourcesCompat.getColor(context.resources, backgroundColorId, null)
+        val textColor = ResourcesCompat.getColor(context.resources, textColorId, null)
+
+        binding.collectionListItemBadge.setCardBackgroundColor(backgroundColor)
+        binding.collectionListItemBadgeText.setTextColor(textColor)
+        binding.collectionListItemBadgeText.text = originText.toEditable()
     }
 }
